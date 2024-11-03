@@ -12,13 +12,14 @@ use std::io::{self, BufRead, BufReader, BufWriter, Write};
 #[command(
     name = "grepq",
     author = "Nicholas D. Crosbie",
-    version = "1.0.2",
-    about = "quickly filter fastq files by matching sequences to set of regex patterns",
+    version = "1.0.3",
+    about = "quickly filter fastq files by matching sequences to a set of regex patterns",
     long_about = "Copyright (c) 2024 Nicholas D. Crosbie. Licensed under the MIT license.",
     after_help = "Notes:
-    - Only supports ASCII-encoded fastq files.
+    - Only supports fastq files.
     - When no options are provided, only the matching sequences are printed.
-    - Count option (-c) is only supported for full fastq records (for example, the output of -R).
+    - Only one of the -I, -R, or -c options can be used at a time.
+    - Count option (-c) will support the output of the -R option since it is in fastq format.
     - Patterns file must contain one regex pattern per line.
     - Inverted matches are not supported.
     - regex patterns with look-around and backreferences are not supported.
@@ -57,7 +58,7 @@ fn main() -> io::Result<()> {
         let file = File::open(patterns_path)?;
         let reader = BufReader::new(file);
         RegexSet::new(reader.lines().filter_map(Result::ok))
-            .expect("Failed to compile regex patterns")
+            .expect("Failed to compile regex patterns. Check your patterns file lists one regex pattern per line.")
     };
 
     let file = File::open(file_path)?;
@@ -69,7 +70,15 @@ fn main() -> io::Result<()> {
     if count {
         let mut match_count = 0;
         while let Some(result) = reader.next() {
-            let record = result.map_err(|e| io::Error::new(io::ErrorKind::Other, e))?;
+            let record = result.map_err(|e| {
+                io::Error::new(
+                    io::ErrorKind::Other,
+                    format!(
+                        "grepq only supports the fastq format. Check your input file.: {}",
+                        e
+                    ),
+                )
+            })?;
             if regex_set.is_match(record.seq()) {
                 match_count += 1;
             }
@@ -77,7 +86,15 @@ fn main() -> io::Result<()> {
         writeln!(writer, "{}", match_count).unwrap();
     } else if with_id {
         while let Some(result) = reader.next() {
-            let record = result.map_err(|e| io::Error::new(io::ErrorKind::Other, e))?;
+            let record = result.map_err(|e| {
+                io::Error::new(
+                    io::ErrorKind::Other,
+                    format!(
+                        "grepq only supports the fastq format. Check your input file: {}",
+                        e
+                    ),
+                )
+            })?;
             if regex_set.is_match(record.seq()) {
                 writer.write_all(b"@").unwrap();
                 writer.write_all(record.head()).unwrap();
@@ -88,7 +105,15 @@ fn main() -> io::Result<()> {
         }
     } else if with_full_record {
         while let Some(result) = reader.next() {
-            let record = result.map_err(|e| io::Error::new(io::ErrorKind::Other, e))?;
+            let record = result.map_err(|e| {
+                io::Error::new(
+                    io::ErrorKind::Other,
+                    format!(
+                        "grepq only supports the fastq format. Check your input file.: {}",
+                        e
+                    ),
+                )
+            })?;
             if regex_set.is_match(record.seq()) {
                 writer.write_all(b"@").unwrap();
                 writer.write_all(record.head()).unwrap();
@@ -103,7 +128,15 @@ fn main() -> io::Result<()> {
         }
     } else {
         while let Some(result) = reader.next() {
-            let record = result.map_err(|e| io::Error::new(io::ErrorKind::Other, e))?;
+            let record = result.map_err(|e| {
+                io::Error::new(
+                    io::ErrorKind::Other,
+                    format!(
+                        "grepq only supports the fastq format. Check your input file.: {}",
+                        e
+                    ),
+                )
+            })?;
             if regex_set.is_match(record.seq()) {
                 writer.write_all(record.seq()).unwrap();
                 writer.write_all(b"\n").unwrap();

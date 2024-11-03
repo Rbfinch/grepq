@@ -1,10 +1,10 @@
 [package]
 name = "grepq"
-version = "1.0.2"
+version = "1.0.3"
 edition = "2021"
 authors = ["Nicholas D. Crosbie"]
 license = "MIT"
-description = "quickly filter fastq files by matching sequences to set of regex patterns"
+description = "quickly filter fastq files by matching sequences to a set of regex patterns"
 homepage = "https://github.com/Rbfinch/grepq"
 documentation = "https://github.com/Rbfinch/grepq"
 repository = "https://github.com/Rbfinch/grepq"
