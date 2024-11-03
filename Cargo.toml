@@ -1,15 +1,7 @@
 [package]
 name = "grepq"
-authors = ["Nicholas D. Crosbie"]
-version = "1.0.0"
+version = "1.0.1"
 edition = "2021"
-license = "MIT"
-description = "quickly filter fastq files by matching sequences to set of regex patterns"
-homepage = "https://github.com/Rbfinch/grepq"
-repository = "https://github.com/Rbfinch/grepq"
-readme = "README.md"
-categories = ["science"]
-keywords = ["bioinformatics", "fastq"]
 
 [dependencies]
 seq_io = "0.3.2"
