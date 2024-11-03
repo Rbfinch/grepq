@@ -59,7 +59,7 @@ Notes:
 - from source
     - clone the repository and `cd` into the `grepq` directory
     - run `cargo build --release`
-    - relative to the cloned parent directory, the executable will be located in `./grepq/target/release`
+    - relative to the cloned parent directory, the executable will be located in `./target/release`
 
 - from Cargo.io
     - `cargo install grepq`
@@ -67,15 +67,15 @@ Notes:
 _Checksums to verify `grepq` is working correctly, using the regex file `regex.txt` and the small fastq file `small.fastq`, both located in the `test` directory:_
 
 ```bash
-./grepq/target/release/grepq ./test/regex.txt ./test/small.fastq > outfile.txt
+./target/release/grepq ./test/regex.txt ./test/small.fastq > outfile.txt
 sha256sum outfile.txt # checksum of outfile.txt if no option is given
 ed0527a4d03481a50b365b03f5d952afab1df259966021699484cd9d59d790fc
 
-./grepq/target/release/grepq -I ./test/regex.txt ./test/small.fastq > outfile.txt
+./target/release/grepq -I ./test/regex.txt ./test/small.fastq > outfile.txt
 sha256sum outfile.txt # checksum of outfile.txt if -I option is given
 204bec425495f606611ba20605c6fa6e6d10627fc3203126821a2df8af025fb0
 
-./grepq/target/release/grepq -R ./test/regex.txt ./test/small.fastq > outfile.txt
+./target/release/grepq -R ./test/regex.txt ./test/small.fastq > outfile.txt
 sha256sum outfile.txt # checksum of outfile.txt if -R option is given
 67ad581448b5e9f0feae96b11f7a48f101cd5da8011b8b27a706681f703c6caf
 ```
