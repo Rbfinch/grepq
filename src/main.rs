@@ -14,7 +14,7 @@ use std::io::{self, BufRead, BufReader, BufWriter, Write};
     author = "Nicholas D. Crosbie",
     version = "1.0",
     about = "quickly filter fastq files by matching sequences to set of regex patterns",
-    long_about = "Copyright (c) 2023 Nicholas D. Crosbie. Licensed under the MIT License."
+    long_about = "Copyright (c) 2024 Nicholas D. Crosbie. Licensed under the MIT License."
 )]
 struct Cli {
     #[arg(short = 'I', help = "Include record ID in the output")]
