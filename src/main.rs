@@ -12,7 +12,7 @@ use std::io::{self, BufRead, BufReader, BufWriter, Write};
 #[command(
     name = "grepq",
     author = "Nicholas D. Crosbie",
-    version = "1.0.1",
+    version = "1.0.2",
     about = "quickly filter fastq files by matching sequences to set of regex patterns",
     long_about = "Copyright (c) 2024 Nicholas D. Crosbie. Licensed under the MIT license.",
     after_help = "Notes:

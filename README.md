@@ -40,8 +40,17 @@ Arguments:
 Options:
   -I             Include record ID in the output
   -R             Include record ID, sequence, separator, and quality in the output
+  -c             Count the number of matching fastq records
   -h, --help     Print help (see more with '--help')
   -V, --version  Print version
+
+Notes:
+    - Only supports ASCII-encoded fastq files.
+    - When no options are provided, only the matching sequences are printed.
+    - Count option (-c) is only supported for full fastq records (for example, the output of -R).
+    - Patterns file must contain one regex pattern per line.
+    - Inverted matches are not supported.
+    - regex patterns with look-around and backreferences are not supported.
 ```
 
 - tips
