@@ -12,18 +12,47 @@ use std::io::{self, BufRead, BufReader, BufWriter, Write};
 #[command(
     name = "grepq",
     author = "Nicholas D. Crosbie",
-    version = "1.0.4",
+    version = "1.0.5",
     about = "quickly filter fastq files by matching sequences to a set of regex patterns",
-    long_about = "Copyright (c) 2024 Nicholas D. Crosbie. Licensed under the MIT license.",
-    after_help = "Notes:
-    - Only supports fastq files.
-    - When no options are provided, only the matching sequences are printed.
-    - Only one of the -I, -R, or -c options can be used at a time.
-    - Count option (-c) will support the output of the -R option since it is in fastq format.
-    - Patterns file must contain one regex pattern per line.
-    - Inverted matches are not supported.
-    - regex patterns with look-around and backreferences are not supported.
-    "
+    long_about = "Copyright (c) 2024 Nicholas D. Crosbie, licensed under the MIT License.",
+    after_help = "
+       Examples:
+             - Print only the matching sequences:
+                  grepq regex.txt file.fastq > outfile.txt
+        
+             - Print the matching sequences with the record ID:
+                  grepq -I regex.txt file.fastq > outfile.txt
+        
+             - Print the matching sequences with the record ID, sequence, separator, and quality fields
+                  grepq -R regex.txt file.fastq > outfile.txt
+        
+             - Count the number of matching fastq records:
+                  grepq -c regex.txt file.fastq
+
+           Tips:
+             - Order your regex patterns from those that are most likely to match to those that
+               are least likely to match. This will speed up the filtering process.
+
+             - Ensure you have enough storage space for the output file.
+
+          Notes:
+             - Only supports fastq files.
+
+             - Patterns file must contain one regex pattern per line.
+
+             - When no options are provided, only the matching sequences are printed.
+
+             - Only one of the -I, -R, or -c options can be used at a time.
+
+             - Count option (-c) will support the output of the -R option since it is in fastq format.
+
+             - Patterns file must contain one regex pattern per line.
+
+             - Inverted matches are not supported.
+        
+             - Regex patterns with look-around and backreferences are not supported.
+
+Copyright (c) 2024 Nicholas D. Crosbie, licensed under the MIT License."
 )]
 struct Cli {
     #[arg(short = 'I', help = "Include record ID in the output")]
