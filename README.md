@@ -1,4 +1,5 @@
-# `grepq` 
+<img src="src/grepq-icon.svg" width="128" />
+
 _quickly filter fastq files by matching sequences to a set of regex patterns_
 
 ## Performance
