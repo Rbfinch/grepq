@@ -12,7 +12,7 @@ On a Mac Studio with 32GB RAM and Apple M1 max chip, `grepq` processed a 104GB f
 `grepq` will only match regex patterns to the sequence part of the fastq file, which is the most common use case. Unlike `ripgrep` and `grep`, which will match the regex patterns to the entire fastq record, which includes the record ID, sequence, separator, and quality. This can lead to false positives and slow down the filtering process.
 
 ## Usage 
-v0.1.5, ouput from -h option
+Ouput from `-h` option
 ```bash
 Usage: grepq [OPTIONS] <PATTERNS> <FILE>
 
@@ -81,7 +81,7 @@ Copyright (c) 2024 Nicholas D. Crosbie, licensed under the MIT License.
     - Relative to the cloned parent directory, the executable will be located in `./target/release`
     - Make sure the executable is in your `PATH` or use the full path to the executable
 
-- From *Cargo.io* (easiest method)
+- From *crates.io* (easiest method)
     - `cargo install grepq`
 
 _Checksums to verify `grepq` is working correctly, using the regex file `regex.txt` and the small fastq file `small.fastq`, both located in the `test` directory:_
