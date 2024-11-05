@@ -3,13 +3,16 @@
 _quickly filter fastq files by matching sequences to a set of regex patterns_
 
 ## Performance
-**`grepq` is fast.**
+**`grepq` is fast**
 
 On a Mac Studio with 32GB RAM and Apple M1 max chip, `grepq` processed a 104GB fastq file against 30 regex patterns in 88 seconds, about 1.2GB of fastq data per second. For a 874MB fastq file, it was around **4.8** and **450** times faster than the general-purpose regex tools `ripgrep` and `grep`, respectively, on the same hardware. 
 
-Furthermore, `grepq` will only match regex patterns to the sequence part of the fastq file, which is the most common use case. This is in contrast to `ripgrep` and `grep`, which will match the regex patterns to the entire fastq record, which includes the record ID, sequence, separator, and quality. This can lead to false positives and slow down the filtering process.
+**`grepq` does not match false positives**
 
-## Usage (v0.1.5, ouput from -h option)
+`grepq` will only match regex patterns to the sequence part of the fastq file, which is the most common use case. Unlike `ripgrep` and `grep`, which will match the regex patterns to the entire fastq record, which includes the record ID, sequence, separator, and quality. This can lead to false positives and slow down the filtering process.
+
+## Usage 
+v0.1.5, ouput from -h option
 ```bash
 Usage: grepq [OPTIONS] <PATTERNS> <FILE>
 
