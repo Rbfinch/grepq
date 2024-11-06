@@ -57,9 +57,7 @@ Options:
              - Only one of the -I, -R, or -c options can be used at a time.
 
              - Count option (-c) will support the output of the -R option since it is in fastq format.
-
-             - Patterns file must contain one regex pattern per line.
-
+             
              - Inverted matches are not supported.
         
              - Regex patterns with look-around and backreferences are not supported.
