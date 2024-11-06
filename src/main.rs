@@ -19,13 +19,13 @@ use std::io::{self, BufRead, BufReader, BufWriter, Write};
        Examples:
              - Print only the matching sequences:
                   grepq regex.txt file.fastq > outfile.txt
-        
+
              - Print the matching sequences with the record ID:
                   grepq -I regex.txt file.fastq > outfile.txt
-        
+
              - Print the matching sequences with the record ID, sequence, separator, and quality fields
                   grepq -R regex.txt file.fastq > outfile.txt
-        
+
              - Count the number of matching fastq records:
                   grepq -c regex.txt file.fastq
 
@@ -46,10 +46,8 @@ use std::io::{self, BufRead, BufReader, BufWriter, Write};
 
              - Count option (-c) will support the output of the -R option since it is in fastq format.
 
-             - Patterns file must contain one regex pattern per line.
-
              - Inverted matches are not supported.
-        
+
              - Regex patterns with look-around and backreferences are not supported.
 
 Copyright (c) 2024 Nicholas D. Crosbie, licensed under the MIT License."
