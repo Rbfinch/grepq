@@ -2,6 +2,10 @@ TBD
 ===
 Unreleased changes. Release notes have not yet been written.
 
+1.0.8
+=====
+* Minor changes to README.md
+
 1.0.7
 =====
 * Minor changes to README.md
