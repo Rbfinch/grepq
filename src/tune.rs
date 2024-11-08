@@ -5,7 +5,7 @@ use std::collections::HashMap;
 use std::fs::File;
 use std::io::{self, BufRead, BufReader};
 
-pub fn run_tune(cli: &Cli, num_records: usize) -> io::Result<()> {
+pub fn run_tune(cli: &Cli, num_records: usize, include_count: bool) -> io::Result<()> {
     let patterns_path = &cli.patterns;
     let file_path = &cli.file;
 
@@ -50,7 +50,13 @@ pub fn run_tune(cli: &Cli, num_records: usize) -> io::Result<()> {
 
     println!("Matching patterns:");
     for (pattern, count) in &match_counts {
-        println!("{}: {}", pattern, count);
+        if count > &0 {
+            if include_count {
+                println!("{}: {}", pattern, count);
+            } else {
+                println!("{}", pattern);
+            }
+        }
     }
 
     println!("\nNon-matching patterns:");

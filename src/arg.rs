@@ -77,4 +77,7 @@ pub enum Commands {
 pub struct Tune {
     #[arg(help = "Number of matched records", short = 'n')]
     pub num_records: usize,
+
+    #[arg(short = 'c', help = "Include count of records for matching patterns")]
+    pub include_count: bool,
 }

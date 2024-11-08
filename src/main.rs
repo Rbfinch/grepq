@@ -17,7 +17,7 @@ fn main() -> io::Result<()> {
 
     match &cli.command {
         Some(Commands::Tune(tune)) => {
-            return tune::run_tune(&cli, tune.num_records);
+            return tune::run_tune(&cli, tune.num_records, tune.include_count);
         }
         None => {}
     }
