@@ -16,4 +16,4 @@ keywords = ["bioinformatics", "fastq"]
 seq_io = "0.3.2"
 regex = "1.11.1"
 mimalloc = "0.1.43"
-clap = { version = "4.5.20", features = ["derive"] }
+clap = { version = "4.5.20", features = ["derive", "cargo"] }
