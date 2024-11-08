@@ -62,4 +62,19 @@ pub struct Cli {
 
     #[arg(help = "Path to the fastq file")]
     pub file: String,
+
+    #[command(subcommand)]
+    pub command: Option<Commands>,
+}
+
+#[derive(Parser)]
+pub enum Commands {
+    #[command(about = "Tune the regex patterns by analyzing matched substrings")]
+    Tune(Tune),
+}
+
+#[derive(Parser)]
+pub struct Tune {
+    #[arg(help = "Number of matched records", short = 'n')]
+    pub num_records: usize,
 }

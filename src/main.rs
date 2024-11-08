@@ -8,11 +8,19 @@ use std::fs::File;
 use std::io::{self, BufRead, BufReader, BufWriter, Write};
 
 mod arg;
-use arg::Cli;
+use arg::{Cli, Commands};
+mod tune;
 use clap::Parser;
 
 fn main() -> io::Result<()> {
     let cli = Cli::parse();
+
+    match &cli.command {
+        Some(Commands::Tune(tune)) => {
+            return tune::run_tune(&cli, tune.num_records);
+        }
+        None => {}
+    }
 
     let patterns_path = &cli.patterns;
     let file_path = &cli.file;
