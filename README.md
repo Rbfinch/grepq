@@ -2,6 +2,8 @@
 
 _quickly filter fastq files by matching sequences to a set of regex patterns_
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.14058563.svg)](https://doi.org/10.5281/zenodo.14058563)
+
 ## Features
 
 **1. Very fast and scales to large fastq files**
