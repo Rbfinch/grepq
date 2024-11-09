@@ -15,7 +15,7 @@ use clap::Parser;
              - Print the matching sequences with the record ID:
                   `grepq -I regex.txt file.fastq > outfile.txt`
 
-             - Print the matching sequences in fastq format (record ID, sequence, separator and quality field)
+             - Print the matching sequences in fastq format
                   `grepq -R regex.txt file.fastq > outfile.txt`
 
              - Count the number of matching fastq records:
@@ -50,7 +50,7 @@ use clap::Parser;
           Notes:
              - Only supports fastq files.
 
-             - Patterns file must contain one regex pattern per line.
+             - Patterns file must contain one regex pattern per line, and patterns are case-sensitive.
 
              - When no options are provided, only the matching sequences are printed.
 
