@@ -10,22 +10,25 @@ use clap::Parser;
     after_help = "
        Examples:
              - Print only the matching sequences:
-                  grepq regex.txt file.fastq > outfile.txt
+                  `grepq regex.txt file.fastq > outfile.txt`
 
              - Print the matching sequences with the record ID:
-                  grepq -I regex.txt file.fastq > outfile.txt
+                  `grepq -I regex.txt file.fastq > outfile.txt`
 
-             - Print the matching sequences with the record ID, sequence, separator, and quality fields
-                  grepq -R regex.txt file.fastq > outfile.txt
+             - Print the matching sequences in fastq format (record ID, sequence, separator and quality field)
+                  `grepq -R regex.txt file.fastq > outfile.txt`
 
              - Count the number of matching fastq records:
-                  grepq -c regex.txt file.fastq
+                  `grepq -c regex.txt file.fastq`
+
+             - For each matched pattern in a search of the first 100000 records, print the pattern and the number of matches:
+                  `grepq regex.txt file.fastq tune -n 100000 -c`
 
            Tips:
-             - Order your regex patterns from those that are most likely to match to those that
-               are least likely to match. This will speed up the filtering process.
 
-             - Ensure you have enough storage space for the output file.
+             - Use the `tune` subcommand (`grepq tune -h` for instructions) to analyze matched substrings and update the number and/or order of regex patterns in your pattern file according to their matched frequency. This can speed up the filtering process.
+
+             - Ensure you have enough storage space for output files.
 
           Notes:
              - Only supports fastq files.
