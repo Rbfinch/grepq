@@ -2,6 +2,10 @@ TBD
 ===
 Unreleased changes. Release notes have not yet been written.
 
+1.1.0
+=====
+* Minor changes to README.md
+
 1.0.9
 =====
 * Added the `tune` subcommand

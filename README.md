@@ -8,19 +8,27 @@ _quickly filter fastq files by matching sequences to a set of regex patterns_
 
 **1. Very fast and scales to large fastq files**
 
-On a Mac Studio with 32GB RAM and Apple M1 max chip, `grepq` processed a 104GB fastq file against 30 regex patterns in 88 seconds, about 1.2GB of fastq data per second. For a 874MB fastq file, it was around **4.8** and **450** times faster than the general-purpose regex tools `ripgrep` and `grep`, respectively, on the same hardware. 
+On a Mac Studio with 32GB RAM and Apple M1 max chip, `grepq` processed a 104GB fastq file against 30 regex patterns in 88 seconds, about 1.2GB of fastq data per second. And for the same fastq file and 30 regex patterns, getting an ordered count of each matched regex using the `tune` subcommand took less than five seconds.
+
+For a 874MB fastq file, it was around **4.8** and **450** times faster than the general-purpose regex tools `ripgrep` and `grep`, respectively, on the same hardware. 
 
 **2. Does not match false positives**
 
 `grepq` will only match regex patterns to the sequence part of the fastq file, which is the most common use case. Unlike `ripgrep` and `grep`, which will match the regex patterns to the entire fastq record, which includes the record ID, sequence, separator, and quality. This can lead to false positives and slow down the filtering process.
 
-**3. Will tune your pattern file with the `tune` subcommand**
+**3. Output matched sequences to one of three formats**
+
+- matched sequences only
+- matched sequences and their corresponding record IDs
+- matched sequences, their corresponding record IDs, and the quality scores (i.e. fastq format)
+
+**4. Will tune your pattern file with the `tune` subcommand**
 
 Use the `tune` subcommand to analyze matched substrings and update the number and/or order of regex patterns in your pattern file according to their matched frequency. This can speed up the filtering process. 
 
 Specifying the `-c` option to the `tune` subcommand will output the matched substrings and their frequencies, ranked from highest to lowest.
 
-**4. Follows the unix philosophy, so plays nicely with command-line driven workflows**
+**5. Plays nicely with your unix workflows**
 
 For example:
 
