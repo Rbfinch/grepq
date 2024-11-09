@@ -2,74 +2,42 @@
 
 _quickly filter fastq files by matching sequences to a set of regex patterns_
 
-## Performance
-**`grepq` is fast**
+## Features
+
+**1. Very fast and scales to large fastq files**
 
 On a Mac Studio with 32GB RAM and Apple M1 max chip, `grepq` processed a 104GB fastq file against 30 regex patterns in 88 seconds, about 1.2GB of fastq data per second. For a 874MB fastq file, it was around **4.8** and **450** times faster than the general-purpose regex tools `ripgrep` and `grep`, respectively, on the same hardware. 
 
-**`grepq` does not match false positives**
+**2. Does not match false positives**
 
 `grepq` will only match regex patterns to the sequence part of the fastq file, which is the most common use case. Unlike `ripgrep` and `grep`, which will match the regex patterns to the entire fastq record, which includes the record ID, sequence, separator, and quality. This can lead to false positives and slow down the filtering process.
 
-## Usage 
-Ouput from `-h` option
+**3. Will tune your pattern file with the `tune` subcommand**
+
+Use the `tune` subcommand to analyze matched substrings and update the number and/or order of regex patterns in your pattern file according to their matched frequency. This can speed up the filtering process. 
+
+Specifying the `-c` option to the `tune` subcommand will output the matched substrings and their frequencies, ranked from highest to lowest.
+
+**4. Follows the unix philosophy, so plays nicely with command-line driven workflows**
+
+For example:
+
 ```bash
-Usage: grepq [OPTIONS] <PATTERNS> <FILE>
+#!/bin/bash
 
-Arguments:
-  <PATTERNS>  Path to the patterns file (one regex pattern per line)
-  <FILE>      Path to the fastq file
-
-Options:
-  -I             Include record ID in the output
-  -R             Include record ID, sequence, separator, and quality in the output
-  -c             Count the number of matching fastq records
-  -h, --help     Print help (see more with '--help')
-  -V, --version  Print version
-
-
-       Examples:
-             - Print only the matching sequences:
-                  grepq regex.txt file.fastq > outfile.txt
-        
-             - Print the matching sequences with the record ID:
-                  grepq -I regex.txt file.fastq > outfile.txt
-        
-             - Print the matching sequences with the record ID, sequence, separator, and quality fields
-                  grepq -R regex.txt file.fastq > outfile.txt
-        
-             - Count the number of matching fastq records:
-                  grepq -c regex.txt file.fastq
-
-           Tips:
-             - Order your regex patterns from those that are most likely to match to those that
-               are least likely to match. This will speed up the filtering process.
-
-             - Ensure you have enough storage space for the output file.
-
-          Notes:
-             - Only supports fastq files.
-
-             - Patterns file must contain one regex pattern per line.
-
-             - When no options are provided, only the matching sequences are printed.
-
-             - Only one of the -I, -R, or -c options can be used at a time.
-
-             - Count option (-c) will support the output of the -R option since it is in fastq format.
-             
-             - Inverted matches are not supported.
-        
-             - Regex patterns with look-around and backreferences are not supported.
-
-Copyright (c) 2024 Nicholas D. Crosbie, licensed under the MIT License.
+# This two-line script shows an example of tuning the regular expression pattern file using the tune subcommand.
+grepq regex.txt file.fastq tune -n 50 | head -n 2 > tunedRegs.txt
+grepq tunedRegs.txt file.fastq > tuned-seqs.txt
 ```
 
+## Usage 
+Get instructions using `grepq -h`, and `grepq tune -h` for more information on the tuning options.
 
 ## Requirements
 
 - `grepq` has been tested on Linux and macOS. It might work on Windows, but it has not been tested.
 - Ensure that Rust is installed on your system (https://www.rust-lang.org/tools/install)
+- If the build fails, make sure you have the latest version of the Rust compiler by running `rustup update`
 
 ## Installation
 
@@ -82,18 +50,18 @@ Copyright (c) 2024 Nicholas D. Crosbie, licensed under the MIT License.
 - From *crates.io* (easiest method)
     - `cargo install grepq`
 
-_Checksums to verify `grepq` is working correctly, using the regex file `regex.txt` and the small fastq file `small.fastq`, both located in the `test` directory:_
+_Checksums to verify `grepq` is working correctly, using the regex file `regex.txt` and the small fastq file `small.fastq`, both located in the `examples` directory:_
 
 ```bash
-./target/release/grepq ./test/regex.txt ./test/small.fastq > outfile.txt
+./target/release/grepq ./examples/regex.txt ./examples/small.fastq > outfile.txt
 sha256sum outfile.txt # checksum of outfile.txt if no option is given
 ed0527a4d03481a50b365b03f5d952afab1df259966021699484cd9d59d790fc
 
-./target/release/grepq -I ./test/regex.txt ./test/small.fastq > outfile.txt
+./target/release/grepq -I ./examples/regex.txt ./examples/small.fastq > outfile.txt
 sha256sum outfile.txt # checksum of outfile.txt if -I option is given
 204bec425495f606611ba20605c6fa6e6d10627fc3203126821a2df8af025fb0
 
-./target/release/grepq -R ./test/regex.txt ./test/small.fastq > outfile.txt
+./target/release/grepq -R ./examples/regex.txt ./examples/small.fastq > outfile.txt
 sha256sum outfile.txt # checksum of outfile.txt if -R option is given
 67ad581448b5e9f0feae96b11f7a48f101cd5da8011b8b27a706681f703c6caf
 ```

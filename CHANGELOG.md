@@ -2,6 +2,12 @@ TBD
 ===
 Unreleased changes. Release notes have not yet been written.
 
+1.0.9
+=====
+* Added the `tune` subcommand
+* Reorganized the code to make it more modular and easier to maintain
+* Changes to -h [--help] and README.md
+
 1.0.8
 =====
 * Minor changes to -h [--help] and README.md

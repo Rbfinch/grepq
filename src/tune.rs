@@ -48,7 +48,7 @@ pub fn run_tune(cli: &Cli, num_records: usize, include_count: bool) -> io::Resul
     let mut match_counts: Vec<_> = match_counts.into_iter().collect();
     match_counts.sort_by(|a, b| b.1.cmp(&a.1));
 
-    println!("Matching patterns:");
+    // println!("Matching patterns:");
     for (pattern, count) in &match_counts {
         if count > &0 {
             if include_count {
@@ -59,7 +59,7 @@ pub fn run_tune(cli: &Cli, num_records: usize, include_count: bool) -> io::Resul
         }
     }
 
-    println!("\nNon-matching patterns:");
+    // println!("\nNon-matching patterns:");
     let matched_patterns: std::collections::HashSet<_> =
         match_counts.iter().map(|(p, _)| p).collect();
     for pattern in regex_set.patterns() {
