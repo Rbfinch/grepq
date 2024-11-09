@@ -1,31 +1,10 @@
-use mimalloc::MiMalloc;
-#[global_allocator]
-static GLOBAL: MiMalloc = MiMalloc;
-
+use crate::arg::Cli;
 use regex::bytes::RegexSet;
 use seq_io::fastq::{Reader, Record};
 use std::fs::File;
 use std::io::{self, BufRead, BufReader, BufWriter, Write};
 
-mod arg;
-use arg::{Cli, Commands};
-mod inverted;
-mod tune;
-use clap::Parser;
-
-fn main() -> io::Result<()> {
-    let cli = Cli::parse();
-
-    match &cli.command {
-        Some(Commands::Tune(tune)) => {
-            return tune::run_tune(&cli, tune.num_records, tune.include_count);
-        }
-        Some(Commands::Inverted) => {
-            return inverted::run_inverted(&cli);
-        }
-        None => {}
-    }
-
+pub fn run_inverted(cli: &Cli) -> io::Result<()> {
     let patterns_path = &cli.patterns;
     let file_path = &cli.file;
     let with_id = cli.with_id;
@@ -57,7 +36,7 @@ fn main() -> io::Result<()> {
                     ),
                 )
             })?;
-            if regex_set.is_match(record.seq()) {
+            if !regex_set.is_match(record.seq()) {
                 match_count += 1;
             }
         }
@@ -73,7 +52,7 @@ fn main() -> io::Result<()> {
                     ),
                 )
             })?;
-            if regex_set.is_match(record.seq()) {
+            if !regex_set.is_match(record.seq()) {
                 writer.write_all(b"@").unwrap();
                 writer.write_all(record.head()).unwrap();
                 writer.write_all(b"\n").unwrap();
@@ -92,7 +71,7 @@ fn main() -> io::Result<()> {
                     ),
                 )
             })?;
-            if regex_set.is_match(record.seq()) {
+            if !regex_set.is_match(record.seq()) {
                 writer.write_all(b"@").unwrap();
                 writer.write_all(record.head()).unwrap();
                 writer.write_all(b"\n").unwrap();
@@ -115,7 +94,7 @@ fn main() -> io::Result<()> {
                     ),
                 )
             })?;
-            if regex_set.is_match(record.seq()) {
+            if !regex_set.is_match(record.seq()) {
                 writer.write_all(record.seq()).unwrap();
                 writer.write_all(b"\n").unwrap();
             }

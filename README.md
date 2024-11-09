@@ -51,15 +51,16 @@ Get instructions using `grepq -h`, and `grepq tune -h` for more information on t
 
 ## Installation
 
+- From *crates.io* (easiest method)
+    - `cargo install grepq`
+
 - From *source*
     - Clone the repository and `cd` into the `grepq` directory
     - Run `cargo build --release`
     - Relative to the cloned parent directory, the executable will be located in `./target/release`
     - Make sure the executable is in your `PATH` or use the full path to the executable
 
-- From *crates.io* (easiest method)
-    - `cargo install grepq`
-
+## Examples
 _Checksums to verify `grepq` is working correctly, using the regex file `regex.txt` and the small fastq file `small.fastq`, both located in the `examples` directory:_
 
 ```bash
