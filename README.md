@@ -8,7 +8,7 @@ _quickly filter fastq files by matching sequences to a set of regex patterns_
 
 **1. Very fast and scales to large fastq files**
 
-On a Mac Studio with 32GB RAM and Apple M1 max chip, `grepq` processed a 104GB fastq file against 30 regex patterns in 88 seconds, about 1.2GB of fastq data per second. And for the same fastq file and 30 regex patterns, getting an ordered count of each matched regex using the `tune` subcommand took less than five seconds.
+On a Mac Studio with 32GB RAM and Apple M1 max chip, `grepq` processed a 104GB fastq file against 30 regex patterns in 88 seconds, about 1.2GB of fastq data per second. And for the same fastq file and 30 regex patterns, getting an ordered count of each matched regex using the `tune` subcommand took less than five seconds for 100,000 fastq records.
 
 For a 874MB fastq file, it was around **4.8** and **450** times faster than the general-purpose regex tools `ripgrep` and `grep`, respectively, on the same hardware. 
 
