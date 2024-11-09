@@ -2,6 +2,11 @@ TBD
 ===
 Unreleased changes. Release notes have not yet been written.
 
+1.1.2
+=====
+* Added the `inverted` subcommand
+* Updated README.md
+
 1.1.1
 =====
 * Minor changes to README.md

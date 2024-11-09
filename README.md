@@ -5,7 +5,6 @@ _quickly filter fastq files by matching sequences to a set of regex patterns_
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.14058563.svg)](https://doi.org/10.5281/zenodo.14058563)
 
 ## Features
-
 **1. Very fast and scales to large fastq files**
 
 On a Mac Studio with 32GB RAM and Apple M1 max chip, `grepq` processed a 104GB fastq file against 30 regex patterns in 88 seconds, about 1.2GB of fastq data per second. And for the same fastq file and 30 regex patterns, getting an ordered count of each matched regex using the `tune` subcommand took less than five seconds for 100,000 fastq records.
@@ -14,13 +13,13 @@ For a 874MB fastq file, it was around **4.8** and **450** times faster than the 
 
 **2. Does not match false positives**
 
-`grepq` will only match regex patterns to the sequence part of the fastq file, which is the most common use case. Unlike `ripgrep` and `grep`, which will match the regex patterns to the entire fastq record, which includes the record ID, sequence, separator, and quality. This can lead to false positives and slow down the filtering process.
+`grepq` will only match regex patterns to the sequence field of a fastq record, which is the most common use case. Unlike `ripgrep` and `grep`, which will match the regex patterns to the entire fastq record, which includes the record ID, sequence, separator, and quality. This can lead to false positives and slow down the filtering process.
 
 **3. Output matched sequences to one of three formats**
 
-- matched sequences only
-- matched sequences and their corresponding record IDs
-- matched sequences, their corresponding record IDs, and the quality scores (i.e. fastq format)
+- sequences only (default)
+- sequences and their corresponding record IDs (`-I` option)
+- fastq format (`-R` option)
 
 **4. Will tune your pattern file with the `tune` subcommand**
 
@@ -28,20 +27,16 @@ Use the `tune` subcommand to analyze matched substrings and update the number an
 
 Specifying the `-c` option to the `tune` subcommand will output the matched substrings and their frequencies, ranked from highest to lowest.
 
-**5. Plays nicely with your unix workflows**
+**5. Supports inverted matching with the `inverted` subcommand**
 
-For example:
+Use the `inverted` subcommand to output sequences that do not match any of the regex patterns in your pattern file.
 
-```bash
-#!/bin/bash
+**6. Plays nicely with your unix workflows**
 
-# This two-line script shows an example of tuning the regular expression pattern file using the tune subcommand.
-grepq regex.txt file.fastq tune -n 50 | head -n 2 > tunedRegs.txt
-grepq tunedRegs.txt file.fastq > tuned-seqs.txt
-```
+For example, see `tune.sh` in the `examples` directory. This simple script will filter a fastq file using `grepq`, tune the pattern file on a user-specified number of fastq records, and then filter the fastq file again using the tuned pattern file for a user-specified number of the most frequent regex pattern matches.
 
 ## Usage 
-Get instructions using `grepq -h`, and `grepq tune -h` for more information on the tuning options.
+Get instructions and examples using `grepq -h`, and `grepq tune -h` and `grepq inverted -h` for more information on the `tune` and `inverted` subcommands, respectively.
 
 ## Requirements
 
@@ -50,7 +45,6 @@ Get instructions using `grepq -h`, and `grepq tune -h` for more information on t
 - If the build fails, make sure you have the latest version of the Rust compiler by running `rustup update`
 
 ## Installation
-
 - From *crates.io* (easiest method)
     - `cargo install grepq`
 
@@ -61,7 +55,11 @@ Get instructions using `grepq -h`, and `grepq tune -h` for more information on t
     - Make sure the executable is in your `PATH` or use the full path to the executable
 
 ## Examples
+`grepq -h` will show you the available options and subcommands, with examples of how to use them.
+
 _Checksums to verify `grepq` is working correctly, using the regex file `regex.txt` and the small fastq file `small.fastq`, both located in the `examples` directory:_
+
+(note replace `./target/release/grepq` with `grepq` if you installed from *crates.io*)
 
 ```bash
 ./target/release/grepq ./examples/regex.txt ./examples/small.fastq > outfile.txt
