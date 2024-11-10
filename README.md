@@ -75,9 +75,27 @@ sha256sum outfile.txt # checksum of outfile.txt if -R option is given
 67ad581448b5e9f0feae96b11f7a48f101cd5da8011b8b27a706681f703c6caf
 ```
 
+- **SARS-CoV-2 example**
+
+Count of the top five most frequently matched patterns found in SRX26602697.fastq using the pattern file SARS-CoV-2.txt (this pattern file contains 64 sequences of length 60 from Table II of this [preprint](https://www.biorxiv.org/content/10.1101/2021.06.14.448839v1.full.pdf)):
+
+```bash
+time grepq SARS-CoV-2.txt SRX26602697.fastq tune -n 10000 -c | head -5
+GTATGGAAAAGTTATGTGCATGTTGTAGACGGTTGTAATTCATCAACTTGTATGATGTGT: 1595
+CGGAACGTTCTGAAAAGAGCTATGAATTGCAGACACCTTTTGAAATTAAATTGGCAAAGA: 693
+TCCTTACTGCGCTTCGATTGTGTGCGTACTGCTGCAATATTGTTAACGTGAGTCTTGTAA: 356
+GCGCTTCGATTGTGTGCGTACTGCTGCAATATTGTTAACGTGAGTCTTGTAAAACCTTCT: 332
+CCGTAGCTGGTGTCTCTATCTGTAGTACTATGACCAATAGACAGTTTCATCAAAAATTAT: 209
+
+________________________________________________________
+Executed in  236.47 millis    fish           external
+   usr time  203.88 millis    0.12 millis  203.76 millis
+   sys time   34.74 millis   13.57 millis   21.16 millis
+
+```
+
 ## Update changes
 see [CHANGELOG](https://github.com/Rbfinch/grepq/blob/main/CHANGELOG.md)
 
 ## License
 MIT
-
