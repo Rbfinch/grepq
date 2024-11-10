@@ -77,7 +77,7 @@ sha256sum outfile.txt # checksum of outfile.txt if -R option is given
 
 - **SARS-CoV-2 example**
 
-Count of the top five most frequently matched patterns found in SRX26602697.fastq using the pattern file SARS-CoV-2.txt (this pattern file contains 64 sequences of length 60 from Table II of this [preprint](https://www.biorxiv.org/content/10.1101/2021.06.14.448839v1.full.pdf)):
+Count of the top five most frequently matched patterns found in SRX26602697.fastq using the pattern file SARS-CoV-2.txt (this pattern file contains 64 sequences of length 60 from Table II of this [preprint](https://doi.org/10.1101/2021.04.14.439840)):
 
 ```bash
 time grepq SARS-CoV-2.txt SRX26602697.fastq tune -n 10000 -c | head -5

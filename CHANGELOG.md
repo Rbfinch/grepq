@@ -2,6 +2,10 @@ TBD
 ===
 Unreleased changes. Release notes have not yet been written.
 
+1.1.4
+=====
+* Fixed preprint link in README.md
+
 1.1.3
 =====
 * Added SARS-CoV-2 example to README.md
