@@ -23,7 +23,7 @@ fn main() {
             return;
         }
         Some(Commands::Inverted) => {
-            inverted::run_inverted(&cli).unwrap();
+            inverted::run_inverted(&cli);
             return;
         }
         None => {}
@@ -42,16 +42,21 @@ fn main() {
             .expect("Failed to compile regex patterns. Check your patterns file lists one regex pattern per line.")
     };
 
-    let reader = Reader::from_path(file_path).unwrap();
+    //let reader = Reader::from_path(file_path).unwrap();
+    let file = File::open(file_path).unwrap();
+    let reader = Reader::with_capacity(file, 8 * 1024 * 1024);
 
-    let mut writer = BufWriter::new(File::create("filtered.fastq").unwrap());
+    //    let mut writer = BufWriter::new(File::create("filtered.fastq").unwrap());
+
+    let mut writer =
+        BufWriter::with_capacity(8 * 1024 * 1024, File::create("filtered.fastq").unwrap());
 
     if count {
         let mut match_count = 0;
         parallel_fastq(
             reader,
-            4,
-            2,
+            num_cpus::get() as u32,
+            num_cpus::get() as usize,
             |record, found| {
                 // runs in worker
                 *found = false;
@@ -72,8 +77,8 @@ fn main() {
     } else {
         parallel_fastq(
             reader,
-            4,
-            2,
+            num_cpus::get() as u32,
+            num_cpus::get() as usize,
             |record, found| {
                 // runs in worker
                 *found = false;
