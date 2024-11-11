@@ -10,13 +10,13 @@ use clap::Parser;
     after_help = "
        Examples:
              - Print only the matching sequences:
-                  `grepq regex.txt file.fastq > outfile.txt`
+                  `grepq regex.txt file.fastq > output.txt`
 
              - Print the matching sequences with the record ID:
-                  `grepq -I regex.txt file.fastq > outfile.txt`
+                  `grepq -I regex.txt file.fastq > output.txt`
 
              - Print the matching sequences in fastq format
-                  `grepq -R regex.txt file.fastq > outfile.txt`
+                  `grepq -R regex.txt file.fastq > output.fastq`
 
              - Count the number of matching fastq records:
                   `grepq -c regex.txt file.fastq`
@@ -25,13 +25,13 @@ use clap::Parser;
                   `grepq regex.txt file.fastq tune -n 100000 -c`
 
              - Print the records where none of the regex patterns are found:
-                  `grepq regex.txt file.fastq inverted > outfile.txt`
+                  `grepq regex.txt file.fastq inverted > output.txt`
 
              - Print the records where none of the regex patterns are found with the record ID:
-                  `grepq -I regex.txt file.fastq inverted > outfile.txt`
+                  `grepq -I regex.txt file.fastq inverted > output.txt`
 
              - Print the records where none of the regex patterns are found in fastq format:
-                  `grepq -R regex.txt file.fastq inverted > outfile.txt`
+                  `grepq -R regex.txt file.fastq inverted > output.fastq`
 
             - Count the number of records where none of the regex patterns are found:
                   `grepq -c regex.txt file.fastq inverted`

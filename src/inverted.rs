@@ -3,7 +3,7 @@ use regex::bytes::RegexSet;
 use seq_io::fastq::{Reader, Record};
 use seq_io::parallel::parallel_fastq;
 use std::fs::File;
-use std::io::{BufRead, BufReader, BufWriter, Write};
+use std::io::{self, BufRead, BufReader, BufWriter, Write};
 
 pub fn run_inverted(cli: &Cli) {
     let patterns_path = &cli.patterns;
@@ -19,14 +19,11 @@ pub fn run_inverted(cli: &Cli) {
             .expect("Failed to compile regex patterns. Check your patterns file lists one regex pattern per line.")
     };
 
-    //let reader = Reader::from_path(file_path).unwrap();
     let file = File::open(file_path).unwrap();
     let reader = Reader::with_capacity(file, 8 * 1024 * 1024);
 
-    //    let mut writer = BufWriter::new(File::create("filtered.fastq").unwrap());
-
-    let mut writer =
-        BufWriter::with_capacity(8 * 1024 * 1024, File::create("filtered.fastq").unwrap());
+    let stdout = io::stdout();
+    let mut writer = BufWriter::with_capacity(8 * 1024 * 1024, stdout.lock());
 
     if count {
         let mut match_count = 0;
