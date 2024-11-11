@@ -4,8 +4,9 @@ static GLOBAL: MiMalloc = MiMalloc;
 
 use regex::bytes::RegexSet;
 use seq_io::fastq::{Reader, Record};
+use seq_io::parallel::parallel_fastq;
 use std::fs::File;
-use std::io::{self, BufRead, BufReader, BufWriter, Write};
+use std::io::{BufRead, BufReader, BufWriter, Write};
 
 mod arg;
 use arg::{Cli, Commands};
@@ -13,15 +14,17 @@ mod inverted;
 mod tune;
 use clap::Parser;
 
-fn main() -> io::Result<()> {
+fn main() {
     let cli = Cli::parse();
 
     match &cli.command {
         Some(Commands::Tune(tune)) => {
-            return tune::run_tune(&cli, tune.num_records, tune.include_count);
+            tune::run_tune(&cli, tune.num_records, tune.include_count).unwrap();
+            return;
         }
         Some(Commands::Inverted) => {
-            return inverted::run_inverted(&cli);
+            inverted::run_inverted(&cli).unwrap();
+            return;
         }
         None => {}
     }
@@ -33,94 +36,81 @@ fn main() -> io::Result<()> {
     let count = cli.count;
 
     let regex_set = {
-        let file = File::open(patterns_path)?;
+        let file = File::open(patterns_path).unwrap();
         let reader = BufReader::new(file);
         RegexSet::new(reader.lines().filter_map(Result::ok))
             .expect("Failed to compile regex patterns. Check your patterns file lists one regex pattern per line.")
     };
 
-    let file = File::open(file_path)?;
-    let mut reader = Reader::with_capacity(file, 8 * 1024 * 1024);
+    let reader = Reader::from_path(file_path).unwrap();
 
-    let stdout = io::stdout();
-    let mut writer = BufWriter::with_capacity(8 * 1024 * 1024, stdout.lock());
+    let mut writer = BufWriter::new(File::create("filtered.fastq").unwrap());
 
     if count {
         let mut match_count = 0;
-        while let Some(result) = reader.next() {
-            let record = result.map_err(|e| {
-                io::Error::new(
-                    io::ErrorKind::Other,
-                    format!(
-                        "grepq only supports the fastq format. Check your input file.: {}",
-                        e
-                    ),
-                )
-            })?;
-            if regex_set.is_match(record.seq()) {
-                match_count += 1;
-            }
-        }
+        parallel_fastq(
+            reader,
+            4,
+            2,
+            |record, found| {
+                // runs in worker
+                *found = false;
+                if regex_set.is_match(record.seq()) {
+                    *found = true;
+                }
+            },
+            |_, found| {
+                // runs in main thread
+                if *found {
+                    match_count += 1;
+                }
+                None::<()>
+            },
+        )
+        .unwrap();
         writeln!(writer, "{}", match_count).unwrap();
-    } else if with_id {
-        while let Some(result) = reader.next() {
-            let record = result.map_err(|e| {
-                io::Error::new(
-                    io::ErrorKind::Other,
-                    format!(
-                        "grepq only supports the fastq format. Check your input file: {}",
-                        e
-                    ),
-                )
-            })?;
-            if regex_set.is_match(record.seq()) {
-                writer.write_all(b"@").unwrap();
-                writer.write_all(record.head()).unwrap();
-                writer.write_all(b"\n").unwrap();
-                writer.write_all(record.seq()).unwrap();
-                writer.write_all(b"\n").unwrap();
-            }
-        }
-    } else if with_full_record {
-        while let Some(result) = reader.next() {
-            let record = result.map_err(|e| {
-                io::Error::new(
-                    io::ErrorKind::Other,
-                    format!(
-                        "grepq only supports the fastq format. Check your input file.: {}",
-                        e
-                    ),
-                )
-            })?;
-            if regex_set.is_match(record.seq()) {
-                writer.write_all(b"@").unwrap();
-                writer.write_all(record.head()).unwrap();
-                writer.write_all(b"\n").unwrap();
-                writer.write_all(record.seq()).unwrap();
-                writer.write_all(b"\n").unwrap();
-                writer.write_all(b"+").unwrap();
-                writer.write_all(b"\n").unwrap();
-                writer.write_all(record.qual()).unwrap();
-                writer.write_all(b"\n").unwrap();
-            }
-        }
     } else {
-        while let Some(result) = reader.next() {
-            let record = result.map_err(|e| {
-                io::Error::new(
-                    io::ErrorKind::Other,
-                    format!(
-                        "grepq only supports the fastq format. Check your input file.: {}",
-                        e
-                    ),
-                )
-            })?;
-            if regex_set.is_match(record.seq()) {
-                writer.write_all(record.seq()).unwrap();
-                writer.write_all(b"\n").unwrap();
-            }
-        }
+        parallel_fastq(
+            reader,
+            4,
+            2,
+            |record, found| {
+                // runs in worker
+                *found = false;
+                if regex_set.is_match(record.seq()) {
+                    *found = true;
+                }
+            },
+            |record, found| {
+                // runs in main thread
+                if *found {
+                    if with_id {
+                        // With ID mode
+                        writer.write_all(b"@").unwrap();
+                        writer.write_all(record.head()).unwrap();
+                        writer.write_all(b"\n").unwrap();
+                        writer.write_all(record.seq()).unwrap();
+                        writer.write_all(b"\n").unwrap();
+                    } else if with_full_record {
+                        // With full record mode
+                        writer.write_all(b"@").unwrap();
+                        writer.write_all(record.head()).unwrap();
+                        writer.write_all(b"\n").unwrap();
+                        writer.write_all(record.seq()).unwrap();
+                        writer.write_all(b"\n").unwrap();
+                        writer.write_all(b"+").unwrap();
+                        writer.write_all(b"\n").unwrap();
+                        writer.write_all(record.qual()).unwrap();
+                        writer.write_all(b"\n").unwrap();
+                    } else {
+                        // Default mode
+                        writer.write_all(record.seq()).unwrap();
+                        writer.write_all(b"\n").unwrap();
+                    }
+                }
+                None::<()>
+            },
+        )
+        .unwrap();
     }
-
-    Ok(())
 }
