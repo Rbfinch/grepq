@@ -2,6 +2,10 @@ TBD
 ===
 Unreleased changes. Release notes have not yet been written.
 
+1.1.6
+=====
+* Added CITATION.cff*
+
 1.1.5
 =====
 * Parallelized the all but the `tune` subcommand
