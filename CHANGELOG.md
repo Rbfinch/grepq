@@ -2,6 +2,11 @@ TBD
 ===
 Unreleased changes. Release notes have not yet been written.
 
+1.1.5
+=====
+* Parallelized the all but the `tune` subcommand
+* Changes to README.md*
+
 1.1.4
 =====
 * Fixed preprint link in README.md

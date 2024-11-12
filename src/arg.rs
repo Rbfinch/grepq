@@ -5,7 +5,7 @@ use clap::Parser;
     name = "grepq",
     author = "Nicholas D. Crosbie",
     version = clap::crate_version!(),
-    about = "quickly filter fastq files by matching sequences to a set of regex patterns",
+    about = "quickly filter FASTQ files by matching sequences to a set of regex patterns",
     long_about = "Copyright (c) 2024 Nicholas D. Crosbie, licensed under the MIT License.",
     after_help = "
        Examples:
@@ -15,10 +15,10 @@ use clap::Parser;
              - Print the matching sequences with the record ID:
                   `grepq -I regex.txt file.fastq > output.txt`
 
-             - Print the matching sequences in fastq format
+             - Print the matching sequences in FASTQ format
                   `grepq -R regex.txt file.fastq > output.fastq`
 
-             - Count the number of matching fastq records:
+             - Count the number of matching FASTQ records:
                   `grepq -c regex.txt file.fastq`
 
              - For each matched pattern in a search of the first 100000 records, print the pattern and the number of matches:
@@ -30,13 +30,13 @@ use clap::Parser;
              - Print the records where none of the regex patterns are found with the record ID:
                   `grepq -I regex.txt file.fastq inverted > output.txt`
 
-             - Print the records where none of the regex patterns are found in fastq format:
+             - Print the records where none of the regex patterns are found in FASTQ format:
                   `grepq -R regex.txt file.fastq inverted > output.fastq`
 
             - Count the number of records where none of the regex patterns are found:
                   `grepq -c regex.txt file.fastq inverted`
 
-            - Count the total number of records in the fastq file using an empty pattern file:
+            - Count the total number of records in the FASTQ file using an empty pattern file:
                   `grepq -c empty.txt file.fastq inverted` 
 
            Tips:
@@ -48,7 +48,7 @@ use clap::Parser;
              - Ensure you have enough storage space for output files.
 
           Notes:
-             - Only supports fastq files.
+             - Only supports FASTQ files.
 
              - Patterns file must contain one regex pattern per line, and patterns are case-sensitive.
 
@@ -56,7 +56,7 @@ use clap::Parser;
 
              - Only one of the -I, -R, or -c options can be used at a time.
 
-             - Count option (-c) will support the output of the -R option since it is in fastq format.
+             - Count option (-c) will support the output of the -R option since it is in FASTQ format.
 
              - Regex patterns with look-around and backreferences are not supported.
 
@@ -72,13 +72,13 @@ pub struct Cli {
     )]
     pub with_full_record: bool,
 
-    #[arg(short = 'c', help = "Count the number of matching fastq records")]
+    #[arg(short = 'c', help = "Count the number of matching FASTQ records")]
     pub count: bool,
 
     #[arg(help = "Path to the patterns file (one regex pattern per line)")]
     pub patterns: String,
 
-    #[arg(help = "Path to the fastq file")]
+    #[arg(help = "Path to the FASTQ file")]
     pub file: String,
 
     #[command(subcommand)]

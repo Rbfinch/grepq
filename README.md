@@ -1,25 +1,35 @@
 <img src="src/grepq-icon.svg" width="128" />
 
-_quickly filter fastq files by matching sequences to a set of regex patterns_
+_quickly filter FASTQ files by matching sequences to a set of regex patterns_
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.14058563.svg)](https://doi.org/10.5281/zenodo.14058563)
 
 ## Features
-**1. Very fast and scales to large fastq files**
+**1. Very fast and scales to large FASTQ files**
 
-On a Mac Studio with 32GB RAM and Apple M1 max chip, `grepq` processed a 104GB fastq file against 30 regex patterns in 88 seconds, about 1.2GB of fastq data per second. And for the same fastq file and 30 regex patterns, getting an ordered count of each matched regex using the `tune` subcommand took less than five seconds for 100,000 fastq records.
+| tool    | time (s) | &times; grep speedup | &times; ripgrep speedup |
+|---------|----------|----------------------|-------------------------|
+| grepq   | 0.31     | 1123                 | 11                      |
+| ripgrep | 3.50     | 98                   | NA                      |
+| grep    | 342.79   | NA                   | NA                      |
 
-For a 874MB fastq file, it was around **4.8** and **450** times faster than the general-purpose regex tools `ripgrep` and `grep`, respectively, on the same hardware. 
+*Test conditions*
+
+Mac Studio (2022 model) with 32GB RAM and Apple M1 max chip running macOS 15.0.1. The FASTQ file was 104GB in size and was stored on the internal SSD (APPLE SSD AP0512R). The pattern file contained 30 regex patterns (see `examples/regex.txt` for the patterns used).
+
+*Versions of the tools used*
+
+ `grepq` v1.1.5, `ripgrep` v14.1.1 and `grep` 2.6.0-FreeBSD. `ripgrep` and `grep` were run with the default settings.
 
 **2. Does not match false positives**
 
-`grepq` will only match regex patterns to the sequence field of a fastq record, which is the most common use case. Unlike `ripgrep` and `grep`, which will match the regex patterns to the entire fastq record, which includes the record ID, sequence, separator, and quality. This can lead to false positives and slow down the filtering process.
+`grepq` will only match regex patterns to the sequence field of a FASTQ record, which is the most common use case. Unlike `ripgrep` and `grep`, which will match the regex patterns to the entire FASTQ record, which includes the record ID, sequence, separator, and quality. This can lead to false positives and slow down the filtering process.
 
 **3. Output matched sequences to one of three formats**
 
 - sequences only (default)
 - sequences and their corresponding record IDs (`-I` option)
-- fastq format (`-R` option)
+- FASTQ format (`-R` option)
 
 **4. Will tune your pattern file with the `tune` subcommand**
 
@@ -33,7 +43,7 @@ Use the `inverted` subcommand to output sequences that do not match any of the r
 
 **6. Plays nicely with your unix workflows**
 
-For example, see `tune.sh` in the `examples` directory. This simple script will filter a fastq file using `grepq`, tune the pattern file on a user-specified number of fastq records, and then filter the fastq file again using the tuned pattern file for a user-specified number of the most frequent regex pattern matches.
+For example, see `tune.sh` in the `examples` directory. This simple script will filter a FASTQ file using `grepq`, tune the pattern file on a user-specified number of FASTQ records, and then filter the FASTQ file again using the tuned pattern file for a user-specified number of the most frequent regex pattern matches.
 
 ## Usage 
 Get instructions and examples using `grepq -h`, and `grepq tune -h` and `grepq inverted -h` for more information on the `tune` and `inverted` subcommands, respectively.
