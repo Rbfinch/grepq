@@ -15,7 +15,9 @@ _quickly filter FASTQ files by matching sequences to a set of regex patterns_
 
 *Test conditions*
 
-Mac Studio (2022 model) with 32GB RAM and Apple M1 max chip running macOS 15.0.1. The FASTQ file was 104GB in size and was stored on the internal SSD (APPLE SSD AP0512R). The pattern file contained 30 regex patterns (see `examples/regex.txt` for the patterns used).
+Mac Studio (2022 model) with 32GB RAM and Apple M1 max chip running macOS 15.0.1. The FASTQ file was 874MB in size and was stored on the internal SSD (APPLE SSD AP0512R). The pattern file contained 30 regex patterns (see `examples/regex.txt` for the patterns used).
+
+Under the same conditions and using the same pattern file, `grepq` processed a 104GB FASTQ file in 26 seconds (4GB/s).
 
 *Versions of the tools used*
 
