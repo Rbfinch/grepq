@@ -2,9 +2,13 @@ TBD
 ===
 Unreleased changes. Release notes have not yet been written.
 
+1.1.7
+=====
+* Updates to README.md
+
 1.1.6
 =====
-* Added CITATION.cff*
+* Added CITATION.cff
 
 1.1.5
 =====

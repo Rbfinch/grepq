@@ -69,22 +69,28 @@ Get instructions and examples using `grepq -h`, and `grepq tune -h` and `grepq i
 ## Examples
 `grepq -h` will show you the available options and subcommands, with examples of how to use them.
 
-_Checksums to verify `grepq` is working correctly, using the regex file `regex.txt` and the small fastq file `small.fastq`, both located in the `examples` directory:_
+_File sizes of outfiles to verify `grepq` is working correctly, using the regex file `regex.txt` and the small fastq file `small.fastq`, both located in the `examples` directory:_
 
 (note replace `./target/release/grepq` with `grepq` if you installed from *crates.io*)
 
 ```bash
-./target/release/grepq ./examples/regex.txt ./examples/small.fastq > outfile.txt
-sha256sum outfile.txt # checksum of outfile.txt if no option is given
-ed0527a4d03481a50b365b03f5d952afab1df259966021699484cd9d59d790fc
+grepq ./examples/regex.txt ./examples/small.fastq > outfile.txt 
+15953
 
-./target/release/grepq -I ./examples/regex.txt ./examples/small.fastq > outfile.txt
-sha256sum outfile.txt # checksum of outfile.txt if -I option is given
-204bec425495f606611ba20605c6fa6e6d10627fc3203126821a2df8af025fb0
+grepq  ./examples/regex.txt ./examples/small.fastq inverted > outfile.txt
+736547
 
-./target/release/grepq -R ./examples/regex.txt ./examples/small.fastq > outfile.txt
-sha256sum outfile.txt # checksum of outfile.txt if -R option is given
-67ad581448b5e9f0feae96b11f7a48f101cd5da8011b8b27a706681f703c6caf
+grepq -I ./examples/regex.txt ./examples/small.fastq > outfile.txt
+19515
+
+grepq -I ./examples/regex.txt ./examples/small.fastq inverted > outfile.txt 
+901271
+
+grepq -R ./examples/regex.txt ./examples/small.fastq > outfile.txt
+35574
+
+grepq -R ./examples/regex.txt ./examples/small.fastq inverted > outfile.txt 
+1642712
 ```
 
 - **SARS-CoV-2 example**
