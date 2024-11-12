@@ -1,0 +1,11 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+- family-names: "Crosbie"
+  given-names: "Nicholas D."
+  orcid: "https://orcid.org/0000-0002-0319-4248"
+title: "grepq: A Rust application that quickly filters FASTQ files by matching sequences to a set of regex patterns."
+version: 1.1.6
+doi: 10.5281/zenodo.14031703
+date-released: 2024-11-12
+url: "https://github.com/Rbfinch/grepq"
