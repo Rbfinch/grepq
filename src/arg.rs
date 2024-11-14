@@ -18,6 +18,15 @@ use clap::Parser;
              - Print the matching sequences in FASTQ format
                   `grepq -R regex.txt file.fastq > output.fastq`
 
+             - Print the matching sequences in gzip compressed FASTQ format:
+                  `grepq -R -z regex.txt file.fastq > output.fastq.gz`
+
+             - Read the FASTQ file in gzip compressed format:
+                  `grepq -x regex.txt file.fastq.gz > output.txt`
+
+             - Read and write the output in gzip compressed format:
+                  `grepq -xz regex.txt file.fastq.gz > output.fastq.gz`
+
              - Count the number of matching FASTQ records:
                   `grepq -c regex.txt file.fastq`
 
@@ -48,13 +57,15 @@ use clap::Parser;
              - Ensure you have enough storage space for output files.
 
           Notes:
-             - Only supports FASTQ files.
+             - Only supports FASTQ files or gzip compressed FASTQ files.
 
-             - Patterns file must contain one regex pattern per line, and patterns are case-sensitive.
+             - Patterns file must contain one regex pattern per line, and patterns are case-sensitive (you can supply an empty pattern file to count the total number of records in the FASTQ file).
 
              - When no options are provided, only the matching sequences are printed.
 
              - Only one of the -I, -R, or -c options can be used at a time.
+
+             - The -x and -z options can be used separately, or together, and in combination any of the other filtering options (cannot be used with the tune subcommand).
 
              - Count option (-c) will support the output of the -R option since it is in FASTQ format.
 
@@ -74,6 +85,12 @@ pub struct Cli {
 
     #[arg(short = 'c', help = "Count the number of matching FASTQ records")]
     pub count: bool,
+
+    #[arg(short = 'x', help = "Read the FASTQ file in gzip compressed format")]
+    pub gzip_input: bool,
+
+    #[arg(short = 'z', help = "Write the output in gzip compressed format")]
+    pub gzip_output: bool,
 
     #[arg(help = "Path to the patterns file (one regex pattern per line)")]
     pub patterns: String,

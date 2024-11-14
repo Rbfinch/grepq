@@ -1,29 +1,24 @@
 use crate::arg::Cli;
-use regex::bytes::RegexSet;
-use seq_io::fastq::{Reader, Record};
+use crate::initialise::{create_reader, create_regex_set, create_writer};
+// use flate2::read::GzDecoder;
+// use flate2::write::GzEncoder;
+// use flate2::Compression;
+// use regex::bytes::RegexSet;
+use seq_io::fastq::Record;
 use seq_io::parallel::parallel_fastq;
-use std::fs::File;
-use std::io::{self, BufRead, BufReader, BufWriter, Write};
+// use std::fs::File;
+use std::io::Write;
 
 pub fn run_inverted(cli: &Cli) {
-    let patterns_path = &cli.patterns;
-    let file_path = &cli.file;
+    // let patterns_path = &cli.patterns;
+    // let file_path = &cli.file;
     let with_id = cli.with_id;
     let with_full_record = cli.with_full_record;
     let count = cli.count;
 
-    let regex_set = {
-        let file = File::open(patterns_path).unwrap();
-        let reader = BufReader::new(file);
-        RegexSet::new(reader.lines().filter_map(Result::ok))
-            .expect("Failed to compile regex patterns. Check your patterns file lists one regex pattern per line.")
-    };
-
-    let file = File::open(file_path).unwrap();
-    let reader = Reader::with_capacity(file, 8 * 1024 * 1024);
-
-    let stdout = io::stdout();
-    let mut writer = BufWriter::with_capacity(8 * 1024 * 1024, stdout.lock());
+    let regex_set = create_regex_set(&cli.patterns);
+    let reader = create_reader(&cli);
+    let mut writer = create_writer(&cli);
 
     if count {
         let mut match_count = 0;

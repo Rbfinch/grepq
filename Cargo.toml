@@ -18,6 +18,7 @@ regex = "1.11.1"
 mimalloc = "0.1.43"
 clap = { version = "4.5.20", features = ["derive", "cargo"] }
 num_cpus = "1.16.0"
+flate2 = "1.0.34"
 
 [profile.release]
 lto = true
