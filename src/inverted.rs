@@ -1,17 +1,10 @@
 use crate::arg::Cli;
 use crate::initialise::{create_reader, create_regex_set, create_writer};
-// use flate2::read::GzDecoder;
-// use flate2::write::GzEncoder;
-// use flate2::Compression;
-// use regex::bytes::RegexSet;
 use seq_io::fastq::Record;
 use seq_io::parallel::parallel_fastq;
-// use std::fs::File;
 use std::io::Write;
 
 pub fn run_inverted(cli: &Cli) {
-    // let patterns_path = &cli.patterns;
-    // let file_path = &cli.file;
     let with_id = cli.with_id;
     let with_full_record = cli.with_full_record;
     let count = cli.count;

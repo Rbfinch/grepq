@@ -24,8 +24,11 @@ use clap::Parser;
              - Read the FASTQ file in gzip compressed format:
                   `grepq -x regex.txt file.fastq.gz > output.txt`
 
-             - Read and write the output in gzip compressed format:
-                  `grepq -xz regex.txt file.fastq.gz > output.fastq.gz`
+             - Read and write the output in gzip compressed format, with fast compression:
+                  `grepq -xz --fast regex.txt file.fastq.gz > output.fastq.gz`
+
+             - Read and write the output in gzip compressed format, with best compression:
+                  `grepq -xz --best regex.txt file.fastq.gz > output.fastq.gz`
 
              - Count the number of matching FASTQ records:
                   `grepq -c regex.txt file.fastq`
@@ -91,6 +94,12 @@ pub struct Cli {
 
     #[arg(short = 'z', help = "Write the output in gzip compressed format")]
     pub gzip_output: bool,
+
+    #[arg(long = "fast", help = "Use fast compression")]
+    pub fast_compression: bool,
+
+    #[arg(long = "best", help = "Use best compression")]
+    pub best_compression: bool,
 
     #[arg(help = "Path to the patterns file (one regex pattern per line)")]
     pub patterns: String,

@@ -2,13 +2,8 @@ use mimalloc::MiMalloc;
 #[global_allocator]
 static GLOBAL: MiMalloc = MiMalloc;
 
-// use flate2::read::GzDecoder;
-// use flate2::write::GzEncoder;
-// use flate2::Compression;
-// use regex::bytes::RegexSet;
 use seq_io::fastq::Record;
 use seq_io::parallel::parallel_fastq;
-// use std::fs::File;
 use std::io::Write;
 
 mod arg;
