@@ -4,7 +4,16 @@ _quickly filter FASTQ files by matching sequences to a set of regex patterns_
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.14058563.svg)](https://doi.org/10.5281/zenodo.14058563)
 
-## Features
+## Feature set
+- very fast and scales to large FASTQ files
+- gzip support
+- does not match false positives
+- output matched sequences to one of three formats
+- tune your pattern file with the `tune` subcommand
+- supports inverted matching with the `inverted` subcommand
+- plays nicely with your unix workflows
+
+## Features and performance in detail
 **1. Very fast and scales to large FASTQ files**
 
 | tool    | time (s) | &times; grep speedup | &times; ripgrep speedup |
