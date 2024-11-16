@@ -2,6 +2,11 @@ TBD
 ===
 Unreleased changes. Release notes have not yet been written.
 
+1.1.8
+=====
+* Updates to README.md
+* gzip support
+
 1.1.7
 =====
 * Updates to README.md

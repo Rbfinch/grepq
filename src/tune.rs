@@ -1,23 +1,21 @@
 use crate::arg::Cli;
+use crate::initialise::create_reader;
 use regex::bytes::RegexSet;
-use seq_io::fastq::{Reader, Record};
+use seq_io::fastq::Record;
 use std::collections::HashMap;
-use std::fs::File;
-use std::io::{self, BufRead, BufReader};
+use std::io::{self, BufRead};
 
 pub fn run_tune(cli: &Cli, num_records: usize, include_count: bool) -> io::Result<()> {
     let patterns_path = &cli.patterns;
-    let file_path = &cli.file;
 
     let regex_set = {
-        let file = File::open(patterns_path)?;
-        let reader = BufReader::new(file);
+        let file = std::fs::File::open(patterns_path)?;
+        let reader = std::io::BufReader::new(file);
         RegexSet::new(reader.lines().filter_map(Result::ok))
             .expect("Failed to compile regex patterns. Check your patterns file lists one regex pattern per line.")
     };
 
-    let file = File::open(file_path)?;
-    let mut reader = Reader::with_capacity(file, 8 * 1024 * 1024);
+    let mut reader = create_reader(cli);
 
     let mut match_counts: HashMap<String, usize> = HashMap::new();
     let mut total_matches = 0;

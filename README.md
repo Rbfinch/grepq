@@ -9,41 +9,46 @@ _quickly filter FASTQ files by matching sequences to a set of regex patterns_
 
 | tool    | time (s) | &times; grep speedup | &times; ripgrep speedup |
 |---------|----------|----------------------|-------------------------|
-| grepq   | 0.31     | 1123                 | 11                      |
-| ripgrep | 3.50     | 98                   | NA                      |
+| grepq   | 0.22     | 1558                 | 16                      |
+| ripgrep | 3.57     | 96                   | NA                      |
 | grep    | 342.79   | NA                   | NA                      |
 
-*Test conditions*
+*2022 model Mac Studio with 32GB RAM and Apple M1 max chip running macOS 15.0.1. The FASTQ file (SRX26365298.fastq) was 874MB in size and was stored on the internal SSD (APPLE SSD AP0512R). The pattern file contained 30 regex patterns (see `examples/regex.txt` for the patterns used). Under the same conditions and using the same pattern file, `grepq` processed a 104GB FASTQ file in 26 seconds (4GB/s) (`grepq` v1.1.8, `ripgrep` v14.1.1 and `grep` 2.6.0-FreeBSD. `ripgrep` and `grep` were run with the default settings).*
 
-Mac Studio (2022 model) with 32GB RAM and Apple M1 max chip running macOS 15.0.1. The FASTQ file was 874MB in size and was stored on the internal SSD (APPLE SSD AP0512R). The pattern file contained 30 regex patterns (see `examples/regex.txt` for the patterns used).
+**2. Reads and writes regular or gzip-compressed FASTQ files**
 
-Under the same conditions and using the same pattern file, `grepq` processed a 104GB FASTQ file in 26 seconds (4GB/s).
+Use the `--best` option for best compression, or the `--fast` option for faster compression. 
 
-*Versions of the tools used*
+| tool    | time (s) | &times; grep speedup | &times; ripgrep speedup |
+|---------|----------|----------------------|-------------------------|
+| grepq   | 2.30     | 149                  | 1.6                     |
+| ripgrep | 3.59     | 95                   | NA                      |
+| grep    | 343.57   | NA                   | NA                      |
 
- `grepq` v1.1.5, `ripgrep` v14.1.1 and `grep` 2.6.0-FreeBSD. `ripgrep` and `grep` were run with the default settings.
+*Conditions and versions as above, but the FASTQ file was gzip-compressed. `grepq` was run with the `-x` option, `ripgrep` with the `-z` option, and `grep` with the `-Z` option.*
 
-**2. Does not match false positives**
+
+**3. Does not match false positives**
 
 `grepq` will only match regex patterns to the sequence field of a FASTQ record, which is the most common use case. Unlike `ripgrep` and `grep`, which will match the regex patterns to the entire FASTQ record, which includes the record ID, sequence, separator, and quality. This can lead to false positives and slow down the filtering process.
 
-**3. Output matched sequences to one of three formats**
+**4. Output matched sequences to one of three formats**
 
 - sequences only (default)
 - sequences and their corresponding record IDs (`-I` option)
 - FASTQ format (`-R` option)
 
-**4. Will tune your pattern file with the `tune` subcommand**
+**5. Will tune your pattern file with the `tune` subcommand**
 
 Use the `tune` subcommand to analyze matched substrings and update the number and/or order of regex patterns in your pattern file according to their matched frequency. This can speed up the filtering process. 
 
 Specifying the `-c` option to the `tune` subcommand will output the matched substrings and their frequencies, ranked from highest to lowest.
 
-**5. Supports inverted matching with the `inverted` subcommand**
+**6. Supports inverted matching with the `inverted` subcommand**
 
 Use the `inverted` subcommand to output sequences that do not match any of the regex patterns in your pattern file.
 
-**6. Plays nicely with your unix workflows**
+**7. Plays nicely with your unix workflows**
 
 For example, see `tune.sh` in the `examples` directory. This simple script will filter a FASTQ file using `grepq`, tune the pattern file on a user-specified number of FASTQ records, and then filter the FASTQ file again using the tuned pattern file for a user-specified number of the most frequent regex pattern matches.
 

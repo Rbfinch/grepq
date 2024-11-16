@@ -36,6 +36,9 @@ use clap::Parser;
              - For each matched pattern in a search of the first 100000 records, print the pattern and the number of matches:
                   `grepq regex.txt file.fastq tune -n 100000 -c`
 
+             - For each matched pattern in a search of the first 100000 records of a gzip-compressed FASTQ file, print the pattern and the number of matches:
+                    `grepq -x regex.txt file.fastq.gz tune -n 100000 -c`
+
              - Print the records where none of the regex patterns are found:
                   `grepq regex.txt file.fastq inverted > output.txt`
 
@@ -68,7 +71,7 @@ use clap::Parser;
 
              - Only one of the -I, -R, or -c options can be used at a time.
 
-             - The -x and -z options can be used separately, or together, and in combination any of the other filtering options (cannot be used with the tune subcommand).
+             - The -x and -z options can be used separately, or together, and in combination any of the other filtering options (the -z option cannot be used with the tune subcommand).
 
              - Count option (-c) will support the output of the -R option since it is in FASTQ format.
 
