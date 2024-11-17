@@ -1,19 +1,15 @@
 use crate::arg::Cli;
-use crate::initialise::create_reader;
-use regex::bytes::RegexSet;
+use crate::initialise::{create_reader, create_regex_set};
 use seq_io::fastq::Record;
+use serde_json::json;
 use std::collections::HashMap;
-use std::io::{self, BufRead};
+use std::fs::File;
+use std::io::{self};
 
 pub fn run_tune(cli: &Cli, num_records: usize, include_count: bool) -> io::Result<()> {
     let patterns_path = &cli.patterns;
 
-    let regex_set = {
-        let file = std::fs::File::open(patterns_path)?;
-        let reader = std::io::BufReader::new(file);
-        RegexSet::new(reader.lines().filter_map(Result::ok))
-            .expect("Failed to compile regex patterns. Check your patterns file lists one regex pattern per line.")
-    };
+    let regex_set = create_regex_set(patterns_path, cli);
 
     let mut reader = create_reader(cli);
 
@@ -46,23 +42,80 @@ pub fn run_tune(cli: &Cli, num_records: usize, include_count: bool) -> io::Resul
     let mut match_counts: Vec<_> = match_counts.into_iter().collect();
     match_counts.sort_by(|a, b| b.1.cmp(&a.1));
 
-    // println!("Matching patterns:");
-    for (pattern, count) in &match_counts {
-        if count > &0 {
-            if include_count {
-                println!("{}: {}", pattern, count);
+    if cli.json_input {
+        let json: serde_json::Value = serde_json::from_reader(std::fs::File::open(patterns_path)?)?;
+        let regex_set_name = json["regexSet"]["regexSetName"]
+            .as_str()
+            .unwrap_or("Unknown");
+
+        if cli.command.as_ref().map_or(
+            false,
+            |cmd| matches!(cmd, crate::arg::Commands::Tune(t) if t.include_names),
+        ) {
+            println!("Regex Set Name: {}", regex_set_name);
+        }
+
+        let regex_array = json["regexSet"]["regex"].as_array().unwrap();
+        let mut regex_matches = vec![];
+
+        for regex in regex_array {
+            let regex_string = regex["regexString"].as_str().unwrap();
+            let regex_name = regex["regexName"].as_str().unwrap_or("Unknown");
+            let count = match_counts
+                .iter()
+                .find(|(pattern, _)| pattern == regex_string)
+                .map(|(_, count)| count)
+                .unwrap_or(&0);
+
+            regex_matches.push(json!({
+                "regexName": regex_name,
+                "regexString": regex_string,
+                "regexCount": count
+            }));
+
+            if cli.command.as_ref().map_or(
+                false,
+                |cmd| matches!(cmd, crate::arg::Commands::Tune(t) if t.include_names),
+            ) {
+                if include_count {
+                    println!("{} ({}): {}", regex_name, regex_string, count);
+                } else {
+                    println!("{} ({})", regex_name, regex_string);
+                }
             } else {
-                println!("{}", pattern);
+                if *count > 0 {
+                    if include_count {
+                        println!("{}: {}", regex_string, count);
+                    } else {
+                        println!("{}", regex_string);
+                    }
+                }
             }
         }
-    }
 
-    // println!("\nNon-matching patterns:");
-    let matched_patterns: std::collections::HashSet<_> =
-        match_counts.iter().map(|(p, _)| p).collect();
-    for pattern in regex_set.patterns() {
-        if !matched_patterns.contains(pattern) {
-            println!("{}", pattern);
+        if let Some(cmd) = &cli.command {
+            if let crate::arg::Commands::Tune(tune) = cmd {
+                if tune.json_matches && tune.include_names && include_count && cli.json_input {
+                    let json_output = json!({
+                        "regexSet": {
+                            "regexSetName": regex_set_name,
+                            "regex": regex_matches
+                        }
+                    });
+                    let file = File::create("matches.json")?;
+                    serde_json::to_writer(file, &json_output)?;
+                }
+            }
+        }
+    } else {
+        for (pattern, count) in &match_counts {
+            if count > &0 {
+                if include_count {
+                    println!("{}: {}", pattern, count);
+                } else {
+                    println!("{}", pattern);
+                }
+            }
         }
     }
 

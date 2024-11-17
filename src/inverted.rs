@@ -9,7 +9,7 @@ pub fn run_inverted(cli: &Cli) {
     let with_full_record = cli.with_full_record;
     let count = cli.count;
 
-    let regex_set = create_regex_set(&cli.patterns);
+    let regex_set = create_regex_set(&cli.patterns, cli);
     let reader = create_reader(&cli);
     let mut writer = create_writer(&cli);
 

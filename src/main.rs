@@ -29,7 +29,7 @@ fn main() {
         None => {}
     }
 
-    let regex_set = create_regex_set(&cli.patterns);
+    let regex_set = create_regex_set(&cli.patterns, &cli);
     let reader = create_reader(&cli);
     let mut writer = create_writer(&cli);
 

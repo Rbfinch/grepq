@@ -104,6 +104,9 @@ pub struct Cli {
     #[arg(long = "best", help = "Use best compression")]
     pub best_compression: bool,
 
+    #[arg(short = 'j', help = "Read the patterns file in JSON format")]
+    pub json_input: bool,
+
     #[arg(help = "Path to the patterns file (one regex pattern per line)")]
     pub patterns: String,
 
@@ -129,4 +132,16 @@ pub struct Tune {
 
     #[arg(short = 'c', help = "Include count of records for matching patterns")]
     pub include_count: bool,
+
+    #[arg(
+        long = "names",
+        help = "Include regexSetName and regexName in the output"
+    )]
+    pub include_names: bool,
+
+    #[arg(
+        long = "json-matches",
+        help = "Write the output to a JSON file called matches.json"
+    )]
+    pub json_matches: bool,
 }
