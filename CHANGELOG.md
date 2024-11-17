@@ -2,6 +2,11 @@ TBD
 ===
 Unreleased changes. Release notes have not yet been written.
 
+1.1.9
+=====
+* Updates to README.md
+* json support for regex input and tune subcommand output
+
 1.1.8
 =====
 * Updates to README.md

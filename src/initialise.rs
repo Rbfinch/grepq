@@ -2,23 +2,65 @@ use crate::arg::Cli;
 use flate2::read::MultiGzDecoder;
 use flate2::write::GzEncoder as MultiGzEncoder;
 pub(crate) use flate2::Compression;
-// use jsonschema::Draft;
 use regex::bytes::RegexSet;
 use seq_io::fastq::Reader;
 use serde_json::Value;
 use std::fs::File;
 use std::io::{self, BufRead, BufReader, Write};
 
-pub fn create_regex_set_from_json(json_path: &str, schema_path: &str) -> Result<RegexSet, String> {
+static SCHEMA: &str = r#"
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "grepq",
+    "version": 1,
+    "type": "object",
+    "properties": {
+        "regexSet": {
+            "type": "object",
+            "properties": {
+                "regexSetName": {
+                    "type": "string"
+                },
+                "regex": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "regexName": {
+                                "type": "string"
+                            },
+                            "regexString": {
+                                "type": "string"
+                            }
+                        },
+                        "required": [
+                            "regexName",
+                            "regexString"
+                        ]
+                    }
+                }
+            },
+            "required": [
+                "regexSetName",
+                "regex"
+            ]
+        }
+    },
+    "required": [
+        "regexSet"
+    ]
+}
+"#;
+
+pub fn create_regex_set_from_json(json_path: &str) -> Result<RegexSet, String> {
     let json_file =
         File::open(json_path).map_err(|e| format!("Failed to open JSON file: {}", e))?;
-    let schema_file =
-        File::open(schema_path).map_err(|e| format!("Failed to open schema file: {}", e))?;
 
     let json: Value = serde_json::from_reader(json_file)
         .map_err(|e| format!("Failed to parse JSON file: {}", e))?;
-    let schema: Value = serde_json::from_reader(schema_file)
-        .map_err(|e| format!("Failed to parse schema file: {}", e))?;
+    let schema: Value = serde_json::from_str(SCHEMA)
+        .map_err(|e| format!("Failed to parse embedded schema: {}", e))?;
 
     let validator = jsonschema::validator_for(&schema)
         .map_err(|e| format!("Failed to compile schema: {}", e))?;
@@ -48,7 +90,7 @@ pub fn create_regex_set_from_json(json_path: &str, schema_path: &str) -> Result<
 
 pub fn create_regex_set(patterns_path: &str, cli: &Cli) -> RegexSet {
     if cli.json_input {
-        match create_regex_set_from_json(patterns_path, "schema.json") {
+        match create_regex_set_from_json(patterns_path) {
             Ok(regex_set) => regex_set,
             Err(e) => {
                 eprintln!("{}", e);

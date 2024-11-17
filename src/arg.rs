@@ -8,7 +8,7 @@ use clap::Parser;
     about = "quickly filter FASTQ files by matching sequences to a set of regex patterns",
     long_about = "Copyright (c) 2024 Nicholas D. Crosbie, licensed under the MIT License.",
     after_help = "
-       Examples:
+       EXAMPLES:
              - Print only the matching sequences:
                   `grepq regex.txt file.fastq > output.txt`
 
@@ -39,6 +39,9 @@ use clap::Parser;
              - For each matched pattern in a search of the first 100000 records of a gzip-compressed FASTQ file, print the pattern and the number of matches:
                     `grepq -x regex.txt file.fastq.gz tune -n 100000 -c`
 
+             - For each matched pattern in a search of the first 100000 records of a gzip-compressed FASTQ file, print the pattern and the number of matches to a JSON file called matches.json: 
+                  `grepq -xj regex.json file.fastq.gz tune -n 100000 -c --names --json-matches`
+
              - Print the records where none of the regex patterns are found:
                   `grepq regex.txt file.fastq inverted > output.txt`
 
@@ -54,18 +57,18 @@ use clap::Parser;
             - Count the total number of records in the FASTQ file using an empty pattern file:
                   `grepq -c empty.txt file.fastq inverted` 
 
-           Tips:
+           TIPS:
 
-             - Use the `tune` subcommand (`grepq tune -h` for instructions) to analyze matched substrings and update the number and/or order of regex patterns in your pattern file according to their matched frequency. This can speed up the filtering process.
+             - Use the `tune` subcommand (`grepq tune -h` for instructions) to analyze matched substrings and update the number and/or order of regex patterns in your pattern file according to their matched frequency. This can speed up the filtering process. Specify that `tune` should output to a JSON file if you want to save the results in a format that preserves the regex names and the name of the regex set (see also the EXAMPLES and NOTES sections).
 
              - Use the `inverted` subcommand to identify records that do not match any of the regex patterns in your pattern file.
 
              - Ensure you have enough storage space for output files.
 
-          Notes:
-             - Only supports FASTQ files or gzip compressed FASTQ files.
+          NOTES:
+             - Only supports FASTQ files or gzip compressed FASTQ files that contain DNA sequences.
 
-             - Patterns file must contain one regex pattern per line, and patterns are case-sensitive (you can supply an empty pattern file to count the total number of records in the FASTQ file).
+             - Pattern files must contain one regex pattern per line, and patterns are case-sensitive (you can supply an empty pattern file to count the total number of records in the FASTQ file). The regex patterns should only include the DNA sequence characters (A, C, G, T), and not other IUPAC codes (e.g., not N, R, Y, etc.). If your regex patterns contain any of these other IUPAC codes, then transform them to DNA sequence characters (A, C, G, T) before using them with grepq. See regex.txt and regex.json in the examples directory of `grepq`'s GitHub repository for examples of valid pattern files.
 
              - When no options are provided, only the matching sequences are printed.
 

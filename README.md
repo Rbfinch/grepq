@@ -5,8 +5,11 @@ _quickly filter FASTQ files by matching sequences to a set of regex patterns_
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.14058563.svg)](https://doi.org/10.5281/zenodo.14058563)
 
 ## Feature set
+(italics signifies a new feature added to the latest version)
+
 - very fast and scales to large FASTQ files
 - gzip support
+- *JSON support for pattern file input and `tune` subcommand output, allowing named regex sets and named regex patterns. Validation of the JSON pattern file is performed before processing (see the `schema.json` file in the `examples` directory)*
 - does not match false positives
 - output matched sequences to one of three formats
 - tune your pattern file with the `tune` subcommand
@@ -36,7 +39,6 @@ Use the `--best` option for best compression, or the `--fast` option for faster 
 
 *Conditions and versions as above, but the FASTQ file was gzip-compressed. `grepq` was run with the `-x` option, `ripgrep` with the `-z` option, and `grep` with the `-Z` option.*
 
-
 **3. Does not match false positives**
 
 `grepq` will only match regex patterns to the sequence field of a FASTQ record, which is the most common use case. Unlike `ripgrep` and `grep`, which will match the regex patterns to the entire FASTQ record, which includes the record ID, sequence, separator, and quality. This can lead to false positives and slow down the filtering process.
@@ -53,6 +55,8 @@ Use the `tune` subcommand to analyze matched substrings and update the number an
 
 Specifying the `-c` option to the `tune` subcommand will output the matched substrings and their frequencies, ranked from highest to lowest.
 
+When the patterns file is given in JSON format (specified with the `-j` option), then specifying the `-c`, `--names` and `--json-matches` options to the `tune` subcommand will output the matched substrings and their frequencies in JSON format to a file called `matches.json`, allowing named regex sets and named regex patterns. See `examples/regex.json` for an example of a JSON pattern file and `examples/matches.json` for an example of the output of the `tune` subcommand in JSON format.
+
 **6. Supports inverted matching with the `inverted` subcommand**
 
 Use the `inverted` subcommand to output sequences that do not match any of the regex patterns in your pattern file.
@@ -63,6 +67,8 @@ For example, see `tune.sh` in the `examples` directory. This simple script will 
 
 ## Usage 
 Get instructions and examples using `grepq -h`, and `grepq tune -h` and `grepq inverted -h` for more information on the `tune` and `inverted` subcommands, respectively.
+
+Pattern files must contain one regex pattern per line, and patterns are case-sensitive (you can supply an empty pattern file to count the total number of records in the FASTQ file). The regex patterns should only include the DNA sequence characters (A, C, G, T), and not other IUPAC codes (e.g., not N, R, Y, etc.). If your regex patterns contain any of these other IUPAC codes, then transform them to DNA sequence characters (A, C, G, T) before using them with grepq. See `regex.txt` and `regex.json` in the `examples` directory for examples of valid pattern files.
 
 ## Requirements
 
@@ -81,11 +87,9 @@ Get instructions and examples using `grepq -h`, and `grepq tune -h` and `grepq i
     - Make sure the executable is in your `PATH` or use the full path to the executable
 
 ## Examples
-`grepq -h` will show you the available options and subcommands, with examples of how to use them.
+Get instructions and examples using `grepq -h`, and `grepq tune -h` and `grepq inverted -h` for more information on the `tune` and `inverted` subcommands, respectively. See the `examples` directory for examples of pattern files and FASTQ files.
 
 _File sizes of outfiles to verify `grepq` is working correctly, using the regex file `regex.txt` and the small fastq file `small.fastq`, both located in the `examples` directory:_
-
-(note replace `./target/release/grepq` with `grepq` if you installed from *crates.io*)
 
 ```bash
 grepq ./examples/regex.txt ./examples/small.fastq > outfile.txt 
