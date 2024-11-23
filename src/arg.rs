@@ -76,7 +76,11 @@ use clap::Parser;
 
              - The -x and -z options can be used separately, or together, and in combination any of the other filtering options (the -z option cannot be used with the tune subcommand).
 
-             - Count option (-c) will support the output of the -R option since it is in FASTQ format.
+             - The count option (-c) will support the output of the -R option since it is in FASTQ format.
+
+             - When the count option (-c) is given with the `tune` subcommand, `grepq` will count the number of FASTQ records containing a sequence that is matched, for each matching regex in the pattern file. If, however, there are multiple occurrences of a given regex within a FASTQ record sequence field, `grepq` will count this as one match.
+
+             - When the count option (-c) is not given with the `tune` subcommand, `grepq` prints the total number of matching FASTQ records for the set of regex patterns in the pattern file.
 
              - Regex patterns with look-around and backreferences are not supported.
 

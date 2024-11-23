@@ -2,7 +2,8 @@
 
 _quickly filter FASTQ files by matching sequences to a set of regex patterns_
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.14058563.svg)](https://doi.org/10.5281/zenodo.14058563)
+[![Crates.io](https://img.shields.io/crates/v/grepq.svg)](https://crates.io/crates/grepq)
+[![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
 ## Feature set
 (italics signifies a new feature added to the latest version)
@@ -56,6 +57,11 @@ Use the `tune` subcommand to analyze matched substrings and update the number an
 Specifying the `-c` option to the `tune` subcommand will output the matched substrings and their frequencies, ranked from highest to lowest.
 
 When the patterns file is given in JSON format (specified with the `-j` option), then specifying the `-c`, `--names` and `--json-matches` options to the `tune` subcommand will output the matched substrings and their frequencies in JSON format to a file called `matches.json`, allowing named regex sets and named regex patterns. See `examples/regex.json` for an example of a JSON pattern file and `examples/matches.json` for an example of the output of the `tune` subcommand in JSON format.
+
+>[!NOTE]
+When the count option (-c) is given with the `tune` subcommand, `grepq` will count the number of FASTQ records containing a sequence that is matched, for each matching regex in the pattern file. If, however, there are multiple occurrences of a given regex *within a FASTQ record sequence field*, `grepq` will count this as one match.
+
+When the count option (-c) is not given with the `tune` subcommand, `grepq` provides the total number of matching FASTQ records for the set of regex patterns in the pattern file.
 
 **6. Supports inverted matching with the `inverted` subcommand**
 
