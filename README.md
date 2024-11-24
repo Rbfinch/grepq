@@ -133,7 +133,14 @@ Executed in  236.47 millis    fish           external
 
 ```
 
+## Citation
+
+If you use `grepq` in your research, please cite as follows:
+
+Crosbie, N.D. (2024). grepq: A Rust application that quickly filters FASTQ files by matching sequences to a set of regex patterns. 10.5281/zenodo.14031703
+
 ## Update changes
+
 see [CHANGELOG](https://github.com/Rbfinch/grepq/blob/main/CHANGELOG.md)
 
 ## License
