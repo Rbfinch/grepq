@@ -9,52 +9,52 @@ use clap::Parser;
     long_about = "Copyright (c) 2024 Nicholas D. Crosbie, licensed under the MIT License.",
     after_help = "
        EXAMPLES:
-             - Print only the matching sequences:
+             - Print only the matching sequences
                   `grepq regex.txt file.fastq > output.txt`
 
-             - Print the matching sequences with the record ID:
+             - Print the matching sequences with the record ID
                   `grepq -I regex.txt file.fastq > output.txt`
 
              - Print the matching sequences in FASTQ format
                   `grepq -R regex.txt file.fastq > output.fastq`
 
-             - Print the matching sequences in gzip compressed FASTQ format:
+             - Print the matching sequences in gzip compressed FASTQ format
                   `grepq -R -z regex.txt file.fastq > output.fastq.gz`
 
-             - Read the FASTQ file in gzip compressed format:
+             - Read the FASTQ file in gzip compressed format
                   `grepq -x regex.txt file.fastq.gz > output.txt`
 
-             - Read and write the output in gzip compressed format, with fast compression:
+             - Read and write the output in gzip compressed format, with fast compression
                   `grepq -xz --fast regex.txt file.fastq.gz > output.fastq.gz`
 
-             - Read and write the output in gzip compressed format, with best compression:
+             - Read and write the output in gzip compressed format, with best compression
                   `grepq -xz --best regex.txt file.fastq.gz > output.fastq.gz`
 
-             - Count the number of matching FASTQ records:
+             - Count the number of matching FASTQ records
                   `grepq -c regex.txt file.fastq`
 
-             - For each matched pattern in a search of the first 100000 records, print the pattern and the number of matches:
+             - For each matched pattern in a search of the first 100000 records, print the pattern and the number of matches
                   `grepq regex.txt file.fastq tune -n 100000 -c`
 
-             - For each matched pattern in a search of the first 100000 records of a gzip-compressed FASTQ file, print the pattern and the number of matches:
+             - For each matched pattern in a search of the first 100000 records of a gzip-compressed FASTQ file, print the pattern and the number of matches
                     `grepq -x regex.txt file.fastq.gz tune -n 100000 -c`
 
-             - For each matched pattern in a search of the first 100000 records of a gzip-compressed FASTQ file, print the pattern and the number of matches to a JSON file called matches.json: 
+             - For each matched pattern in a search of the first 100000 records of a gzip-compressed FASTQ file, print the pattern and the number of matches to a JSON file called matches.json 
                   `grepq -xj regex.json file.fastq.gz tune -n 100000 -c --names --json-matches`
 
-             - Print the records where none of the regex patterns are found:
+             - Print the records where none of the regex patterns are found
                   `grepq regex.txt file.fastq inverted > output.txt`
 
-             - Print the records where none of the regex patterns are found with the record ID:
+             - Print the records where none of the regex patterns are found with the record ID
                   `grepq -I regex.txt file.fastq inverted > output.txt`
 
-             - Print the records where none of the regex patterns are found in FASTQ format:
+             - Print the records where none of the regex patterns are found in FASTQ format
                   `grepq -R regex.txt file.fastq inverted > output.fastq`
 
-            - Count the number of records where none of the regex patterns are found:
+            - Count the number of records where none of the regex patterns are found
                   `grepq -c regex.txt file.fastq inverted`
 
-            - Count the total number of records in the FASTQ file using an empty pattern file:
+            - Count the total number of records in the FASTQ file using an empty pattern file
                   `grepq -c empty.txt file.fastq inverted` 
 
            TIPS:
