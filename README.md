@@ -134,6 +134,10 @@ Executed in  236.47 millis    fish           external
 
 ```
 
+## Testing
+
+`grepq` can be tested using tools that generate synthetic FASTQ files, such as `spikeq` (https://github.com/Rbfinch/spikeq)
+
 ## Citation
 
 If you use `grepq` in your research, please cite as follows:
