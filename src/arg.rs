@@ -84,6 +84,12 @@ use clap::Parser;
 
              - Regex patterns with look-around and backreferences are not supported.
 
+           CITATION:
+          
+             If you use `grepq` in your research, please cite as follows:
+             
+               Crosbie, N.D. (2024). grepq: A Rust application that quickly filters FASTQ files by matching sequences to a set of regex patterns. 10.5281/zenodo.14031703
+
 Copyright (c) 2024 Nicholas D. Crosbie, licensed under the MIT License."
 )]
 pub struct Cli {
