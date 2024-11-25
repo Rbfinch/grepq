@@ -72,7 +72,7 @@ For example, see `tune.sh` in the `examples` directory. This simple script will 
 Get instructions and examples using `grepq -h`, and `grepq tune -h` and `grepq inverted -h` for more information on the `tune` and `inverted` subcommands, respectively.
 
 >[!NOTE]
-Pattern files must contain one regex pattern per line, and patterns are case-sensitive (you can supply an empty pattern file to count the total number of records in the FASTQ file). The regex patterns should only include the DNA sequence characters (A, C, G, T), and not other IUPAC codes (e.g., not N, R, Y, etc.). If your regex patterns contain any of these other IUPAC codes, then transform them to DNA sequence characters (A, C, G, T) before using them with grepq. See `regex.txt` and `regex.json` in the `examples` directory for examples of valid pattern files.
+Pattern files must contain one regex pattern per line or provided in JSON format using the `-j` option, and patterns are case-sensitive. You can supply an empty pattern file to count the total number of records in the FASTQ file. The regex patterns should only include the DNA sequence characters (A, C, G, T), and not IUPAC ambiguity codes (i.e., not N, R, Y, etc.). If your regex patterns contain any IUPAC ambiguity codes, then transform them to DNA sequence characters (A, C, G, T) before using them with grepq. See `regex.txt` and `regex.json` in the `examples` directory for examples of valid pattern files.
 
 ## Requirements
 
