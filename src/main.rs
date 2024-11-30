@@ -14,10 +14,23 @@ mod inverted;
 mod quality;
 mod tune;
 use clap::Parser;
+use env_logger::Env;
 use initialise::{create_reader, create_writer, parse_patterns_file};
+use log::info;
 use std::io::{self};
 
+macro_rules! debug_log {
+    ($($arg:tt)*) => {
+        #[cfg(debug_assertions)]
+        {
+            info!($($arg)*);
+        }
+    };
+}
+
 fn main() {
+    env_logger::Builder::from_env(Env::default().default_filter_or("info")).init();
+
     let cli = Cli::parse();
 
     match &cli.command {
@@ -44,9 +57,6 @@ fn main() {
     let with_full_record = cli.with_full_record;
     let count = cli.count;
 
-    // Example usage of convert_and_print function
-    quality::convert_and_print(quality::QUALITY_STRING);
-
     if count {
         let mut match_count = 0;
         parallel_fastq(
@@ -56,18 +66,22 @@ fn main() {
             |record, found| {
                 // runs in worker
                 *found = false;
-                if minimum_sequence_length.map_or(true, |len| record.seq().len() >= len as usize)
-                    && minimum_quality.map_or(true, |min_q| {
-                        quality::average_quality(
-                            record.qual(),
-                            quality_encoding.as_deref().unwrap_or("Phred+33"),
-                        ) >= min_q as f32
-                    })
-                    && header_regex
-                        .as_ref()
-                        .map_or(true, |re| re.is_match(record.head()))
-                    && regex_set.is_match(record.seq())
-                {
+                let seq_len_check =
+                    minimum_sequence_length.map_or(true, |len| record.seq().len() >= len as usize);
+                let qual_check = minimum_quality.map_or(true, |min_q| {
+                    quality::average_quality(
+                        record.qual(),
+                        quality_encoding.as_deref().unwrap_or("Phred+33"),
+                    ) >= min_q as f32
+                });
+                let header_check = header_regex
+                    .as_ref()
+                    .map_or(true, |re| re.is_match(record.head()));
+                let regex_check = regex_set.is_match(record.seq());
+
+                debug_log!("Debug: seq_len_check = {}, qual_check = {}, header_check = {}, regex_check = {}", seq_len_check, qual_check, header_check, regex_check);
+
+                if seq_len_check && qual_check && header_check && regex_check {
                     *found = true;
                 }
             },
@@ -89,18 +103,22 @@ fn main() {
             |record, found| {
                 // runs in worker
                 *found = false;
-                if minimum_sequence_length.map_or(true, |len| record.seq().len() >= len as usize)
-                    && minimum_quality.map_or(true, |min_q| {
-                        quality::average_quality(
-                            record.qual(),
-                            quality_encoding.as_deref().unwrap_or("Phred+33"),
-                        ) >= min_q as f32
-                    })
-                    && header_regex
-                        .as_ref()
-                        .map_or(true, |re| re.is_match(record.head()))
-                    && regex_set.is_match(record.seq())
-                {
+                let seq_len_check =
+                    minimum_sequence_length.map_or(true, |len| record.seq().len() >= len as usize);
+                let qual_check = minimum_quality.map_or(true, |min_q| {
+                    quality::average_quality(
+                        record.qual(),
+                        quality_encoding.as_deref().unwrap_or("Phred+33"),
+                    ) >= min_q as f32
+                });
+                let header_check = header_regex
+                    .as_ref()
+                    .map_or(true, |re| re.is_match(record.head()));
+                let regex_check = regex_set.is_match(record.seq());
+
+                debug_log!("Debug: seq_len_check = {}, qual_check = {}, header_check = {}, regex_check = {}", seq_len_check, qual_check, header_check, regex_check);
+
+                if seq_len_check && qual_check && header_check && regex_check {
                     *found = true;
                 }
             },

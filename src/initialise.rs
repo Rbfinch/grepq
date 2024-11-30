@@ -72,7 +72,7 @@ pub fn parse_patterns_file(
         RegexSet,
         Option<String>,
         Option<u64>,
-        Option<u64>,
+        Option<f64>, // Update type to f64
         Option<String>,
     ),
     String,
@@ -114,7 +114,7 @@ pub fn parse_patterns_file(
             .as_str()
             .map(|s| s.to_string());
         let minimum_sequence_length = json["regexSet"]["minimumSequenceLength"].as_u64();
-        let minimum_quality = json["regexSet"]["minimumQuality"].as_u64();
+        let minimum_quality = json["regexSet"]["minimumQuality"].as_f64();
         let quality_encoding = json["regexSet"]["qualityEncoding"]
             .as_str()
             .map(|s| s.to_string());
