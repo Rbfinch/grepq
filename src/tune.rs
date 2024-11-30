@@ -1,5 +1,6 @@
 use crate::arg::Cli;
 use crate::initialise::{create_reader, parse_patterns_file};
+use regex::bytes::Regex;
 use seq_io::fastq::Record;
 use serde_json::json;
 use std::collections::HashMap;
@@ -12,6 +13,7 @@ pub fn run_tune(cli: &Cli, num_records: usize, include_count: bool) -> io::Resul
     let (regex_set, header_regex, sequence_length, minimum_quality) =
         parse_patterns_file(patterns_path).map_err(|e| io::Error::new(io::ErrorKind::Other, e))?;
 
+    let header_regex = header_regex.map(|re| Regex::new(&re).unwrap());
     let mut reader = create_reader(cli);
 
     let mut match_counts: HashMap<String, usize> = HashMap::new();
@@ -27,12 +29,18 @@ pub fn run_tune(cli: &Cli, num_records: usize, include_count: bool) -> io::Resul
                 ),
             )
         })?;
-        for mat in regex_set.matches(record.seq()).into_iter() {
-            let matched_pattern = regex_set.patterns()[mat].to_string();
-            *match_counts.entry(matched_pattern).or_insert(0) += 1;
-            total_matches += 1;
-            if total_matches >= num_records {
-                break;
+        if sequence_length.map_or(true, |len| record.seq().len() > len as usize)
+            && header_regex
+                .as_ref()
+                .map_or(true, |re| re.is_match(record.head()))
+        {
+            for mat in regex_set.matches(record.seq()).into_iter() {
+                let matched_pattern = regex_set.patterns()[mat].to_string();
+                *match_counts.entry(matched_pattern).or_insert(0) += 1;
+                total_matches += 1;
+                if total_matches >= num_records {
+                    break;
+                }
             }
         }
         if total_matches >= num_records {

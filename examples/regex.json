@@ -123,7 +123,7 @@
                 "regexString": "CTTGTTA[CT]GACT"
             }
         ],
-        "headerRegex": "A\\d{5}",
+        "headerRegex": "A00627",
         "sequenceLength": 200
     }
 }
