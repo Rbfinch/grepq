@@ -2,6 +2,7 @@ use mimalloc::MiMalloc;
 #[global_allocator]
 static GLOBAL: MiMalloc = MiMalloc;
 
+use regex::bytes::Regex;
 use seq_io::fastq::Record;
 use seq_io::parallel::parallel_fastq;
 use std::io::Write;
@@ -12,7 +13,8 @@ mod initialise;
 mod inverted;
 mod tune;
 use clap::Parser;
-use initialise::{create_reader, create_regex_set, create_writer};
+use initialise::{create_reader, create_writer, parse_patterns_file};
+use std::io::{self};
 
 fn main() {
     let cli = Cli::parse();
@@ -29,7 +31,10 @@ fn main() {
         None => {}
     }
 
-    let regex_set = create_regex_set(&cli.patterns, &cli);
+    let (regex_set, header_regex, sequence_length, _) = parse_patterns_file(&cli.patterns)
+        .map_err(|e| io::Error::new(io::ErrorKind::Other, e))
+        .unwrap();
+    let header_regex = header_regex.map(|re| Regex::new(&re).unwrap());
     let reader = create_reader(&cli);
     let mut writer = create_writer(&cli);
 
@@ -46,7 +51,12 @@ fn main() {
             |record, found| {
                 // runs in worker
                 *found = false;
-                if regex_set.is_match(record.seq()) {
+                if sequence_length.map_or(true, |len| record.seq().len() > len as usize)
+                    && header_regex
+                        .as_ref()
+                        .map_or(true, |re| re.is_match(record.head()))
+                    && regex_set.is_match(record.seq())
+                {
                     *found = true;
                 }
             },
@@ -68,7 +78,12 @@ fn main() {
             |record, found| {
                 // runs in worker
                 *found = false;
-                if regex_set.is_match(record.seq()) {
+                if sequence_length.map_or(true, |len| record.seq().len() > len as usize)
+                    && header_regex
+                        .as_ref()
+                        .map_or(true, |re| re.is_match(record.head()))
+                    && regex_set.is_match(record.seq())
+                {
                     *found = true;
                 }
             },

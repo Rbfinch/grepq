@@ -1,15 +1,18 @@
 use crate::arg::Cli;
-use crate::initialise::{create_reader, create_regex_set, create_writer};
+use crate::initialise::{create_reader, create_writer, parse_patterns_file};
 use seq_io::fastq::Record;
 use seq_io::parallel::parallel_fastq;
 use std::io::Write;
+use std::io::{self};
 
 pub fn run_inverted(cli: &Cli) {
     let with_id = cli.with_id;
     let with_full_record = cli.with_full_record;
     let count = cli.count;
 
-    let regex_set = create_regex_set(&cli.patterns, cli);
+    let (regex_set, _, _, _) = parse_patterns_file(&cli.patterns)
+        .map_err(|e| io::Error::new(io::ErrorKind::Other, e))
+        .unwrap();
     let reader = create_reader(&cli);
     let mut writer = create_writer(&cli);
 

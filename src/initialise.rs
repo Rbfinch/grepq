@@ -39,6 +39,15 @@ static SCHEMA: &str = r#"
                             "regexString"
                         ]
                     }
+                },
+                "headerRegex": {
+                    "type": "string"
+                },
+                "sequenceLength": {
+                    "type": "number"
+                },
+                "minimumQuality": {
+                    "type": "number"
                 }
             },
             "required": [
@@ -53,55 +62,56 @@ static SCHEMA: &str = r#"
 }
 "#;
 
-pub fn create_regex_set_from_json(json_path: &str) -> Result<RegexSet, String> {
-    let json_file =
-        File::open(json_path).map_err(|e| format!("Failed to open JSON file: {}", e))?;
+pub fn parse_patterns_file(
+    patterns_path: &str,
+) -> Result<(RegexSet, Option<String>, Option<u64>, Option<u64>), String> {
+    if patterns_path.ends_with(".json") {
+        let json_file =
+            File::open(patterns_path).map_err(|e| format!("Failed to open JSON file: {}", e))?;
+        let json: Value = serde_json::from_reader(json_file)
+            .map_err(|e| format!("Failed to parse JSON file: {}", e))?;
+        let schema: Value = serde_json::from_str(SCHEMA)
+            .map_err(|e| format!("Failed to parse embedded schema: {}", e))?;
 
-    let json: Value = serde_json::from_reader(json_file)
-        .map_err(|e| format!("Failed to parse JSON file: {}", e))?;
-    let schema: Value = serde_json::from_str(SCHEMA)
-        .map_err(|e| format!("Failed to parse embedded schema: {}", e))?;
+        let validator = jsonschema::validator_for(&schema)
+            .map_err(|e| format!("Failed to compile schema: {}", e))?;
 
-    let validator = jsonschema::validator_for(&schema)
-        .map_err(|e| format!("Failed to compile schema: {}", e))?;
-
-    let mut error_messages = Vec::new();
-    for error in validator.iter_errors(&json) {
-        error_messages.push(format!("Error: {error}\nLocation: {}", error.instance_path));
-    }
-
-    if !error_messages.is_empty() {
-        return Err(format!("JSON validation errors: {:?}", error_messages));
-    }
-
-    let regex_strings: Vec<String> = json["regexSet"]["regex"]
-        .as_array()
-        .ok_or("Invalid JSON structure")?
-        .iter()
-        .filter_map(|r| {
-            r.get("regexString")
-                .and_then(|s| s.as_str())
-                .map(|s| s.to_string())
-        })
-        .collect();
-
-    RegexSet::new(regex_strings).map_err(|e| format!("Failed to compile regex patterns: {}", e))
-}
-
-pub fn create_regex_set(patterns_path: &str, cli: &Cli) -> RegexSet {
-    if cli.json_input {
-        match create_regex_set_from_json(patterns_path) {
-            Ok(regex_set) => regex_set,
-            Err(e) => {
-                eprintln!("{}", e);
-                std::process::exit(1);
-            }
+        let mut error_messages = Vec::new();
+        for error in validator.iter_errors(&json) {
+            error_messages.push(format!("Error: {error}\nLocation: {}", error.instance_path));
         }
+
+        if !error_messages.is_empty() {
+            return Err(format!("JSON validation errors: {:?}", error_messages));
+        }
+
+        let regex_strings: Vec<String> = json["regexSet"]["regex"]
+            .as_array()
+            .ok_or("Invalid JSON structure")?
+            .iter()
+            .filter_map(|r| {
+                r.get("regexString")
+                    .and_then(|s| s.as_str())
+                    .map(|s| s.to_string())
+            })
+            .collect();
+
+        let regex_set = RegexSet::new(regex_strings)
+            .map_err(|e| format!("Failed to compile regex patterns: {}", e))?;
+        let header_regex = json["regexSet"]["headerRegex"]
+            .as_str()
+            .map(|s| s.to_string());
+        let sequence_length = json["regexSet"]["sequenceLength"].as_u64();
+        let minimum_quality = json["regexSet"]["minimumQuality"].as_u64();
+
+        Ok((regex_set, header_regex, sequence_length, minimum_quality))
     } else {
-        let file = File::open(patterns_path).unwrap();
+        let file = File::open(patterns_path)
+            .map_err(|e| format!("Failed to open patterns file: {}", e))?;
         let reader = BufReader::new(file);
-        RegexSet::new(reader.lines().filter_map(Result::ok))
-            .expect("Failed to compile regex patterns. Check your patterns file lists one regex pattern per line.")
+        let regex_set = RegexSet::new(reader.lines().filter_map(Result::ok))
+            .map_err(|e| format!("Failed to compile regex patterns: {}", e))?;
+        Ok((regex_set, None, None, None))
     }
 }
 

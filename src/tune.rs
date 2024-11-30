@@ -1,5 +1,5 @@
 use crate::arg::Cli;
-use crate::initialise::{create_reader, create_regex_set};
+use crate::initialise::{create_reader, parse_patterns_file};
 use seq_io::fastq::Record;
 use serde_json::json;
 use std::collections::HashMap;
@@ -9,7 +9,8 @@ use std::io::{self};
 pub fn run_tune(cli: &Cli, num_records: usize, include_count: bool) -> io::Result<()> {
     let patterns_path = &cli.patterns;
 
-    let regex_set = create_regex_set(patterns_path, cli);
+    let (regex_set, header_regex, sequence_length, minimum_quality) =
+        parse_patterns_file(patterns_path).map_err(|e| io::Error::new(io::ErrorKind::Other, e))?;
 
     let mut reader = create_reader(cli);
 
@@ -42,7 +43,7 @@ pub fn run_tune(cli: &Cli, num_records: usize, include_count: bool) -> io::Resul
     let mut match_counts: Vec<_> = match_counts.into_iter().collect();
     match_counts.sort_by(|a, b| b.1.cmp(&a.1));
 
-    if cli.json_input {
+    if patterns_path.ends_with(".json") {
         let json: serde_json::Value = serde_json::from_reader(std::fs::File::open(patterns_path)?)?;
         let regex_set_name = json["regexSet"]["regexSetName"]
             .as_str()
@@ -95,7 +96,7 @@ pub fn run_tune(cli: &Cli, num_records: usize, include_count: bool) -> io::Resul
 
         if let Some(cmd) = &cli.command {
             if let crate::arg::Commands::Tune(tune) = cmd {
-                if tune.json_matches && tune.include_names && include_count && cli.json_input {
+                if tune.json_matches && tune.include_names && include_count {
                     let json_output = json!({
                         "regexSet": {
                             "regexSetName": regex_set_name,

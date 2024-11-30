@@ -122,6 +122,8 @@
                 "regexName": "regex30",
                 "regexString": "CTTGTTA[CT]GACT"
             }
-        ]
+        ],
+        "headerRegex": "A\\d{5}",
+        "sequenceLength": 200
     }
 }

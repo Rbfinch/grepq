@@ -117,10 +117,7 @@ pub struct Cli {
     #[arg(long = "best", help = "Use best compression")]
     pub best_compression: bool,
 
-    #[arg(short = 'j', help = "Read the patterns file in JSON format")]
-    pub json_input: bool,
-
-    #[arg(help = "Path to the patterns file (one regex pattern per line)")]
+    #[arg(help = "Path to the patterns file")]
     pub patterns: String,
 
     #[arg(help = "Path to the FASTQ file")]
