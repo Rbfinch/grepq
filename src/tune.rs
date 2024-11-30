@@ -10,7 +10,7 @@ use std::io::{self};
 pub fn run_tune(cli: &Cli, num_records: usize, include_count: bool) -> io::Result<()> {
     let patterns_path = &cli.patterns;
 
-    let (regex_set, header_regex, sequence_length, minimum_quality) =
+    let (regex_set, header_regex, minimum_sequence_length, _, _) =
         parse_patterns_file(patterns_path).map_err(|e| io::Error::new(io::ErrorKind::Other, e))?;
 
     let header_regex = header_regex.map(|re| Regex::new(&re).unwrap());
@@ -29,7 +29,7 @@ pub fn run_tune(cli: &Cli, num_records: usize, include_count: bool) -> io::Resul
                 ),
             )
         })?;
-        if sequence_length.map_or(true, |len| record.seq().len() > len as usize)
+        if minimum_sequence_length.map_or(true, |len| record.seq().len() >= len as usize)
             && header_regex
                 .as_ref()
                 .map_or(true, |re| re.is_match(record.head()))

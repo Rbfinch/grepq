@@ -43,11 +43,14 @@ static SCHEMA: &str = r#"
                 "headerRegex": {
                     "type": "string"
                 },
-                "sequenceLength": {
+                "minimumSequenceLength": {
                     "type": "number"
                 },
                 "minimumQuality": {
                     "type": "number"
+                },
+                "qualityEncoding": {
+                    "type": "string"
                 }
             },
             "required": [
@@ -64,7 +67,16 @@ static SCHEMA: &str = r#"
 
 pub fn parse_patterns_file(
     patterns_path: &str,
-) -> Result<(RegexSet, Option<String>, Option<u64>, Option<u64>), String> {
+) -> Result<
+    (
+        RegexSet,
+        Option<String>,
+        Option<u64>,
+        Option<u64>,
+        Option<String>,
+    ),
+    String,
+> {
     if patterns_path.ends_with(".json") {
         let json_file =
             File::open(patterns_path).map_err(|e| format!("Failed to open JSON file: {}", e))?;
@@ -101,17 +113,26 @@ pub fn parse_patterns_file(
         let header_regex = json["regexSet"]["headerRegex"]
             .as_str()
             .map(|s| s.to_string());
-        let sequence_length = json["regexSet"]["sequenceLength"].as_u64();
+        let minimum_sequence_length = json["regexSet"]["minimumSequenceLength"].as_u64();
         let minimum_quality = json["regexSet"]["minimumQuality"].as_u64();
+        let quality_encoding = json["regexSet"]["qualityEncoding"]
+            .as_str()
+            .map(|s| s.to_string());
 
-        Ok((regex_set, header_regex, sequence_length, minimum_quality))
+        Ok((
+            regex_set,
+            header_regex,
+            minimum_sequence_length,
+            minimum_quality,
+            quality_encoding,
+        ))
     } else {
         let file = File::open(patterns_path)
             .map_err(|e| format!("Failed to open patterns file: {}", e))?;
         let reader = BufReader::new(file);
         let regex_set = RegexSet::new(reader.lines().filter_map(Result::ok))
             .map_err(|e| format!("Failed to compile regex patterns: {}", e))?;
-        Ok((regex_set, None, None, None))
+        Ok((regex_set, None, None, None, None))
     }
 }
 

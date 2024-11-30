@@ -10,7 +10,7 @@ pub fn run_inverted(cli: &Cli) {
     let with_full_record = cli.with_full_record;
     let count = cli.count;
 
-    let (regex_set, _, _, _) = parse_patterns_file(&cli.patterns)
+    let (regex_set, _, _, _, _) = parse_patterns_file(&cli.patterns)
         .map_err(|e| io::Error::new(io::ErrorKind::Other, e))
         .unwrap();
     let reader = create_reader(&cli);

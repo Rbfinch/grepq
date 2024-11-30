@@ -124,6 +124,8 @@
             }
         ],
         "headerRegex": "A00627",
-        "sequenceLength": 200
+        "minimumSequenceLength": 200,
+        "minimumQuality": 20,
+        "qualityEncoding": "Phred+33"
     }
 }

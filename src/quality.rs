@@ -22,6 +22,24 @@ pub fn convert_and_print(input: &str) {
     }
 }
 
+pub fn average_quality(quality: &[u8], quality_encoding: &str) -> f32 {
+    let offset = match quality_encoding {
+        "Phred+33" => 33,
+        "Phred+64" => 64,
+        _ => 33, // Default to Phred+33 if unknown encoding
+    };
+
+    let sum: i32 = quality.iter().map(|&q| (q as i32 - offset)).sum();
+    let count = quality.len() as i32;
+
+    if count > 0 {
+        let avg = sum as f32 / count as f32;
+        avg
+    } else {
+        0.0
+    }
+}
+
 // Quality string to be used for testing
 pub const QUALITY_STRING: &str = r#"F#FFFFFFFFFF:FFFFFFF,FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF:FFFF:FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF:FFF,FFFFFFFFFFFFF,:FFF:FFFFFFFFFFFFFF:,FF,F:FFFFFFFFFFFFF::FF,FFFFFFFF:FFFFFFFFFFF:FFFFFFFFFFFFFFFFFF:FF,FF:FFFF,FFFFF,:FFF:FF,:FF:FFFFFF:FFFFFFFFFFF::FFFFFFFFFFF:FFFFFFF,FFFFF:F"#;
 
@@ -40,5 +58,13 @@ mod tests {
         // 33
         // 34
         // Average: 33.0
+    }
+
+    #[test]
+    fn test_average_quality() {
+        let quality = b"FFF";
+        let quality_encoding = "Phred+33";
+        let avg = average_quality(quality, quality_encoding);
+        assert_eq!(avg, 37.0); // ASCII 'F' is 70, 70 - 33 = 37
     }
 }

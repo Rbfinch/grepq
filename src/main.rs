@@ -32,9 +32,10 @@ fn main() {
         None => {}
     }
 
-    let (regex_set, header_regex, sequence_length, _) = parse_patterns_file(&cli.patterns)
-        .map_err(|e| io::Error::new(io::ErrorKind::Other, e))
-        .unwrap();
+    let (regex_set, header_regex, minimum_sequence_length, minimum_quality, quality_encoding) =
+        parse_patterns_file(&cli.patterns)
+            .map_err(|e| io::Error::new(io::ErrorKind::Other, e))
+            .unwrap();
     let header_regex = header_regex.map(|re| Regex::new(&re).unwrap());
     let reader = create_reader(&cli);
     let mut writer = create_writer(&cli);
@@ -55,7 +56,13 @@ fn main() {
             |record, found| {
                 // runs in worker
                 *found = false;
-                if sequence_length.map_or(true, |len| record.seq().len() > len as usize)
+                if minimum_sequence_length.map_or(true, |len| record.seq().len() >= len as usize)
+                    && minimum_quality.map_or(true, |min_q| {
+                        quality::average_quality(
+                            record.qual(),
+                            quality_encoding.as_deref().unwrap_or("Phred+33"),
+                        ) >= min_q as f32
+                    })
                     && header_regex
                         .as_ref()
                         .map_or(true, |re| re.is_match(record.head()))
@@ -82,7 +89,13 @@ fn main() {
             |record, found| {
                 // runs in worker
                 *found = false;
-                if sequence_length.map_or(true, |len| record.seq().len() > len as usize)
+                if minimum_sequence_length.map_or(true, |len| record.seq().len() >= len as usize)
+                    && minimum_quality.map_or(true, |min_q| {
+                        quality::average_quality(
+                            record.qual(),
+                            quality_encoding.as_deref().unwrap_or("Phred+33"),
+                        ) >= min_q as f32
+                    })
                     && header_regex
                         .as_ref()
                         .map_or(true, |re| re.is_match(record.head()))
