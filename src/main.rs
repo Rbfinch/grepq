@@ -11,6 +11,7 @@ mod arg;
 use arg::{Cli, Commands};
 mod initialise;
 mod inverted;
+mod quality;
 mod tune;
 use clap::Parser;
 use initialise::{create_reader, create_writer, parse_patterns_file};
@@ -41,6 +42,9 @@ fn main() {
     let with_id = cli.with_id;
     let with_full_record = cli.with_full_record;
     let count = cli.count;
+
+    // Example usage of convert_and_print function
+    quality::convert_and_print(quality::QUALITY_STRING);
 
     if count {
         let mut match_count = 0;
