@@ -26,3 +26,13 @@ log = "0.4.22"
 
 [profile.release]
 lto = true
+
+[profile.dev]
+opt-level = 2
+debug = true
+
+[profile.dev.dependencies]
+clippy = { version = "0.0.302", default-features = true, features = ["cargo"] }
+
+[profile.dev.build-dependencies]
+clippy_lints = { version = "0.0.212", default-features = true }
