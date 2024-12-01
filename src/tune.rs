@@ -1,5 +1,7 @@
 use crate::arg::Cli;
+use crate::debug_log;
 use crate::initialise::{create_reader, parse_patterns_file};
+use crate::quality;
 use regex::bytes::Regex;
 use seq_io::fastq::Record;
 use serde_json::json;
@@ -10,7 +12,7 @@ use std::io::{self};
 pub fn run_tune(cli: &Cli, num_records: usize, include_count: bool) -> io::Result<()> {
     let patterns_path = &cli.patterns;
 
-    let (regex_set, header_regex, minimum_sequence_length, _, _) =
+    let (regex_set, header_regex, minimum_sequence_length, minimum_quality, quality_encoding) =
         parse_patterns_file(patterns_path).map_err(|e| io::Error::new(io::ErrorKind::Other, e))?;
 
     let header_regex = header_regex.map(|re| Regex::new(&re).unwrap());
@@ -29,11 +31,27 @@ pub fn run_tune(cli: &Cli, num_records: usize, include_count: bool) -> io::Resul
                 ),
             )
         })?;
-        if minimum_sequence_length.map_or(true, |len| record.seq().len() >= len as usize)
-            && header_regex
-                .as_ref()
-                .map_or(true, |re| re.is_match(record.head()))
-        {
+
+        let seq_len_check =
+            minimum_sequence_length.map_or(true, |len| record.seq().len() >= len as usize);
+        let header_check = header_regex
+            .as_ref()
+            .map_or(true, |re| re.is_match(record.head()));
+        let qual_check = minimum_quality.map_or(true, |min_q| {
+            quality::average_quality(
+                record.qual(),
+                quality_encoding.as_deref().unwrap_or("Phred+33"),
+            ) >= min_q as f32
+        });
+
+        debug_log!(
+            "Debug: seq_len_check = {}, header_check = {}, qual_check = {}",
+            seq_len_check,
+            header_check,
+            qual_check
+        );
+
+        if seq_len_check && header_check && qual_check {
             for mat in regex_set.matches(record.seq()).into_iter() {
                 let matched_pattern = regex_set.patterns()[mat].to_string();
                 *match_counts.entry(matched_pattern).or_insert(0) += 1;
@@ -91,29 +109,25 @@ pub fn run_tune(cli: &Cli, num_records: usize, include_count: bool) -> io::Resul
                 } else {
                     println!("{} ({})", regex_name, regex_string);
                 }
-            } else {
-                if *count > 0 {
-                    if include_count {
-                        println!("{}: {}", regex_string, count);
-                    } else {
-                        println!("{}", regex_string);
-                    }
+            } else if *count > 0 {
+                if include_count {
+                    println!("{}: {}", regex_string, count);
+                } else {
+                    println!("{}", regex_string);
                 }
             }
         }
 
-        if let Some(cmd) = &cli.command {
-            if let crate::arg::Commands::Tune(tune) = cmd {
-                if tune.json_matches && tune.include_names && include_count {
-                    let json_output = json!({
-                        "regexSet": {
-                            "regexSetName": regex_set_name,
-                            "regex": regex_matches
-                        }
-                    });
-                    let file = File::create("matches.json")?;
-                    serde_json::to_writer(file, &json_output)?;
-                }
+        if let Some(crate::arg::Commands::Tune(tune)) = &cli.command {
+            if tune.json_matches && tune.include_names && include_count {
+                let json_output = json!({
+                    "regexSet": {
+                        "regexSetName": regex_set_name,
+                        "regex": regex_matches
+                    }
+                });
+                let file = File::create("matches.json")?;
+                serde_json::to_writer(file, &json_output)?;
             }
         }
     } else {

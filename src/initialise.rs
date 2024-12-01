@@ -65,18 +65,18 @@ static SCHEMA: &str = r#"
 }
 "#;
 
-pub fn parse_patterns_file(
-    patterns_path: &str,
-) -> Result<
+type ParseResult = Result<
     (
         RegexSet,
         Option<String>,
         Option<u64>,
-        Option<f64>, // Update type to f64
+        Option<f64>,
         Option<String>,
     ),
     String,
-> {
+>;
+
+pub fn parse_patterns_file(patterns_path: &str) -> ParseResult {
     if patterns_path.ends_with(".json") {
         let json_file =
             File::open(patterns_path).map_err(|e| format!("Failed to open JSON file: {}", e))?;
@@ -130,7 +130,8 @@ pub fn parse_patterns_file(
         let file = File::open(patterns_path)
             .map_err(|e| format!("Failed to open patterns file: {}", e))?;
         let reader = BufReader::new(file);
-        let regex_set = RegexSet::new(reader.lines().filter_map(Result::ok))
+        let lines: Result<Vec<_>, _> = reader.lines().collect();
+        let regex_set = RegexSet::new(lines.map_err(|e| format!("Failed to read lines: {}", e))?)
             .map_err(|e| format!("Failed to compile regex patterns: {}", e))?;
         Ok((regex_set, None, None, None, None))
     }

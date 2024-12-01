@@ -16,20 +16,24 @@ mod tune;
 use clap::Parser;
 use env_logger::Env;
 use initialise::{create_reader, create_writer, parse_patterns_file};
-use log::info;
+#[macro_use]
+extern crate log;
 use std::io::{self};
 
-macro_rules! debug_log {
-    ($($arg:tt)*) => {
-        #[cfg(debug_assertions)]
-        {
-            info!($($arg)*);
-        }
-    };
+pub mod macros {
+    #[macro_export]
+    macro_rules! debug_log {
+        ($($arg:tt)*) => {
+            #[cfg(debug_assertions)]
+            {
+                info!($($arg)*);
+            }
+        };
+    }
 }
 
 fn main() {
-    env_logger::Builder::from_env(Env::default().default_filter_or("info")).init();
+    env_logger::Builder::from_env(Env::default().default_filter_or("debug")).init();
 
     let cli = Cli::parse();
 
@@ -62,7 +66,7 @@ fn main() {
         parallel_fastq(
             reader,
             num_cpus::get() as u32,
-            num_cpus::get() as usize,
+            num_cpus::get(),
             |record, found| {
                 // runs in worker
                 *found = false;
@@ -99,7 +103,7 @@ fn main() {
         parallel_fastq(
             reader,
             num_cpus::get() as u32,
-            num_cpus::get() as usize,
+            num_cpus::get(),
             |record, found| {
                 // runs in worker
                 *found = false;

@@ -1,4 +1,5 @@
-// calculate average quality of a sequence
+// Calculate average quality of a sequence; supports Phred+33 and
+// Phred+64 encodings.
 
 pub fn average_quality(quality: &[u8], quality_encoding: &str) -> f32 {
     let offset = match quality_encoding {
@@ -11,8 +12,7 @@ pub fn average_quality(quality: &[u8], quality_encoding: &str) -> f32 {
     let count = quality.len() as i32;
 
     if count > 0 {
-        let avg = sum as f32 / count as f32;
-        avg
+        sum as f32 / count as f32
     } else {
         0.0
     }
