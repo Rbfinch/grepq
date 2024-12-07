@@ -91,3 +91,10 @@ rsconnect/
 
 # Rust build artifacts
 target/
+
+# Data files
+*.csv
+*.tsv
+*.json
+*.gz
+*.txt

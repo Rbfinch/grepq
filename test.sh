@@ -43,20 +43,25 @@ expected_sizes=(
 
 test_order=("test-1" "test-2" "test-3" "test-4" "test-5" "test-6" "test-7" "test-8" "test-9")
 
+# Color codes
+BOLD="\033[1m"
+ORANGE="\033[38;2;255;165;0m"
+RESET="\033[0m"
+
 echo -e "\nTests run:"
 echo -e "$(date +"%Y-%m-%d %H:%M:%S")\n"
 
 for test in "${test_order[@]}"; do
-    echo -e "\033[1m${test} time\033[0m"
+    echo -e "${BOLD}${test} time${RESET}"
     if [ "$test" == "test-7" ] || [ "$test" == "test-8" ]; then
         actual_count=$(time ${tests[$test]})
         if [ $actual_count -eq ${expected_sizes[$test]} ]; then
             echo -e "\n"
         else
-            echo -e "\n\033[1;33m${test} failed\033[0m"
-            echo -e "\033[1;33mexpected: ${expected_sizes[$test]} counts\033[0m"
-            echo -e "\033[1;33mgot: $actual_count counts\033[0m"
-            echo -e "\033[1;33mcommand was: ${tests[$test]}\033[0m\n"
+            echo -e "\n${ORANGE}${test} failed${RESET}"
+            echo -e "${ORANGE}expected: ${expected_sizes[$test]} counts${RESET}"
+            echo -e "${ORANGE}got: $actual_count counts${RESET}"
+            echo -e "${ORANGE}command was: ${tests[$test]}${RESET}\n"
         fi
     else
         time ${tests[$test]} > ${test}.txt
@@ -65,20 +70,20 @@ for test in "${test_order[@]}"; do
             if [ $actual_size -eq ${expected_sizes[$test]} ]; then
                 echo -e "\n"
             else
-                echo -e "\n\033[1;33m${test} failed\033[0m"
-                echo -e "\033[1;33mexpected: ${expected_sizes[$test]} bytes\033[0m"
-                echo -e "\033[1;33mgot: $actual_size bytes\033[0m"
-                echo -e "\033[1;33mcommand was: ${tests[$test]} > ${test}.txt\033[0m\n"
+                echo -e "\n${ORANGE}${test} failed${RESET}"
+                echo -e "${ORANGE}expected: ${expected_sizes[$test]} bytes${RESET}"
+                echo -e "${ORANGE}got: $actual_size bytes${RESET}"
+                echo -e "${ORANGE}command was: ${tests[$test]} > ${test}.txt${RESET}\n"
             fi
         else
             actual_size=$(stat -f %z "${test}.txt")
             if [ $actual_size -eq ${expected_sizes[$test]} ]; then
                 echo -e "\n"
             else
-                echo -e "\n\033[1;33m${test} failed\033[0m"
-                echo -e "\033[1;33mexpected: ${expected_sizes[$test]} bytes\033[0m"
-                echo -e "\033[1;33mgot: $actual_size bytes\033[0m"
-                echo -e "\033[1;33mcommand was: ${tests[$test]} > ${test}.txt\033[0m\n"
+                echo -e "\n${ORANGE}${test} failed${RESET}"
+                echo -e "${ORANGE}expected: ${expected_sizes[$test]} bytes${RESET}"
+                echo -e "${ORANGE}got: $actual_size bytes${RESET}"
+                echo -e "${ORANGE}command was: ${tests[$test]} > ${test}.txt${RESET}\n"
             fi
         fi
     fi
