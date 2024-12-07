@@ -1,13 +1,15 @@
-#!/opt/homebrew/bin/bash
+#!/usr/bin/env bash
 
 # This script is used to test the grepq program and development build.
 # Author: Nicholas D. Crosbie
-# Date: 2024-12-07
+# Date: December 2024 
 
 # TODO: 
     # add test for tune command 
-    # refactor to include tests for SRX26365298.fastq
     # add Linux support for stat command
+
+# Exit immediately if a command exits with a non-zero status
+set -e
 
 if [ "$1" == "control" ]; then
     GREPQ="grepq"
@@ -26,6 +28,7 @@ tests=(
     ["test-7"]="$GREPQ -c ./examples/regex.txt ./examples/small.fastq"
     ["test-8"]="$GREPQ -c ./examples/regex.txt ./examples/small.fastq inverted"
     ["test-9"]="$GREPQ ./examples/regex.txt ./examples/small.fastq tune -n 10000 -c"
+    ["test-10"]="$GREPQ -xj ./examples/regex.json ./examples/SRX26365298.fastq.gz tune -n 100000 -c --names --json-matches"
 )
 
 declare -A expected_sizes
@@ -39,9 +42,11 @@ expected_sizes=(
     ["test-7"]=53
     ["test-8"]=2447
     ["test-9"]=411
+    ["test-10"]=2366
 )
 
-test_order=("test-1" "test-2" "test-3" "test-4" "test-5" "test-6" "test-7" "test-8" "test-9")
+# Using an array to maintain the order of the tests
+test_order=("test-1" "test-2" "test-3" "test-4" "test-5" "test-6" "test-7" "test-8" "test-9" "test-10")
 
 # Color codes
 BOLD="\033[1m"
@@ -52,7 +57,7 @@ echo -e "\nTests run:"
 echo -e "$(date +"%Y-%m-%d %H:%M:%S")\n"
 
 for test in "${test_order[@]}"; do
-    echo -e "${BOLD}${test} time${RESET}"
+    echo -e "${BOLD}${test} ${RESET}"
     if [ "$test" == "test-7" ] || [ "$test" == "test-8" ]; then
         actual_count=$(time ${tests[$test]})
         if [ $actual_count -eq ${expected_sizes[$test]} ]; then
@@ -64,26 +69,39 @@ for test in "${test_order[@]}"; do
             echo -e "${ORANGE}command was: ${tests[$test]}${RESET}\n"
         fi
     else
-        time ${tests[$test]} > ${test}.txt
-        if [ "$test" == "test-9" ]; then
-            actual_size=$(stat -f %z "${test}.txt")
+        if [ "$test" == "test-10" ]; then
+            time ${tests[$test]}
+            actual_size=$(stat -f %z "matches.json")
             if [ $actual_size -eq ${expected_sizes[$test]} ]; then
                 echo -e "\n"
             else
                 echo -e "\n${ORANGE}${test} failed${RESET}"
                 echo -e "${ORANGE}expected: ${expected_sizes[$test]} bytes${RESET}"
                 echo -e "${ORANGE}got: $actual_size bytes${RESET}"
-                echo -e "${ORANGE}command was: ${tests[$test]} > ${test}.txt${RESET}\n"
+                echo -e "${ORANGE}command was: ${tests[$test]}${RESET}\n"
             fi
         else
-            actual_size=$(stat -f %z "${test}.txt")
-            if [ $actual_size -eq ${expected_sizes[$test]} ]; then
-                echo -e "\n"
+            time ${tests[$test]} > ${test}.txt
+            if [ "$test" == "test-9" ]; then
+                actual_size=$(stat -f %z "${test}.txt")
+                if [ $actual_size -eq ${expected_sizes[$test]} ]; then
+                    echo -e "\n"
+                else
+                    echo -e "\n${ORANGE}${test} failed${RESET}"
+                    echo -e "${ORANGE}expected: ${expected_sizes[$test]} bytes${RESET}"
+                    echo -e "${ORANGE}got: $actual_size bytes${RESET}"
+                    echo -e "${ORANGE}command was: ${tests[$test]} > ${test}.txt${RESET}\n"
+                fi
             else
-                echo -e "\n${ORANGE}${test} failed${RESET}"
-                echo -e "${ORANGE}expected: ${expected_sizes[$test]} bytes${RESET}"
-                echo -e "${ORANGE}got: $actual_size bytes${RESET}"
-                echo -e "${ORANGE}command was: ${tests[$test]} > ${test}.txt${RESET}\n"
+                actual_size=$(stat -f %z "${test}.txt")
+                if [ $actual_size -eq ${expected_sizes[$test]} ]; then
+                    echo -e "\n"
+                else
+                    echo -e "\n${ORANGE}${test} failed${RESET}"
+                    echo -e "${ORANGE}expected: ${expected_sizes[$test]} bytes${RESET}"
+                    echo -e "${ORANGE}got: $actual_size bytes${RESET}"
+                    echo -e "${ORANGE}command was: ${tests[$test]} > ${test}.txt${RESET}\n"
+                fi
             fi
         fi
     fi
