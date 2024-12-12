@@ -13,37 +13,35 @@ set -e
 
 if [ "$1" == "control" ]; then
     GREPQ="grepq"
+    shift
 else 
     GREPQ="./target/release/grepq"
 fi
 
-declare -A tests
-tests=(
-    ["test-1"]="$GREPQ ./examples/regex.txt ./examples/small.fastq"
-    ["test-2"]="$GREPQ ./examples/regex.txt ./examples/small.fastq inverted"
-    ["test-3"]="$GREPQ -I ./examples/regex.txt ./examples/small.fastq"
-    ["test-4"]="$GREPQ -I ./examples/regex.txt ./examples/small.fastq inverted"
-    ["test-5"]="$GREPQ -R ./examples/regex.txt ./examples/small.fastq"
-    ["test-6"]="$GREPQ -R ./examples/regex.txt ./examples/small.fastq inverted"
-    ["test-7"]="$GREPQ -c ./examples/regex.txt ./examples/small.fastq"
-    ["test-8"]="$GREPQ -c ./examples/regex.txt ./examples/small.fastq inverted"
-    ["test-9"]="$GREPQ ./examples/regex.txt ./examples/small.fastq tune -n 10000 -c"
-    ["test-10"]="$GREPQ -xj ./examples/regex.json ./examples/SRX26365298.fastq.gz tune -n 100000 -c --names --json-matches"
-)
+# Check if the path to the test file is provided
+if [ -z "$1" ]; then
+    echo "Usage: $0 [control] <path_to_tests_yaml>"
+    exit 1
+fi
 
+TEST_FILE="$1"
+
+# Load tests and expected sizes from YAML file
+tests_yaml=$(yq e '.tests' "$TEST_FILE")
+expected_sizes_yaml=$(yq e '.expected_sizes' "$TEST_FILE")
+
+declare -A tests
 declare -A expected_sizes
-expected_sizes=(
-    ["test-1"]=15953
-    ["test-2"]=736547
-    ["test-3"]=19515
-    ["test-4"]=901271
-    ["test-5"]=35574
-    ["test-6"]=1642712
-    ["test-7"]=53
-    ["test-8"]=2447
-    ["test-9"]=411
-    ["test-10"]=2366
-)
+
+# Check if tests_yaml and expected_sizes_yaml are not empty
+if [ -n "$tests_yaml" ] && [ -n "$expected_sizes_yaml" ]; then
+    for key in $(echo "$tests_yaml" | yq e 'keys | .[]' -); do
+        if [ "$key" != "null" ]; then
+            tests[$key]=$(echo "$tests_yaml" | yq e ".$key" - | sed "s|\$GREPQ|$GREPQ|g")
+            expected_sizes[$key]=$(echo "$expected_sizes_yaml" | yq e ".$key" -)
+        fi
+    done
+fi
 
 # Using an array to maintain the order of the tests
 test_order=("test-1" "test-2" "test-3" "test-4" "test-5" "test-6" "test-7" "test-8" "test-9" "test-10")
