@@ -5,27 +5,45 @@
 # Date: December 2024 
 ###
 
+
+
 ## TODO: 
     # add test for tune command 
     # add Linux support for stat command
 
 ## Redirect all output to a file, with the current date and time as the filename
-# ./test.sh tests.yaml &> $(date +"%Y-%m-%d %H:%M:%S").txt
-# ./test.sh control tests.yaml &> $(date +"%Y-%m-%d %H:%M:%S").txt
+# ./test.sh tests.yaml &> ../snapshots/$(date +"%Y-%m-%d %H:%M:%S").txt
+# ./test.sh bench tests.yaml &> ../snapshots/$(date +"%Y-%m-%d %H:%M:%S").txt
 
 # Exit immediately if a command exits with a non-zero status
 set -e
 
-if [ "$1" == "control" ]; then
+# Print the operating system and CPU architecture
+if [[ "$OSTYPE" == "linux-"* ]]; then
+  echo "Operating System: Linux"
+  echo "CPU Architecture: $(uname -m)"
+elif [[ "$OSTYPE" == "darwin"* ]]; then
+  echo "Operating System: macOS"
+  echo "CPU Architecture: $(uname -m)"
+else
+  echo "Operating System: Unknown"
+fi
+
+# Check if the bench flag is provided
+if [ "$1" == "bench" ]; then
     GREPQ="grepq"
+    echo "Using grepq version:"
+    grepq -V
     shift
 else 
-    GREPQ="./target/release/grepq"
+    GREPQ="../target/release/grepq"
+    echo "Using grepq version:"
+    ../target/release/grepq -V
 fi
 
 # Check if the path to the test file is provided
 if [ -z "$1" ]; then
-    echo "Usage: $0 [control] <path_to_tests_yaml>"
+    echo "Usage: $0 [bench] <path_to_tests_yaml>"
     exit 1
 fi
 
@@ -55,6 +73,7 @@ test_order=("test-1" "test-2" "test-3" "test-4" "test-5" "test-6" "test-7" "test
 BOLD="\033[1m"
 ORANGE="\033[38;2;255;165;0m"
 RESET="\033[0m"
+
 
 echo -e "\nTests run:"
 echo -e "$(date +"%Y-%m-%d %H:%M:%S")\n"
