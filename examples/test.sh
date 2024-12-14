@@ -10,7 +10,7 @@
 
 ## Redirect all output to a file, with the current date and time as the filename
 # ./test.sh tests.yaml &> ../snapshots/$(date +"%Y-%m-%d %H:%M:%S").txt
-# ./test.sh bench tests.yaml &> ../snapshots/$(date +"%Y-%m-%d %H:%M:%S").txt
+# ./test.sh control tests.yaml &> ../snapshots/$(date +"%Y-%m-%d %H:%M:%S").txt
 
 # Exit immediately if a command exits with a non-zero status
 set -e
@@ -26,8 +26,8 @@ else
   echo "OS: Unknown"
 fi
 
-# Check if the bench flag is provided
-if [ "$1" == "bench" ]; then
+# Check if the control flag is provided
+if [ "$1" == "control" ]; then
     GREPQ="grepq"
     echo "version: $(grepq -V)"
     echo "tests:" $2
@@ -40,7 +40,7 @@ fi
 
 # Check if the path to the test file is provided
 if [ -z "$1" ]; then
-    echo "Usage: $0 [bench] <path_to_tests_yaml>"
+    echo "Usage: $0 [control] <path_to_tests_yaml>"
     exit 1
 fi
 

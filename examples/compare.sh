@@ -23,6 +23,11 @@ fi
 INPUT_FILE="$1"
 SECOND_INPUT_FILE="$2"
 
+echo -e
+echo -e "Comparing times in control: $INPUT_FILE"
+echo -e "to test: $SECOND_INPUT_FILE"
+echo -e
+
 # Function to process input file and extract times in seconds
 extract_times() {
     local file="$1"
