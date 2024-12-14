@@ -17,24 +17,24 @@ set -e
 
 # Print the operating system and CPU architecture
 if [[ "$OSTYPE" == "linux-"* ]]; then
-  echo "Operating System: Linux"
-  echo "CPU Architecture: $(uname -m)"
+  echo "OS: Linux"
+  echo "CPU: $(uname -m)"
 elif [[ "$OSTYPE" == "darwin"* ]]; then
-  echo "Operating System: macOS"
-  echo "CPU Architecture: $(uname -m)"
+  echo "OS: macOS"
+  echo "CPU: $(uname -m)"
 else
-  echo "Operating System: Unknown"
+  echo "OS: Unknown"
 fi
 
 # Check if the bench flag is provided
 if [ "$1" == "bench" ]; then
     GREPQ="grepq"
-    echo "Using grepq version:"
-    grepq -V
+    echo "version: $(grepq -V)"
+    echo "tests:" $2
     shift
 else 
     GREPQ="../target/release/grepq"
-    echo "Using grepq version:"
+    echo "version:"
     ../target/release/grepq -V
 fi
 
@@ -99,26 +99,26 @@ for test in "${test_order[@]}"; do
                 echo -e "${ORANGE}command was: ${tests[$test]}${RESET}\n"
             fi
         else
-            time ${tests[$test]} > ${test}.txt
+            time ${tests[$test]} > /tmp/${test}.txt
             if [ "$test" == "test-9" ]; then
-                actual_size=$(stat -f %z "${test}.txt")
+                actual_size=$(stat -f %z "/tmp/${test}.txt")
                 if [ $actual_size -eq ${expected_sizes[$test]} ]; then
                     echo -e "\n"
                 else
                     echo -e "\n${ORANGE}${test} failed${RESET}"
                     echo -e "${ORANGE}expected: ${expected_sizes[$test]} bytes${RESET}"
                     echo -e "${ORANGE}got: $actual_size bytes${RESET}"
-                    echo -e "${ORANGE}command was: ${tests[$test]} > ${test}.txt${RESET}\n"
+                    echo -e "${ORANGE}command was: ${tests[$test]} > /tmp/${test}.txt${RESET}\n"
                 fi
             else
-                actual_size=$(stat -f %z "${test}.txt")
+                actual_size=$(stat -f %z "/tmp/${test}.txt")
                 if [ $actual_size -eq ${expected_sizes[$test]} ]; then
                     echo -e "\n"
                 else
                     echo -e "\n${ORANGE}${test} failed${RESET}"
                     echo -e "${ORANGE}expected: ${expected_sizes[$test]} bytes${RESET}"
                     echo -e "${ORANGE}got: $actual_size bytes${RESET}"
-                    echo -e "${ORANGE}command was: ${tests[$test]} > ${test}.txt${RESET}\n"
+                    echo -e "${ORANGE}command was: ${tests[$test]} > /tmp/${test}.txt${RESET}\n"
                 fi
             fi
         fi
