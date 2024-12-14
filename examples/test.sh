@@ -9,8 +9,8 @@
 # add Linux support for stat command
 
 ## Redirect all output to a file, with the current date and time as the filename
-# ./test.sh tests.yaml &> ../snapshots/$(date +"%Y-%m-%d %H:%M:%S").txt
-# ./test.sh control tests.yaml &> ../snapshots/$(date +"%Y-%m-%d %H:%M:%S").txt
+# ./test.sh tests.yaml &> ../snapshots/$(date +"%Y-%m-%d-%H:%M:%S").txt
+# ./test.sh control tests.yaml &> ../snapshots/$(date +"%Y-%m-%d-%H:%M:%S").txt
 
 # Exit immediately if a command exits with a non-zero status
 set -e
