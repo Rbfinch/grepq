@@ -61,4 +61,3 @@ for i in "${!times_file1[@]}"; do
     percent_difference=$(echo "scale=2; (($time2 - $time1) / $time1) * 100" | bc)
     echo "%diff test-$((i + 1)): $percent_difference%"
 done
-
