@@ -5,10 +5,7 @@
 # Date: December 2024 
 ###
 
-
-
 ## TODO: 
-    # add test for tune command 
     # add Linux support for stat command
 
 ## Redirect all output to a file, with the current date and time as the filename
@@ -50,18 +47,18 @@ fi
 TEST_FILE="$1"
 
 # Load tests and expected sizes from YAML file
-tests_yaml=$(yq e '.tests' "$TEST_FILE")
-expected_sizes_yaml=$(yq e '.expected_sizes' "$TEST_FILE")
+tests_yaml=$(yq '.tests' "$TEST_FILE")
+expected_sizes_yaml=$(yq '.expected_sizes' "$TEST_FILE")
 
 declare -A tests
 declare -A expected_sizes
 
 # Check if tests_yaml and expected_sizes_yaml are not empty
 if [ -n "$tests_yaml" ] && [ -n "$expected_sizes_yaml" ]; then
-    for key in $(echo "$tests_yaml" | yq e 'keys | .[]' -); do
+    for key in $(echo "$tests_yaml" | yq 'keys | .[]' -); do
         if [ "$key" != "null" ]; then
-            tests[$key]=$(echo "$tests_yaml" | yq e ".$key" - | sed "s|\$GREPQ|$GREPQ|g")
-            expected_sizes[$key]=$(echo "$expected_sizes_yaml" | yq e ".$key" -)
+            tests[$key]=$(echo "$tests_yaml" | yq ".$key" - | sed "s|\$GREPQ|$GREPQ|g")
+            expected_sizes[$key]=$(echo "$expected_sizes_yaml" | yq ".$key" -)
         fi
     done
 fi
