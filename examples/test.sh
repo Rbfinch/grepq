@@ -6,7 +6,7 @@
 ###
 
 ## TODO: 
-    # add Linux support for stat command
+# add Linux support for stat command
 
 ## Redirect all output to a file, with the current date and time as the filename
 # ./test.sh tests.yaml &> ../snapshots/$(date +"%Y-%m-%d %H:%M:%S").txt
@@ -70,7 +70,6 @@ test_order=("test-1" "test-2" "test-3" "test-4" "test-5" "test-6" "test-7" "test
 BOLD="\033[1m"
 ORANGE="\033[38;2;255;165;0m"
 RESET="\033[0m"
-
 
 echo -e "\nTests run:"
 echo -e "$(date +"%Y-%m-%d %H:%M:%S")\n"
