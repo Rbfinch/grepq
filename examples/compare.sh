@@ -48,8 +48,8 @@ INPUT_FILE="$1"
 SECOND_INPUT_FILE="$2"
 
 echo -e
-echo -e "Comparing times in control: $INPUT_FILE"
-echo -e "to test: $SECOND_INPUT_FILE"
+echo -e "% difference for control: $INPUT_FILE"
+echo -e "and test: $SECOND_INPUT_FILE"
 echo -e
 
 # Color codes
@@ -89,8 +89,8 @@ for i in "${!times_file1[@]}"; do
     time2=${times_file2[$i]}
     percent_difference=$(echo "scale=2; (($time2 - $time1) / $time1) * 100" | bc)
     if (( $(echo "$percent_difference > $TOLERANCE" | bc -l) )) || (( $(echo "$percent_difference < -$TOLERANCE" | bc -l) )); then
-        echo -e "${BOLD}${ORANGE}%diff test-$((i + 1)): $percent_difference%${RESET}"
+        echo -e "${BOLD}${ORANGE}test-$((i + 1)): $percent_difference%${RESET}"
     else
-        echo "%diff test-$((i + 1)): $percent_difference%"
+        echo "test-$((i + 1)): $percent_difference%"
     fi
 done
