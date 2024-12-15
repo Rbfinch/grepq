@@ -19,11 +19,14 @@ set -e
 if [[ "$OSTYPE" == "linux-"* ]]; then
   echo "OS: Linux"
   echo "CPU: $(uname -m)"
+  STAT_CMD="stat -c %s"
 elif [[ "$OSTYPE" == "darwin"* ]]; then
   echo "OS: macOS"
   echo "CPU: $(uname -m)"
+  STAT_CMD="stat -f %z"
 else
   echo "OS: Unknown"
+  exit 1
 fi
 
 # Check if the control flag is provided
@@ -89,7 +92,7 @@ for test in "${test_order[@]}"; do
     else
         if [ "$test" == "test-10" ]; then
             time ${tests[$test]}
-            actual_size=$(stat -f %z "matches.json")
+            actual_size=$($STAT_CMD "matches.json")
             if [ $actual_size -eq ${expected_sizes[$test]} ]; then
                 echo -e "\n"
             else
@@ -101,7 +104,7 @@ for test in "${test_order[@]}"; do
         else
             time ${tests[$test]} > /tmp/${test}.txt
             if [ "$test" == "test-9" ]; then
-                actual_size=$(stat -f %z "/tmp/${test}.txt")
+                actual_size=$($STAT_CMD "/tmp/${test}.txt")
                 if [ $actual_size -eq ${expected_sizes[$test]} ]; then
                     echo -e "\n"
                 else
@@ -111,7 +114,7 @@ for test in "${test_order[@]}"; do
                     echo -e "${ORANGE}command was: ${tests[$test]} > /tmp/${test}.txt${RESET}\n"
                 fi
             else
-                actual_size=$(stat -f %z "/tmp/${test}.txt")
+                actual_size=$($STAT_CMD "/tmp/${test}.txt")
                 if [ $actual_size -eq ${expected_sizes[$test]} ]; then
                     echo -e "\n"
                 else
