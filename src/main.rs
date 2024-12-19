@@ -61,6 +61,10 @@ fn main() {
     let with_full_record = cli.with_full_record;
     let count = cli.count;
 
+    let check_seq_len = minimum_sequence_length.is_some();
+    let check_qual = minimum_quality.is_some();
+    let check_header = header_regex.is_some();
+
     if count {
         let mut match_count = 0;
         parallel_fastq(
@@ -70,17 +74,12 @@ fn main() {
             |record, found| {
                 // runs in worker
                 *found = false;
-                let seq_len_check =
-                    minimum_sequence_length.map_or(true, |len| record.seq().len() >= len as usize);
-                let qual_check = minimum_quality.map_or(true, |min_q| {
-                    quality::average_quality(
-                        record.qual(),
-                        quality_encoding.as_deref().unwrap_or("Phred+33"),
-                    ) >= min_q as f32
-                });
-                let header_check = header_regex
-                    .as_ref()
-                    .map_or(true, |re| re.is_match(record.head()));
+                let seq_len_check = !check_seq_len || record.seq().len() >= minimum_sequence_length.unwrap() as usize;
+                let qual_check = !check_qual || quality::average_quality(
+                    record.qual(),
+                    quality_encoding.as_deref().unwrap_or("Phred+33"),
+                ) >= minimum_quality.unwrap() as f32;
+                let header_check = !check_header || header_regex.as_ref().unwrap().is_match(record.head());
                 let regex_check = regex_set.is_match(record.seq());
 
                 debug_log!("Debug: seq_len_check = {}, qual_check = {}, header_check = {}, regex_check = {}", seq_len_check, qual_check, header_check, regex_check);
@@ -107,17 +106,12 @@ fn main() {
             |record, found| {
                 // runs in worker
                 *found = false;
-                let seq_len_check =
-                    minimum_sequence_length.map_or(true, |len| record.seq().len() >= len as usize);
-                let qual_check = minimum_quality.map_or(true, |min_q| {
-                    quality::average_quality(
-                        record.qual(),
-                        quality_encoding.as_deref().unwrap_or("Phred+33"),
-                    ) >= min_q as f32
-                });
-                let header_check = header_regex
-                    .as_ref()
-                    .map_or(true, |re| re.is_match(record.head()));
+                let seq_len_check = !check_seq_len || record.seq().len() >= minimum_sequence_length.unwrap() as usize;
+                let qual_check = !check_qual || quality::average_quality(
+                    record.qual(),
+                    quality_encoding.as_deref().unwrap_or("Phred+33"),
+                ) >= minimum_quality.unwrap() as f32;
+                let header_check = !check_header || header_regex.as_ref().unwrap().is_match(record.head());
                 let regex_check = regex_set.is_match(record.seq());
 
                 debug_log!("Debug: seq_len_check = {}, qual_check = {}, header_check = {}, regex_check = {}", seq_len_check, qual_check, header_check, regex_check);
