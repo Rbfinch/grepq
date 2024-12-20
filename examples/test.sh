@@ -79,6 +79,7 @@ echo -e "$(date +"%Y-%m-%d %H:%M:%S")\n"
 
 for test in "${test_order[@]}"; do
     echo -e "${BOLD}${test} ${RESET}"
+    echo "${tests[$test]}"
     if [ "$test" == "test-7" ] || [ "$test" == "test-8" ]; then
         actual_count=$(time ${tests[$test]})
         if [ $actual_count -eq ${expected_sizes[$test]} ]; then
@@ -103,26 +104,14 @@ for test in "${test_order[@]}"; do
             fi
         else
             time ${tests[$test]} > /tmp/${test}.txt
-            if [ "$test" == "test-9" ]; then
-                actual_size=$($STAT_CMD "/tmp/${test}.txt")
-                if [ $actual_size -eq ${expected_sizes[$test]} ]; then
-                    echo -e "\n"
-                else
-                    echo -e "\n${ORANGE}${test} failed${RESET}"
-                    echo -e "${ORANGE}expected: ${expected_sizes[$test]} bytes${RESET}"
-                    echo -e "${ORANGE}got: $actual_size bytes${RESET}"
-                    echo -e "${ORANGE}command was: ${tests[$test]} > /tmp/${test}.txt${RESET}\n"
-                fi
+            actual_size=$($STAT_CMD "/tmp/${test}.txt")
+            if [ $actual_size -eq ${expected_sizes[$test]} ]; then
+                echo -e "\n"
             else
-                actual_size=$($STAT_CMD "/tmp/${test}.txt")
-                if [ $actual_size -eq ${expected_sizes[$test]} ]; then
-                    echo -e "\n"
-                else
-                    echo -e "\n${ORANGE}${test} failed${RESET}"
-                    echo -e "${ORANGE}expected: ${expected_sizes[$test]} bytes${RESET}"
-                    echo -e "${ORANGE}got: $actual_size bytes${RESET}"
-                    echo -e "${ORANGE}command was: ${tests[$test]} > /tmp/${test}.txt${RESET}\n"
-                fi
+                echo -e "\n${ORANGE}${test} failed${RESET}"
+                echo -e "${ORANGE}expected: ${expected_sizes[$test]} bytes${RESET}"
+                echo -e "${ORANGE}got: $actual_size bytes${RESET}"
+                echo -e "${ORANGE}command was: ${tests[$test]} > /tmp/${test}.txt${RESET}\n"
             fi
         fi
     fi
