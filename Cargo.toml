@@ -10,30 +10,20 @@ documentation = "https://github.com/Rbfinch/grepq"
 repository = "https://github.com/Rbfinch/grepq"
 readme = "README.md"
 categories = ["science"]
-keywords = ["bioinformatics", "FASTQ", "REGEX", "JSON", "gzip"]
+keywords = ["bioinformatics", "FASTQ", "REGEX", "JSON", "gzip", "cli"]
 
 [dependencies]
 seq_io = "0.3.2"
 regex = "1.11.1"
 mimalloc = "0.1.43"
-clap = { version = "4.5.21", features = ["derive", "cargo"] }
+clap = { version = "4.5.23", features = ["derive", "cargo"] }
 num_cpus = "1.16.0"
 flate2 = "1.0.35"
-jsonschema = "0.26.1"
-serde_json = "1.0.133"
-env_logger = "0.11.5"
+jsonschema = "0.26.2"
+serde_json = "1.0.134"
+env_logger = "0.11.6"
 log = "0.4.22"
 colored = "2.2.0"
 
 [profile.release]
 lto = true
-
-[profile.dev]
-opt-level = 2
-debug = true
-
-[profile.dev.dependencies]
-clippy = { version = "0.0.302", default-features = true, features = ["cargo"] }
-
-[profile.dev.build-dependencies]
-clippy_lints = { version = "0.0.212", default-features = true }
