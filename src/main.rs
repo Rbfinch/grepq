@@ -14,27 +14,10 @@ mod inverted;
 mod quality;
 mod tune;
 use clap::Parser;
-use env_logger::Env;
 use initialise::{create_reader, create_writer, parse_patterns_file};
-#[macro_use]
-extern crate log;
 use std::io::{self};
 
-pub mod macros {
-    #[macro_export]
-    macro_rules! debug_log {
-        ($($arg:tt)*) => {
-            #[cfg(debug_assertions)]
-            {
-                info!($($arg)*);
-            }
-        };
-    }
-}
-
 fn main() {
-    env_logger::Builder::from_env(Env::default().default_filter_or("debug")).init();
-
     let cli = Cli::parse();
 
     match &cli.command {
@@ -74,15 +57,16 @@ fn main() {
             |record, found| {
                 // runs in worker
                 *found = false;
-                let seq_len_check = !check_seq_len || record.seq().len() >= minimum_sequence_length.unwrap() as usize;
-                let qual_check = !check_qual || quality::average_quality(
-                    record.qual(),
-                    quality_encoding.as_deref().unwrap_or("Phred+33"),
-                ) >= minimum_quality.unwrap() as f32;
-                let header_check = !check_header || header_regex.as_ref().unwrap().is_match(record.head());
+                let seq_len_check = !check_seq_len
+                    || record.seq().len() >= minimum_sequence_length.unwrap() as usize;
+                let qual_check = !check_qual
+                    || quality::average_quality(
+                        record.qual(),
+                        quality_encoding.as_deref().unwrap_or("Phred+33"),
+                    ) >= minimum_quality.unwrap() as f32;
+                let header_check =
+                    !check_header || header_regex.as_ref().unwrap().is_match(record.head());
                 let regex_check = regex_set.is_match(record.seq());
-
-                debug_log!("Debug: seq_len_check = {}, qual_check = {}, header_check = {}, regex_check = {}", seq_len_check, qual_check, header_check, regex_check);
 
                 if seq_len_check && qual_check && header_check && regex_check {
                     *found = true;
@@ -106,15 +90,16 @@ fn main() {
             |record, found| {
                 // runs in worker
                 *found = false;
-                let seq_len_check = !check_seq_len || record.seq().len() >= minimum_sequence_length.unwrap() as usize;
-                let qual_check = !check_qual || quality::average_quality(
-                    record.qual(),
-                    quality_encoding.as_deref().unwrap_or("Phred+33"),
-                ) >= minimum_quality.unwrap() as f32;
-                let header_check = !check_header || header_regex.as_ref().unwrap().is_match(record.head());
+                let seq_len_check = !check_seq_len
+                    || record.seq().len() >= minimum_sequence_length.unwrap() as usize;
+                let qual_check = !check_qual
+                    || quality::average_quality(
+                        record.qual(),
+                        quality_encoding.as_deref().unwrap_or("Phred+33"),
+                    ) >= minimum_quality.unwrap() as f32;
+                let header_check =
+                    !check_header || header_regex.as_ref().unwrap().is_match(record.head());
                 let regex_check = regex_set.is_match(record.seq());
-
-                debug_log!("Debug: seq_len_check = {}, qual_check = {}, header_check = {}, regex_check = {}", seq_len_check, qual_check, header_check, regex_check);
 
                 if seq_len_check && qual_check && header_check && regex_check {
                     *found = true;

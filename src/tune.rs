@@ -1,5 +1,4 @@
 use crate::arg::Cli;
-use crate::debug_log;
 use crate::initialise::{create_reader, parse_patterns_file};
 use crate::quality;
 use regex::bytes::Regex;
@@ -43,13 +42,6 @@ pub fn run_tune(cli: &Cli, num_records: usize, include_count: bool) -> io::Resul
                 quality_encoding.as_deref().unwrap_or("Phred+33"),
             ) >= min_q as f32
         });
-
-        debug_log!(
-            "Debug: seq_len_check = {}, header_check = {}, qual_check = {}",
-            seq_len_check,
-            header_check,
-            qual_check
-        );
 
         if seq_len_check && header_check && qual_check {
             for mat in regex_set.matches(record.seq()).into_iter() {
