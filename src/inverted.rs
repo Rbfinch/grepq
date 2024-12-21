@@ -60,7 +60,7 @@ pub fn run_inverted(cli: &Cli) {
         parallel_fastq(
             reader,
             num_cpus::get() as u32,
-            num_cpus::get() as usize,
+            num_cpus::get(),
             |record, found| {
                 // runs in worker
                 *found = false;
