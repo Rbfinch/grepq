@@ -159,9 +159,9 @@ fn write_record_with_id<W: Write>(
     head_buffer.extend_from_slice(record.head());
     seq_buffer.extend_from_slice(record.seq());
     writer.write_all(b"@").unwrap();
-    writer.write_all(&head_buffer).unwrap();
+    writer.write_all(head_buffer).unwrap();
     writer.write_all(b"\n").unwrap();
-    writer.write_all(&seq_buffer).unwrap();
+    writer.write_all(seq_buffer).unwrap();
     writer.write_all(b"\n").unwrap();
 }
 
@@ -180,12 +180,12 @@ fn write_full_record<W: Write>(
     seq_buffer.extend_from_slice(record.seq());
     qual_buffer.extend_from_slice(record.qual());
     writer.write_all(b"@").unwrap();
-    writer.write_all(&head_buffer).unwrap();
+    writer.write_all(head_buffer).unwrap();
     writer.write_all(b"\n").unwrap();
-    writer.write_all(&seq_buffer).unwrap();
+    writer.write_all(seq_buffer).unwrap();
     writer.write_all(b"\n").unwrap();
     writer.write_all(b"+").unwrap();
     writer.write_all(b"\n").unwrap();
-    writer.write_all(&qual_buffer).unwrap();
+    writer.write_all(qual_buffer).unwrap();
     writer.write_all(b"\n").unwrap();
 }
