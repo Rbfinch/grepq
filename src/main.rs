@@ -48,6 +48,10 @@ fn main() {
     let check_qual = minimum_quality.is_some();
     let check_header = header_regex.is_some();
 
+    let mut seq_buffer = Vec::new();
+    let mut qual_buffer = Vec::new();
+    let mut head_buffer = Vec::new();
+
     if count {
         let mut match_count = 0;
         parallel_fastq(
@@ -60,7 +64,7 @@ fn main() {
                 let seq_len_check = !check_seq_len
                     || record.seq().len() >= minimum_sequence_length.unwrap() as usize;
                 let qual_check = !check_qual
-                    || quality::average_quality(
+                    || average_quality(
                         record.qual(),
                         quality_encoding.as_deref().unwrap_or("Phred+33"),
                     ) >= minimum_quality.unwrap() as f32;
@@ -110,22 +114,21 @@ fn main() {
                 if *found {
                     if with_id {
                         // With ID mode
-                        writer.write_all(b"@").unwrap();
-                        writer.write_all(record.head()).unwrap();
-                        writer.write_all(b"\n").unwrap();
-                        writer.write_all(record.seq()).unwrap();
-                        writer.write_all(b"\n").unwrap();
+                        write_record_with_id(
+                            &mut writer,
+                            &record,
+                            &mut head_buffer,
+                            &mut seq_buffer,
+                        );
                     } else if with_full_record {
                         // With full record mode
-                        writer.write_all(b"@").unwrap();
-                        writer.write_all(record.head()).unwrap();
-                        writer.write_all(b"\n").unwrap();
-                        writer.write_all(record.seq()).unwrap();
-                        writer.write_all(b"\n").unwrap();
-                        writer.write_all(b"+").unwrap();
-                        writer.write_all(b"\n").unwrap();
-                        writer.write_all(record.qual()).unwrap();
-                        writer.write_all(b"\n").unwrap();
+                        write_full_record(
+                            &mut writer,
+                            &record,
+                            &mut head_buffer,
+                            &mut seq_buffer,
+                            &mut qual_buffer,
+                        );
                     } else {
                         // Default mode
                         writer.write_all(record.seq()).unwrap();
@@ -137,4 +140,52 @@ fn main() {
         )
         .unwrap();
     }
+}
+
+#[inline(always)]
+fn average_quality(qual: &[u8], encoding: &str) -> f32 {
+    quality::average_quality(qual, encoding)
+}
+
+#[inline(always)]
+fn write_record_with_id<W: Write>(
+    writer: &mut W,
+    record: &seq_io::fastq::RefRecord,
+    head_buffer: &mut Vec<u8>,
+    seq_buffer: &mut Vec<u8>,
+) {
+    head_buffer.clear();
+    seq_buffer.clear();
+    head_buffer.extend_from_slice(record.head());
+    seq_buffer.extend_from_slice(record.seq());
+    writer.write_all(b"@").unwrap();
+    writer.write_all(&head_buffer).unwrap();
+    writer.write_all(b"\n").unwrap();
+    writer.write_all(&seq_buffer).unwrap();
+    writer.write_all(b"\n").unwrap();
+}
+
+#[inline(always)]
+fn write_full_record<W: Write>(
+    writer: &mut W,
+    record: &seq_io::fastq::RefRecord,
+    head_buffer: &mut Vec<u8>,
+    seq_buffer: &mut Vec<u8>,
+    qual_buffer: &mut Vec<u8>,
+) {
+    head_buffer.clear();
+    seq_buffer.clear();
+    qual_buffer.clear();
+    head_buffer.extend_from_slice(record.head());
+    seq_buffer.extend_from_slice(record.seq());
+    qual_buffer.extend_from_slice(record.qual());
+    writer.write_all(b"@").unwrap();
+    writer.write_all(&head_buffer).unwrap();
+    writer.write_all(b"\n").unwrap();
+    writer.write_all(&seq_buffer).unwrap();
+    writer.write_all(b"\n").unwrap();
+    writer.write_all(b"+").unwrap();
+    writer.write_all(b"\n").unwrap();
+    writer.write_all(&qual_buffer).unwrap();
+    writer.write_all(b"\n").unwrap();
 }
