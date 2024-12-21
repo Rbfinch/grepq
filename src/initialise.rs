@@ -12,7 +12,7 @@ static SCHEMA: &str = r#"
 {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "title": "grepq",
-    "version": 1,
+    "version": 2,
     "type": "object",
     "properties": {
         "regexSet": {
