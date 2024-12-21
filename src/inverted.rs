@@ -1,27 +1,26 @@
 use crate::arg::Cli;
 use crate::initialise::{create_reader, create_writer, parse_patterns_file};
-use crate::quality;
-use regex::Regex;
+use regex::bytes::Regex;
 use seq_io::fastq::Record;
 use seq_io::parallel::parallel_fastq;
 use std::io::Write;
-use std::io::{self};
-
-use crate::debug_log;
 
 pub fn run_inverted(cli: &Cli) {
-    // No need to initialize env_logger here
     let with_id = cli.with_id;
-    let count = cli.count;
     let with_full_record = cli.with_full_record;
+    let count = cli.count;
+
     let (regex_set, header_regex, minimum_sequence_length, minimum_quality, quality_encoding) =
         parse_patterns_file(&cli.patterns)
-            .map_err(|e| io::Error::new(io::ErrorKind::Other, e))
+            .map_err(|e| std::io::Error::new(std::io::ErrorKind::Other, e))
             .unwrap();
     let header_regex = header_regex.map(|re| Regex::new(&re).unwrap());
-
     let reader = create_reader(cli);
     let mut writer = create_writer(cli);
+
+    let check_seq_len = minimum_sequence_length.is_some();
+    let check_qual = minimum_quality.is_some();
+    let check_header = header_regex.is_some();
 
     if count {
         let mut match_count = 0;
@@ -32,22 +31,18 @@ pub fn run_inverted(cli: &Cli) {
             |record, found| {
                 // runs in worker
                 *found = false;
-                let seq_len_check =
-                    minimum_sequence_length.map_or(true, |len| record.seq().len() >= len as usize);
-                let qual_check = minimum_quality.map_or(true, |min_q| {
-                    quality::average_quality(
+                let seq_len_check = !check_seq_len
+                    || record.seq().len() >= minimum_sequence_length.unwrap() as usize;
+                let qual_check = !check_qual
+                    || crate::quality::average_quality(
                         record.qual(),
                         quality_encoding.as_deref().unwrap_or("Phred+33"),
-                    ) >= min_q as f32
-                });
-                let header_check = header_regex
-                    .as_ref()
-                    .map_or(true, |re| re.is_match(std::str::from_utf8(record.head()).unwrap()));
+                    ) >= minimum_quality.unwrap() as f32;
+                let header_check =
+                    !check_header || header_regex.as_ref().unwrap().is_match(record.head());
                 let regex_check = !regex_set.is_match(record.seq());
 
-                debug_log!("Debug: seq_len_check = {}, qual_check = {}, header_check = {}, regex_check = {}", seq_len_check, qual_check, header_check, regex_check);
-
-                if seq_len_check && qual_check && header_check && !regex_check {
+                if seq_len_check && qual_check && header_check && regex_check {
                     *found = true;
                 }
             },
@@ -65,26 +60,22 @@ pub fn run_inverted(cli: &Cli) {
         parallel_fastq(
             reader,
             num_cpus::get() as u32,
-            num_cpus::get(),
+            num_cpus::get() as usize,
             |record, found| {
                 // runs in worker
                 *found = false;
-                let seq_len_check =
-                    minimum_sequence_length.map_or(true, |len| record.seq().len() >= len as usize);
-                let qual_check = minimum_quality.map_or(true, |min_q| {
-                    quality::average_quality(
+                let seq_len_check = !check_seq_len
+                    || record.seq().len() >= minimum_sequence_length.unwrap() as usize;
+                let qual_check = !check_qual
+                    || crate::quality::average_quality(
                         record.qual(),
                         quality_encoding.as_deref().unwrap_or("Phred+33"),
-                    ) >= min_q as f32
-                });
-                let header_check = header_regex
-                    .as_ref()
-                    .map_or(true, |re| re.is_match(std::str::from_utf8(record.head()).unwrap()));
+                    ) >= minimum_quality.unwrap() as f32;
+                let header_check =
+                    !check_header || header_regex.as_ref().unwrap().is_match(record.head());
                 let regex_check = !regex_set.is_match(record.seq());
 
-                debug_log!("Debug: seq_len_check = {}, qual_check = {}, header_check = {}, regex_check = {}", seq_len_check, qual_check, header_check, regex_check);
-
-                if seq_len_check && qual_check && header_check && !regex_check {
+                if seq_len_check && qual_check && header_check && regex_check {
                     *found = true;
                 }
             },
