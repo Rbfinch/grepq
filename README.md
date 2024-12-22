@@ -9,14 +9,14 @@ _Quickly filter FASTQ files by matching sequences to a set of regex patterns_
 
 - very fast and scales to large FASTQ files
 - gzip support
-- JSON support for pattern file input and `tune` subcommand output, allowing named regex sets and named regex patterns.
-- use **predicates** to filter on header field (with regex), minimum sequence length, and minimum quality score (supports Phred+33 and Phred+64)
+- JSON support for pattern file input and `tune` subcommand output, allowing named regex sets and named regex patterns
+- use **predicates** to filter on header field (with regex), minimum sequence length, and minimum total quality score (supports Phred+33 and Phred+64)
 - does not match false positives
 - output matched sequences to one of three formats
 - tune your pattern file with the `tune` subcommand
 - supports inverted matching with the `inverted` subcommand
-- comprehensive help, examples and testing scripts
 - plays nicely with your unix workflows
+- comprehensive help, examples and testing script
 
 ## Features and performance in detail
 **1. Very fast and scales to large FASTQ files**
@@ -49,13 +49,16 @@ Use the `--best` option for best compression, or the `--fast` option for faster 
 
 **3. Predicates**
 
-Predicates can be used to filter on the header field (with regex), minimum sequence length, and minimum quality score (supports Phred+33 and Phred+64). The header field is the first line of a FASTQ record, which starts with the '@' character. The sequence length is the number of characters in the sequence field of a FASTQ record. The quality score is the number of characters in the quality field of a FASTQ record. The quality score is the ASCII value of the quality score minus 33 for Phred+33, and minus 64 for Phred+64.
+Predicates can be used to filter on the header field (with regex), minimum sequence length, and minimum total quality score (supports Phred+33 and Phred+64). 
 
-Predicates are specified in the json pattern file. For an example, see `examples/regex-and-predicates.json` in the `examples` directory.
+>[!NOTE]
+Regex supplied for the header field is first passed as a string to the regex engine, and then the regex engine is used to match the header field. If you get an error message, be sure to escape any special characters in the regex pattern.
+
+Predicates are specified in a JSON pattern file. For an example, see `regex-and-predicates.json` in the `examples` directory.
 
 **4. Does not match false positives**
 
-`grepq` will only match regex patterns to the sequence field of a FASTQ record, which is the most common use case. Unlike `ripgrep` and `grep`, which will match the regex patterns to the entire FASTQ record, which includes the record ID, sequence, separator, and quality. This can lead to false positives and slow down the filtering process.
+`grepq` will only match regex patterns to the sequence field of a FASTQ record, which is the most common use case. Unlike `ripgrep` and `grep`, which will match the regex patterns to the entire FASTQ record, which includes the record ID, sequence, separator, and quality fields. This can lead to false positives and slow down the filtering process.
 
 **5. Output matched sequences to one of three formats**
 
@@ -86,7 +89,7 @@ For example, see `tune.sh` in the `examples` directory. This simple script will 
 Get instructions and examples using `grepq -h`, and `grepq tune -h` and `grepq inverted -h` for more information on the `tune` and `inverted` subcommands, respectively.
 
 >[!NOTE]
-Pattern files must contain one regex pattern per line or be provided in JSON format, and patterns are case-sensitive. You can supply an empty pattern file to count the total number of records in the FASTQ file. The regex patterns should only include the DNA sequence characters (A, C, G, T), and not IUPAC ambiguity codes (i.e., not N, R, Y, etc.). If your regex patterns contain any IUPAC ambiguity codes, then transform them to DNA sequence characters (A, C, G, T) before using them with grepq. See `regex.txt` and `regex.json` in the `examples` directory for examples of valid pattern files.
+Pattern files must contain one regex pattern per line or be provided in JSON format, and patterns are case-sensitive. You can supply an empty pattern file to count the total number of records in the FASTQ file. The regex patterns should only include the DNA sequence characters (A, C, G, T), and not IUPAC ambiguity codes (i.e., not N, R, Y, etc.). If your regex patterns contain any IUPAC ambiguity codes, then transform them to DNA sequence characters (A, C, G, T) before using them with grepq. See `regex.txt`, `regex.json` and `regex-and-predicates.json` in the `examples` directory for examples of valid pattern files.
 
 ## Requirements
 
@@ -95,10 +98,10 @@ Pattern files must contain one regex pattern per line or be provided in JSON for
 - If the build fails, make sure you have the latest version of the Rust compiler by running `rustup update`
 
 ## Installation
-- From *crates.io* (easiest method)
+- From *crates.io* (easiest method, but will not install the `examples` directory)
     - `cargo install grepq`
 
-- From *source*
+- From *source* (will install the `examples` directory)
     - Clone the repository and `cd` into the `grepq` directory
     - Run `cargo build --release`
     - Relative to the cloned parent directory, the executable will be located in `./target/release`
@@ -129,11 +132,27 @@ grepq -R ./examples/regex.txt ./examples/small.fastq inverted > outfile.txt
 1642712
 ```
 
-You may also the test script `test.sh` in the `examples` directory to test `grepq`:
+**Test script**
+
+You may also run the test script (`test.sh`) in the `examples` directory to more fully test `grepq`:
 
 ```bash
 ./test.sh tests.yaml; ./test.sh tests2.yaml; ./test.sh tests3.yaml
 ```
+
+If all tests pass, their will be no warning (orange) text in the output, and no test will
+report a failure.
+
+*Example of failing test output:*
+
+<span style="color: rgb(255, 165, 0);">
+test-7 failed <br>
+expected: 54 counts <br>
+got: 53 counts <br>
+command was: ../target/release/grepq -c regex.txt small.fastq <br>
+</span>
+<br>
+
 
 - **SARS-CoV-2 example**
 

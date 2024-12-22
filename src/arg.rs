@@ -59,32 +59,45 @@ pattern file"
             .italic(),
         "\n    grepq -c empty.txt file.fastq inverted".bold(),
         "\n\nTips:".bold().underline(),
-        "\n\nUse the `tune` subcommand (`grepq tune -h` for instructions) to
-analyze matched substrings and update the number and/or order of regex patterns
-in your pattern file according to their matched frequency. This can speed up the
-filtering process. Specify that `tune` should output to a JSON file if you want
-to save the results in a format that preserves the regex names and the name of
-the regex set (see also the Examples and Notes sections).",
-        "\n\nUse the `inverted` subcommand to identify records that do not match
+        "\n\nPredicates can be used to filter on the header field (with regex),
+minimum sequence length, and minimum total quality score (supports Phred+33 and
+Phred+64). 
+
+Predicates are specified in a JSON pattern file. For an example, see
+`regex-and-predicates.json` in the `examples` directory.
+
+Note that regex supplied to filter on the header field is first passed as a
+string to the regex engine, and then the regex engine is used to match the header
+field. If you get an error message, be sure to escape any special characters in
+the regex pattern.
+
+Use the `tune` subcommand (`grepq tune -h` for instructions) to analyze matched
+substrings and update the number and/or order of regex patterns in your pattern
+file according to their matched frequency. This can speed up the filtering
+process. Specify that `tune` should output to a JSON file if you want to save
+the results in a format that preserves the regex names and the name of the regex
+set (see also the Examples and Notes sections).",
+        "\nUse the `inverted` subcommand to identify records that do not match
 any of the regex patterns in your pattern file.",
         "\n\nEnsure you have enough storage space for output files.",
         "\n\nNotes:".bold().underline(),
         "\n\nOnly supports FASTQ files or gzip compressed FASTQ files that
 contain DNA sequences.",
-        "\n\nPattern files must contain one regex pattern per line, and patterns
-are case-sensitive (you can supply an empty pattern file to count the total
-number of records in the FASTQ file). The regex patterns should only include the
-DNA sequence characters (A, C, G, T), and not other IUPAC codes (not N, R, Y, ...).
-If your regex patterns contain any of these other IUPAC codes, then transform
-them to DNA sequence characters (A, C, G, T) before using them with `grepq`. See
-regex.txt and regex.json in the examples directory of `grepq`'s GitHub repository
+        "\n\nPattern files must contain one regex pattern per line or be given
+in JSON format, and patterns are case-sensitive (you can supply an empty pattern
+file to count the total number of records in the FASTQ file). The regex patterns
+should only include the DNA sequence characters (A, C, G, T), and not other IUPAC
+codes (not N, R, Y, ...). If your regex patterns contain any of these other IUPAC
+codes, then transform them to DNA sequence characters (A, C, G, T) before using
+them with `grepq`. See regex.txt, regex.json and regex-and-predicates.json in the
+examples directory of `grepq`'s GitHub repository (https://github.com/Rbfinch/grepq)
 for examples of valid pattern files.",
         "\n\nWhen no options are provided, only the matching sequences are
 printed.",
         "\n\nOnly one of the -I, -R, or -c options can be used at a time.",
         "\n\nThe -x and -z options can be used separately, or together, and in
-combination any of the other filtering options (the -z option cannot be used
-with the tune subcommand).",
+combination with any of the other filtering options (the -z option cannot be
+used with the tune subcommand).",
         "\n\nThe count option (-c) will support the output of the -R option 
 since it is in FASTQ format.",
         "\n\nWhen the count option (-c) is given with the `tune` subcommand,
