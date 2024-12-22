@@ -2,6 +2,10 @@ TBD
 ===
 Unreleased changes. Release notes have not yet been written.
 
+1.2.6
+=====
+* Updates to README.md
+
 1.2.5
 =====
 * Addition of predicates to filter on header field (with regex), minimum sequence length, and minimum quality score (supports Phred+33 and Phred+64)

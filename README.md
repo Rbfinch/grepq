@@ -141,7 +141,7 @@ You may also run the test script (`test.sh`) in the `examples` directory to more
 ./test.sh tests.yaml; ./test.sh tests2.yaml; ./test.sh tests3.yaml
 ```
 
-If all tests pass, their will be no warning (orange) text in the output, and no test will
+If all tests pass, there will be no warning (orange) text in the output, and no test will
 report a failure.
 
 *Example of failing test output:*
