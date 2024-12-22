@@ -10,7 +10,7 @@ documentation = "https://github.com/Rbfinch/grepq"
 repository = "https://github.com/Rbfinch/grepq"
 readme = "README.md"
 categories = ["science"]
-keywords = ["bioinformatics", "FASTQ", "REGEX", "JSON", "gzip", "cli"]
+keywords = ["bioinformatics", "FASTQ", "REGEX", "JSON", "cli"]
 
 [dependencies]
 seq_io = "0.3.2"
