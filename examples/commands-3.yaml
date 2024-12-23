@@ -1,0 +1,23 @@
+tests:
+  test-1: "$GREPQ 16S-iupac.json small.fastq"
+  test-2: "$GREPQ 16S-iupac.json small.fastq inverted"
+  test-3: "$GREPQ -I 16S-iupac.json small.fastq"
+  test-4: "$GREPQ -I 16S-iupac.json small.fastq inverted"
+  test-5: "$GREPQ -R 16S-iupac.json small.fastq"
+  test-6: "$GREPQ -R 16S-iupac.json small.fastq inverted"
+  test-7: "$GREPQ -c 16S-iupac.json small.fastq"
+  test-8: "$GREPQ -c 16S-iupac.json small.fastq inverted"
+  test-9: "$GREPQ 16S-iupac.json small.fastq tune -n 10000 -c"
+  test-10: "$GREPQ -x 16S-iupac.json SRX26365298.fastq.gz tune -n 100000 -c --names --json-matches"
+
+expected_sizes:
+  test-1: 15953
+  test-2: 736547
+  test-3: 19515
+  test-4: 901271
+  test-5: 35574
+  test-6: 1642712
+  test-7: 53
+  test-8: 2447
+  test-9: 257
+  test-10: 2478

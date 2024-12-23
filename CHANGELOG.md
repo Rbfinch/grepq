@@ -2,6 +2,12 @@ TBD
 ===
 Unreleased changes. Release notes have not yet been written.
 
+1.2.7
+=====
+* Support for IUPAC ambiguity codes
+* Updates to README.md and help text
+* Fixed bug in `tune` command that caused incorrect output
+
 1.2.6
 =====
 * Updates to README.md
