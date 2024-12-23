@@ -1,125 +1,125 @@
 {
     "regexSet": {
-        "regexSetName": "exampleRegexSet",
+        "regexSetName": "conserved 16S rRNA regions",
         "regex": [
             {
-                "regexName": "regex1",
+                "regexName": "Primer contig 06a",
                 "regexString": "[AG]AAT[AT]G[AG]CGGGG"
             },
             {
-                "regexName": "regex2",
+                "regexName": "Primer contig 06aR",
                 "regexString": "CCCCG[CT]C[AT]ATT[CT]"
             },
             {
-                "regexName": "regex3",
+                "regexName": "Primer contig 03",
                 "regexString": "GG[AG][ACGT]GGC[ACGT]GCAG"
             },
             {
-                "regexName": "regex4",
+                "regexName": "Primer contig 03R",
                 "regexString": "CTGC[ACGT]GCC[ACTG][CT]CC"
             },
             {
-                "regexName": "regex5",
+                "regexName": "Primer contig 07a",
                 "regexString": "G[CT][CT]G[CT]CGTCAGC"
             },
             {
-                "regexName": "regex6",
+                "regexName": "Primer contig 07aR",
                 "regexString": "GCTGACG[AG]C[AG][AG]C"
             },
             {
-                "regexName": "regex7",
+                "regexName": "Primer contig 04",
                 "regexString": "C[ACG]GC[ACGT]GC[CT]GCGG"
             },
             {
-                "regexName": "regex8",
+                "regexName": "Primer contig 04R",
                 "regexString": "CCGC[AG]GC[AGCT]GC[CGT]G"
             },
             {
-                "regexName": "regex9",
+                "regexName": "Primer contig 05b",
                 "regexString": "TAGA[AT]ACCC[ACGT][ACGT]G"
             },
             {
-                "regexName": "regex10",
+                "regexName": "Primer contig 05bR",
                 "regexString": "C[ACGT][ACGT]GGGT[AT]TCTA"
             },
             {
-                "regexName": "regex11",
+                "regexName": "Primer contig 07b",
                 "regexString": "CGAGCGCAACCC"
             },
             {
-                "regexName": "regex12",
+                "regexName": "Primer contig 07bR",
                 "regexString": "GGGTTGCGCTCG"
             },
             {
-                "regexName": "regex13",
+                "regexName": "Primer contig 08a",
                 "regexString": "AGG[CT]GGGGA[CT]GA"
             },
             {
-                "regexName": "regex14",
+                "regexName": "Primer contig 08aR",
                 "regexString": "TC[AG]TCCCC[AG]CCT"
             },
             {
-                "regexName": "regex15",
+                "regexName": "Primer contig 02",
                 "regexString": "[GC][CT]GGCG[ACGT]ACGGG"
             },
             {
-                "regexName": "regex16",
+                "regexName": "Primer contig 02R",
                 "regexString": "CCCGT[ACGT]CGCC[AG][GC]"
             },
             {
-                "regexName": "regex17",
+                "regexName": "Primer contig 06c",
                 "regexString": "GA[AG]GAACCTTAC"
             },
             {
-                "regexName": "regex18",
+                "regexName": "Primer contig 06cR",
                 "regexString": "GTAAGGTTC[CT]TC"
             },
             {
-                "regexName": "regex19",
+                "regexName": "Primer contig 06b",
                 "regexString": "GTGGTTTAATTC"
             },
             {
-                "regexName": "regex20",
+                "regexName": "Primer contig 06bR",
                 "regexString": "GAATTAAACCAC"
             },
             {
-                "regexName": "regex21",
+                "regexName": "Primer contig 09",
                 "regexString": "G[CT]AC[AT]C[AT]CCGCC"
             },
             {
-                "regexName": "regex22",
+                "regexName": "Primer contig 09R",
                 "regexString": "GGCGG[AT]G[AT]GT[AG]C"
             },
             {
-                "regexName": "regex23",
+                "regexName": "Primer contig 08b",
                 "regexString": "GC[TG]ACACACG[CT]G"
             },
             {
-                "regexName": "regex24",
+                "regexName": "Primer contig 08bR",
                 "regexString": "C[AG]CGTGTGT[AC]GC"
             },
             {
-                "regexName": "regex25",
+                "regexName": "Primer contig 05a",
                 "regexString": "G[AC]GGTGAAAT[TG]C"
             },
             {
-                "regexName": "regex26",
+                "regexName": "Primer contig 05aR",
                 "regexString": "G[AC]ATTTCACC[TG]C"
             },
             {
-                "regexName": "regex27",
+                "regexName": "Primer contig 01",
                 "regexString": "AT[CT][AC]TGGCTCAG"
             },
             {
-                "regexName": "regex28",
+                "regexName": "Primer contig 01R",
                 "regexString": "CTGAGCCA[TG][AG]AT"
             },
             {
-                "regexName": "regex29",
+                "regexName": "Primer contig 10",
                 "regexString": "AGTC[AG]TAACAAG"
             },
             {
-                "regexName": "regex30",
+                "regexName": "Primer contig 10R",
                 "regexString": "CTTGTTA[CT]GACT"
             }
         ]

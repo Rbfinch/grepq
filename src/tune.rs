@@ -46,7 +46,8 @@ pub fn run_tune(cli: &Cli, num_records: usize, include_count: bool) -> io::Resul
         if seq_len_check && header_check && qual_check {
             for mat in regex_set.matches(record.seq()).into_iter() {
                 let matched_pattern = regex_set.patterns()[mat].to_string();
-                *match_counts.entry(matched_pattern).or_insert(0) += 1;
+                let converted_pattern = crate::initialise::convert_iupac_to_regex(&matched_pattern);
+                *match_counts.entry(converted_pattern).or_insert(0) += 1;
                 total_matches += 1;
                 if total_matches >= num_records {
                     break;
@@ -79,10 +80,11 @@ pub fn run_tune(cli: &Cli, num_records: usize, include_count: bool) -> io::Resul
 
         for regex in regex_array {
             let regex_string = regex["regexString"].as_str().unwrap();
+            let converted_regex_string = crate::initialise::convert_iupac_to_regex(regex_string);
             let regex_name = regex["regexName"].as_str().unwrap_or("Unknown");
             let count = match_counts
                 .iter()
-                .find(|(pattern, _)| pattern == regex_string)
+                .find(|(pattern, _)| pattern == &converted_regex_string)
                 .map(|(_, count)| count)
                 .unwrap_or(&0);
 

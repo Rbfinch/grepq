@@ -76,6 +76,29 @@ type ParseResult = Result<
     String,
 >;
 
+// IUAPC to regex conversion (note, DNA only)
+pub fn convert_iupac_to_regex(pattern: &str) -> String {
+    let legal_chars = "ACGTYRWSKMBDHVN";
+    for c in pattern.chars() {
+        if c.is_alphabetic() && !legal_chars.contains(c.to_ascii_uppercase()) {
+            panic!("Illegal character found in pattern: {}", c);
+        }
+    }
+    pattern
+        .to_uppercase()
+        .replace('Y', "[CT]")
+        .replace('R', "[AG]")
+        .replace('W', "[AT]")
+        .replace('S', "[CG]")
+        .replace('K', "[GT]")
+        .replace('M', "[AC]")
+        .replace('B', "[CGT]")
+        .replace('D', "[AGT]")
+        .replace('H', "[ACT]")
+        .replace('V', "[ACG]")
+        .replace('N', "[ACGT]")
+}
+
 pub fn parse_patterns_file(patterns_path: &str) -> ParseResult {
     if patterns_path.ends_with(".json") {
         let json_file =
@@ -104,11 +127,11 @@ pub fn parse_patterns_file(patterns_path: &str) -> ParseResult {
             .filter_map(|r| {
                 r.get("regexString")
                     .and_then(|s| s.as_str())
-                    .map(|s| s.to_string())
+                    .map(convert_iupac_to_regex)
             })
             .collect();
 
-        let regex_set = RegexSet::new(regex_strings)
+        let regex_set = RegexSet::new(&regex_strings)
             .map_err(|e| format!("Failed to compile regex patterns: {}", e))?;
         let header_regex = json["regexSet"]["headerRegex"]
             .as_str()
@@ -131,7 +154,12 @@ pub fn parse_patterns_file(patterns_path: &str) -> ParseResult {
             .map_err(|e| format!("Failed to open patterns file: {}", e))?;
         let reader = BufReader::new(file);
         let lines: Result<Vec<_>, _> = reader.lines().collect();
-        let regex_set = RegexSet::new(lines.map_err(|e| format!("Failed to read lines: {}", e))?)
+        let regex_strings: Vec<String> = lines
+            .map_err(|e| format!("Failed to read lines: {}", e))?
+            .iter()
+            .map(|line| convert_iupac_to_regex(line))
+            .collect();
+        let regex_set = RegexSet::new(&regex_strings)
             .map_err(|e| format!("Failed to compile regex patterns: {}", e))?;
         Ok((regex_set, None, None, None, None))
     }

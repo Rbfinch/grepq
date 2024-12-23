@@ -1,0 +1,131 @@
+{
+    "regexSet": {
+        "regexSetName": "conserved 16S rRNA regions",
+        "regex": [
+            {
+                "regexName": "Primer contig 06a",
+                "regexString": "RAATWGRCGGGG"
+            },
+            {
+                "regexName": "Primer contig 06aR",
+                "regexString": "CCCCGYCWATTY"
+            },
+            {
+                "regexName": "Primer contig 03",
+                "regexString": "GGRNGGCNGCAG"
+            },
+            {
+                "regexName": "Primer contig 03R",
+                "regexString": "CTGCNGCCNYCC"
+            },
+            {
+                "regexName": "Primer contig 07a",
+                "regexString": "GYYGYCGTCAGC"
+            },
+            {
+                "regexName": "Primer contig 07aR",
+                "regexString": "GCTGACGRCRRC"
+            },
+            {
+                "regexName": "Primer contig 04",
+                "regexString": "CVGCNGCYGCGG"
+            },
+            {
+                "regexName": "Primer contig 04R",
+                "regexString": "CCGCRGCNGCBG"
+            },
+            {
+                "regexName": "Primer contig 05b",
+                "regexString": "TAGAWACCCNNG"
+            },
+            {
+                "regexName": "Primer contig 05bR",
+                "regexString": "CNNGGGTWTCTA"
+            },
+            {
+                "regexName": "Primer contig 07b",
+                "regexString": "CGAGCGCAACCC"
+            },
+            {
+                "regexName": "Primer contig 07bR",
+                "regexString": "GGGTTGCGCTCG"
+            },
+            {
+                "regexName": "Primer contig 08a",
+                "regexString": "AGGYGGGGAYGA"
+            },
+            {
+                "regexName": "Primer contig 08aR",
+                "regexString": "TCRTCCCCRCCT"
+            },
+            {
+                "regexName": "Primer contig 02",
+                "regexString": "SYGGCGNACGGG"
+            },
+            {
+                "regexName": "Primer contig 02R",
+                "regexString": "CCCGTNCGCCRS"
+            },
+            {
+                "regexName": "Primer contig 06c",
+                "regexString": "GARGAACCTTAC"
+            },
+            {
+                "regexName": "Primer contig 06cR",
+                "regexString": "GTAAGGTTCYTC"
+            },
+            {
+                "regexName": "Primer contig 06b",
+                "regexString": "GTGGTTTAATTC"
+            },
+            {
+                "regexName": "Primer contig 06bR",
+                "regexString": "GAATTAAACCAC"
+            },
+            {
+                "regexName": "Primer contig 09",
+                "regexString": "GYACWCWCCGCC"
+            },
+            {
+                "regexName": "Primer contig 09R",
+                "regexString": "GGCGGWGWGTRC"
+            },
+            {
+                "regexName": "Primer contig 08b",
+                "regexString": "GCKACACACGYG"
+            },
+            {
+                "regexName": "Primer contig 08bR",
+                "regexString": "CRCGTGTGTMGC"
+            },
+            {
+                "regexName": "Primer contig 05a",
+                "regexString": "GMGGTGAAATKC"
+            },
+            {
+                "regexName": "Primer contig 05aR",
+                "regexString": "GMATTTCACCKC"
+            },
+            {
+                "regexName": "Primer contig 01",
+                "regexString": "ATYMTGGCTCAG"
+            },
+            {
+                "regexName": "Primer contig 01R",
+                "regexString": "CTGAGCCAKRAT"
+            },
+            {
+                "regexName": "Primer contig 10",
+                "regexString": "AGTCRTAACAAG"
+            },
+            {
+                "regexName": "Primer contig 10aR",
+                "regexString": "CTTGTTAYGACT"
+            }
+        ],
+        "headerRegex": "A00627",
+        "minimumSequenceLength": 200,
+        "minimumQuality": 34.5,
+        "qualityEncoding": "Phred+33"
+    }
+}

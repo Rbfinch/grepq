@@ -39,7 +39,7 @@ a gzip-compressed FASTQ file, print the pattern and the number of matches"
 a gzip-compressed FASTQ file, print the pattern and the number of matches to a 
 JSON file called matches.json"
             .italic(),
-        "\n    grepq -xj regex.json file.fastq.gz tune -n 100000 -c --names --json-matches".bold(),
+        "\n    grepq -x regex.json file.fastq.gz tune -n 100000 -c --names --json-matches".bold(),
         "\n\nPrint the records where none of the regex patterns are found".italic(),
         "\n    grepq regex.txt file.fastq inverted".bold(),
         "\n\nPrint the records where none of the regex patterns are found, with
