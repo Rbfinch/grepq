@@ -11,7 +11,7 @@ _Quickly filter FASTQ files by matching sequences to a set of regex patterns_
 - IUPAC ambiguity code support
 - gzip support
 - JSON support for pattern file input and `tune` command output, allowing named regex sets and named regex patterns
-- use **predicates** to filter on header field (using a regex), minimum sequence length, and minimum total quality score (supports Phred+33 and Phred+64)
+- use **predicates** to filter on header field (using a regex), minimum sequence length, and minimum average quality score (supports Phred+33 and Phred+64)
 - does not match false positives
 - output matched sequences to one of three formats
 - tune your pattern file with the `tune` command
@@ -50,7 +50,7 @@ Use the `--best` option for best compression, or the `--fast` option for faster 
 
 **3. Predicates**
 
-Predicates can be used to filter on the header field (with regex), minimum sequence length, and minimum total quality score (supports Phred+33 and Phred+64). 
+Predicates can be used to filter on the header field (using a regex), minimum sequence length, and minimum average quality score (supports Phred+33 and Phred+64). 
 
 >[!NOTE]
 A regex supplied to filter on the header field is first passed as a string to the regex engine, and then the regex engine is used to match the header field. If you get an error message, be sure to escape any special characters in the regex pattern.
@@ -134,6 +134,8 @@ grepq -R ./examples/16S-no-iupac.txt ./examples/small.fastq inverted > outfile.t
 1642712
 ```
 
+For the curious-minded, note that the regex patterns in `16S-no-iupac.txt`, `16S-iupac.json`, and `16S-iupac-and-predicates.json` are from Table 3 of Martinez-Porchas, Marcel, et al. "How conserved are the conserved 16S-rRNA regions?." PeerJ 5 (2017): e3036.
+
 **Test script**
 
 You may also run the test script (`test.sh`) in the `examples` directory to more fully test `grepq`. From the `examples directory`, run the following command:
@@ -156,7 +158,7 @@ command was: ../target/release/grepq -c 16S-no-iupac.txt small.fastq <br>
 <br>
 
 
-- **SARS-CoV-2 example**
+**SARS-CoV-2 example**
 
 Count of the top five most frequently matched patterns found in SRX26602697.fastq using the pattern file SARS-CoV-2.txt (this pattern file contains 64 sequences of length 60 from Table II of this [preprint](https://doi.org/10.1101/2021.04.14.439840)):
 
@@ -174,6 +176,8 @@ Executed in  218.80 millis    fish           external
    sys time   31.47 millis    4.98 millis   26.49 millis
 
 ```
+
+Obtain `SRX26602697.fastq` from the SRA using `fastq-dump --accession SRX26602697`.
 
 ## Futher testing
 

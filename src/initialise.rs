@@ -46,7 +46,7 @@ static SCHEMA: &str = r#"
                 "minimumSequenceLength": {
                     "type": "number"
                 },
-                "minimumQuality": {
+                "minimumAverageQuality": {
                     "type": "number"
                 },
                 "qualityEncoding": {
@@ -137,7 +137,7 @@ pub fn parse_patterns_file(patterns_path: &str) -> ParseResult {
             .as_str()
             .map(|s| s.to_string());
         let minimum_sequence_length = json["regexSet"]["minimumSequenceLength"].as_u64();
-        let minimum_quality = json["regexSet"]["minimumQuality"].as_f64();
+        let minimum_quality = json["regexSet"]["minimumAverageQuality"].as_f64();
         let quality_encoding = json["regexSet"]["qualityEncoding"]
             .as_str()
             .map(|s| s.to_string());
