@@ -8,13 +8,14 @@ _Quickly filter FASTQ files by matching sequences to a set of regex patterns_
 ## Feature set
 
 - very fast and scales to large FASTQ files
+- IUPAC ambiguity code support
 - gzip support
-- JSON support for pattern file input and `tune` subcommand output, allowing named regex sets and named regex patterns
-- use **predicates** to filter on header field (with regex), minimum sequence length, and minimum total quality score (supports Phred+33 and Phred+64)
+- JSON support for pattern file input and `tune` command output, allowing named regex sets and named regex patterns
+- use **predicates** to filter on header field (using a regex), minimum sequence length, and minimum total quality score (supports Phred+33 and Phred+64)
 - does not match false positives
 - output matched sequences to one of three formats
-- tune your pattern file with the `tune` subcommand
-- supports inverted matching with the `inverted` subcommand
+- tune your pattern file with the `tune` command
+- supports inverted matching with the `inverted` command
 - plays nicely with your unix workflows
 - comprehensive help, examples and testing script
 
@@ -29,7 +30,7 @@ _Quickly filter FASTQ files by matching sequences to a set of regex patterns_
 
 <details>
   <summary>Details</summary>
-  <p>2022 model Mac Studio with 32GB RAM and Apple M1 max chip running macOS 15.0.1. The FASTQ file (SRX26365298.fastq) was 874MB in size and was stored on the internal SSD (APPLE SSD AP0512R). The pattern file contained 30 regex patterns (see `examples/regex.txt` for the patterns used). Under the same conditions and using the same pattern file, `grepq` processed a 104GB FASTQ file in 26 seconds (4GB/s) (`grepq` v1.1.8, `ripgrep` v14.1.1 and `grep` 2.6.0-FreeBSD. `ripgrep` and `grep` were run with the default settings).</p>
+  <p>2022 model Mac Studio with 32GB RAM and Apple M1 max chip running macOS 15.0.1. The FASTQ file (SRX26365298.fastq) was 874MB in size and was stored on the internal SSD (APPLE SSD AP0512R). The pattern file contained 30 regex patterns (see `examples/16S-no-iupac.txt` for the patterns used). Under the same conditions and using the same pattern file, `grepq` processed a 104GB FASTQ file in 26 seconds (4GB/s) (`grepq` v1.1.8, `ripgrep` v14.1.1 and `grep` 2.6.0-FreeBSD. `ripgrep` and `grep` were run with the default settings).</p>
 </details>
 
 **2. Reads and writes regular or gzip-compressed FASTQ files**
@@ -52,9 +53,9 @@ Use the `--best` option for best compression, or the `--fast` option for faster 
 Predicates can be used to filter on the header field (with regex), minimum sequence length, and minimum total quality score (supports Phred+33 and Phred+64). 
 
 >[!NOTE]
-Regex supplied for the header field is first passed as a string to the regex engine, and then the regex engine is used to match the header field. If you get an error message, be sure to escape any special characters in the regex pattern.
+A regex supplied to filter on the header field is first passed as a string to the regex engine, and then the regex engine is used to match the header field. If you get an error message, be sure to escape any special characters in the regex pattern.
 
-Predicates are specified in a JSON pattern file. For an example, see `regex-and-predicates.json` in the `examples` directory.
+Predicates are specified in a JSON pattern file. For an example, see `16S-iupac-and-predicates.json` in the `examples` directory.
 
 **4. Does not match false positives**
 
@@ -66,37 +67,37 @@ Predicates are specified in a JSON pattern file. For an example, see `regex-and-
 - sequences and their corresponding record IDs (`-I` option)
 - FASTQ format (`-R` option)
 
-**6. Will tune your pattern file with the `tune` subcommand**
+**6. Will tune your pattern file with the `tune` command**
 
-Use the `tune` subcommand to analyze matched substrings and update the number and/or order of regex patterns in your pattern file according to their matched frequency. This can speed up the filtering process. 
+Use the `tune` command to analyze matched substrings and update the number and/or order of regex patterns in your pattern file according to their matched frequency. This can speed up the filtering process. 
 
-Specifying the `-c` option to the `tune` subcommand will output the matched substrings and their frequencies, ranked from highest to lowest.
+Specifying the `-c` option to the `tune` command will output the matched substrings and their frequencies, ranked from highest to lowest.
 
-When the patterns file is given in JSON format, then specifying the `-c`, `--names` and `--json-matches` options to the `tune` subcommand will output the matched substrings and their frequencies in JSON format to a file called `matches.json`, allowing named regex sets and named regex patterns. See `examples/regex.json` for an example of a JSON pattern file and `examples/matches.json` for an example of the output of the `tune` subcommand in JSON format.
+When the patterns file is given in JSON format, then specifying the `-c`, `--names` and `--json-matches` options to the `tune` command will output the matched substrings and their frequencies in JSON format to a file called `matches.json`, allowing named regex sets and named regex patterns. See `examples/16S-iupac.json` for an example of a JSON pattern file and `examples/matches.json` for an example of the output of the `tune` command in JSON format.
 
 >[!NOTE]
-When the count option (-c) is given with the `tune` subcommand, `grepq` will count the number of FASTQ records containing a sequence that is matched, for each matching regex in the pattern file. If, however, there are multiple occurrences of a given regex *within a FASTQ record sequence field*, `grepq` will count this as one match. When the count option (-c) is not given with the `tune` subcommand, `grepq` provides the total number of matching FASTQ records for the set of regex patterns in the pattern file.
+When the count option (-c) is given with the `tune` command, `grepq` will count the number of FASTQ records containing a sequence that is matched, for each matching regex in the pattern file. If, however, there are multiple occurrences of a given regex *within a FASTQ record sequence field*, `grepq` will count this as one match. When the count option (-c) is not given with the `tune` command, `grepq` provides the total number of matching FASTQ records for the set of regex patterns in the pattern file.
 
-**7. Supports inverted matching with the `inverted` subcommand**
+**7. Supports inverted matching with the `inverted` command**
 
-Use the `inverted` subcommand to output sequences that do not match any of the regex patterns in your pattern file.
+Use the `inverted` command to output sequences that do not match any of the regex patterns in your pattern file.
 
 **8. Plays nicely with your unix workflows**
 
 For example, see `tune.sh` in the `examples` directory. This simple script will filter a FASTQ file using `grepq`, tune the pattern file on a user-specified number of FASTQ records, and then filter the FASTQ file again using the tuned pattern file for a user-specified number of the most frequent regex pattern matches.
 
 ## Usage 
-Get instructions and examples using `grepq -h`, and `grepq tune -h` and `grepq inverted -h` for more information on the `tune` and `inverted` subcommands, respectively.
+Get instructions and examples using `grepq -h`, and `grepq tune -h` and `grepq inverted -h` for more information on the `tune` and `inverted` commands, respectively.
 
 >[!NOTE]
-Pattern files must contain one regex pattern per line or be provided in JSON format, and patterns are case-sensitive. You can supply an empty pattern file to count the total number of records in the FASTQ file. The regex patterns should only include the DNA sequence characters (A, C, G, T), and not IUPAC ambiguity codes (i.e., not N, R, Y, etc.). If your regex patterns contain any IUPAC ambiguity codes, then transform them to DNA sequence characters (A, C, G, T) before using them with grepq. See `regex.txt`, `regex.json` and `regex-and-predicates.json` in the `examples` directory for examples of valid pattern files.
+Pattern files must contain one regex pattern per line or be provided in JSON format, and patterns are case-sensitive. You can supply an empty pattern file to count the total number of records in the FASTQ file. The regex patterns should only include the DNA sequence characters (A, C, G, T), or IUPAC ambiguity codes (N, R, Y, etc.). See `16S-no-iupac.txt`, `16S-iupac.json` and `16S-iupac-and-predicates.json` in the `examples` directory for examples of valid pattern files.
 
 ## Requirements
 
 - `grepq` has been tested on Linux and macOS. It might work on Windows, but it has not been tested.
 - Ensure that Rust is installed on your system (https://www.rust-lang.org/tools/install)
 - If the build fails, make sure you have the latest version of the Rust compiler by running `rustup update`
-- To use the `test.sh` script in the `examples` directory, you will need `yq` (v4.44.6 or later) installed on your system. To run "test-10" in `tests.yaml`, `tests2.yaml` and `tests3.yaml`, you will need to download the file SRX26365298.fastq.gz from the SRA and place it in the `examples` directory. You can download the file with `fastq-dump --accession SRX26365298`. Obtain `fastq-dump` from the SRA Toolkit, available at NCBI.
+- To use the `test.sh` script in the `examples` directory, you will need `yq` (v4.44.6 or later) installed on your system. To run "test-10" in `commands-1.yaml`, `commands-2.yaml`, `commands-3.yaml` and `commands-4.yaml`, you will need to download the file SRX26365298.fastq.gz from the SRA and place it in the `examples` directory. You can download the file with `fastq-dump --accession SRX26365298`. Obtain `fastq-dump` from the SRA Toolkit, available at NCBI.
 
 ## Installation
 - From *crates.io* (easiest method, but will not install the `examples` directory)
@@ -109,39 +110,39 @@ Pattern files must contain one regex pattern per line or be provided in JSON for
     - Make sure the executable is in your `PATH` or use the full path to the executable
 
 ## Examples and tests
-Get instructions and examples using `grepq -h`, and `grepq tune -h` and `grepq inverted -h` for more information on the `tune` and `inverted` subcommands, respectively. See the `examples` directory for examples of pattern files and FASTQ files.
+Get instructions and examples using `grepq -h`, `grepq tune -h` and `grepq inverted -h` for more information on the `tune` and `inverted` commands, respectively. See the `examples` directory for examples of pattern files and FASTQ files.
 
-_File sizes of outfiles to verify `grepq` is working correctly, using the regex file `regex.txt` and the small fastq file `small.fastq`, both located in the `examples` directory:_
+_File sizes of outfiles to verify `grepq` is working correctly, using the regex file `16S-no-iupac.txt` and the small fastq file `small.fastq`, both located in the `examples` directory:_
 
 ```bash
-grepq ./examples/regex.txt ./examples/small.fastq > outfile.txt 
+grepq ./examples/16S-no-iupac.txt ./examples/small.fastq > outfile.txt 
 15953
 
-grepq  ./examples/regex.txt ./examples/small.fastq inverted > outfile.txt
+grepq  ./examples/16S-no-iupac.txt ./examples/small.fastq inverted > outfile.txt
 736547
 
-grepq -I ./examples/regex.txt ./examples/small.fastq > outfile.txt
+grepq -I ./examples/16S-no-iupac.txt ./examples/small.fastq > outfile.txt
 19515
 
-grepq -I ./examples/regex.txt ./examples/small.fastq inverted > outfile.txt 
+grepq -I ./examples/16S-no-iupac.txt ./examples/small.fastq inverted > outfile.txt 
 901271
 
-grepq -R ./examples/regex.txt ./examples/small.fastq > outfile.txt
+grepq -R ./examples/16S-no-iupac.txt ./examples/small.fastq > outfile.txt
 35574
 
-grepq -R ./examples/regex.txt ./examples/small.fastq inverted > outfile.txt 
+grepq -R ./examples/16S-no-iupac.txt ./examples/small.fastq inverted > outfile.txt 
 1642712
 ```
 
 **Test script**
 
-You may also run the test script (`test.sh`) in the `examples` directory to more fully test `grepq`:
+You may also run the test script (`test.sh`) in the `examples` directory to more fully test `grepq`. From the `examples directory`, run the following command:
 
 ```bash
-./test.sh tests.yaml; ./test.sh tests2.yaml; ./test.sh tests3.yaml
+./test.sh commands-1.yaml; ./test.sh commands-2.yaml; ./test.sh commands-3.yaml; ./test.sh commands-4.yaml
 ```
 
-If all tests pass, there will be no warning (orange) text in the output, and no test will
+If all tests pass, there will be no orange (warning) text in the output, and no test will
 report a failure.
 
 *Example of failing test output:*
@@ -150,7 +151,7 @@ report a failure.
 test-7 failed <br>
 expected: 54 counts <br>
 got: 53 counts <br>
-command was: ../target/release/grepq -c regex.txt small.fastq <br>
+command was: ../target/release/grepq -c 16S-no-iupac.txt small.fastq <br>
 </span>
 <br>
 
@@ -168,9 +169,9 @@ GCGCTTCGATTGTGTGCGTACTGCTGCAATATTGTTAACGTGAGTCTTGTAAAACCTTCT: 332
 CCGTAGCTGGTGTCTCTATCTGTAGTACTATGACCAATAGACAGTTTCATCAAAAATTAT: 209
 
 ________________________________________________________
-Executed in  236.47 millis    fish           external
-   usr time  203.88 millis    0.12 millis  203.76 millis
-   sys time   34.74 millis   13.57 millis   21.16 millis
+Executed in  218.80 millis    fish           external
+   usr time  188.97 millis    0.09 millis  188.88 millis
+   sys time   31.47 millis    4.98 millis   26.49 millis
 
 ```
 
