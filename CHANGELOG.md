@@ -2,6 +2,10 @@ TBD
 ===
 Unreleased changes. Release notes have not yet been written.
 
+1.2.8
+=====
+* XXXX
+
 1.2.7
 =====
 * Support for IUPAC ambiguity codes
