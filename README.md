@@ -154,6 +154,8 @@ grepq -R ./examples/16S-no-iupac.txt ./examples/small.fastq inverted > outfile.t
 
 For the curious-minded, note that the regex patterns in `16S-no-iupac.txt`, `16S-iupac.json`, and `16S-iupac-and-predicates.json` are from Table 3 of Martinez-Porchas, Marcel, et al. "How conserved are the conserved 16S-rRNA regions?." PeerJ 5 (2017): e3036.
 
+For more examples, see the `examples` directory and the [cookbook](https://github.com/Rbfinch/grepq/blob/main/cookbook.md)
+
 **Test script**
 
 You may also run the test script (`test.sh`) in the `examples` directory to more fully test `grepq`. From the `examples directory`, run the following command:
