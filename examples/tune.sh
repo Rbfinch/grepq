@@ -1,8 +1,16 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-# Filter sequences for the most frequent regular expression matches
+### Filter sequences for the most frequent regular expression matches
+# Author: Nicholas D. Crosbie
+# Date: December 2024 
+###
 
 # Filters a fastq file using `grepq`, tunes the pattern file on a user-specified number of fastq records, and then filters the fastq file again using the tuned pattern file for a user-specified number of the most frequent regex pattern matches.
+
+# Example usage: ./tune.sh 16S-no-iupac.txt small.fastq 1000 5
+
+# Exit immediately if a command exits with a non-zero status
+set -e
 
 if [ "$#" -ne 4 ]; then
     echo "Usage: $0 <regex_file> <fastq_file> <n_value> <head_value>"

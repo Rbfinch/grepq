@@ -39,13 +39,13 @@ _Quickly filter FASTQ files by matching sequences to a set of regex patterns_
 
 | tool    | time (s) | &times; grep speedup | &times; ripgrep speedup |
 |---------|----------|----------------------|-------------------------|
-| grepq   | 0.22     | 1558                 | 16                      |
-| ripgrep | 3.57     | 96                   | NA                      |
-| grep    | 342.79   | NA                   | NA                      |
+| grepq   | 0.20     | 1731                 | 18                      |
+| ripgrep | 3.57     | 97                   | NA                      |
+| grep    | 345.07   | NA                   | NA                      |
 
 <details>
   <summary>Details</summary>
-  <p>2022 model Mac Studio with 32GB RAM and Apple M1 max chip running macOS 15.0.1. The FASTQ file (SRX26365298.fastq) was 874MB in size and was stored on the internal SSD (APPLE SSD AP0512R). The pattern file contained 30 regex patterns (see `examples/16S-no-iupac.txt` for the patterns used). Under the same conditions and using the same pattern file, `grepq` processed a 104GB FASTQ file in 26 seconds (4GB/s) (`grepq` v1.1.8, `ripgrep` v14.1.1 and `grep` 2.6.0-FreeBSD. `ripgrep` and `grep` were run with the default settings).</p>
+  <p>2022 model Mac Studio with 32GB RAM and Apple M1 max chip running macOS 15.0.1. The FASTQ file (SRX26365298.fastq) was 874MB in size and was stored on the internal SSD (APPLE SSD AP0512R). The pattern file contained 30 regex patterns (see `examples/16S-no-iupac.txt` for the patterns used). Under the same conditions and using the same pattern file, `grepq` processed a 104GB FASTQ file in 26 seconds (4GB/s) (`grepq` v1.2.9, `ripgrep` v14.1.1 and `grep` 2.6.0-FreeBSD. `ripgrep` was run with --colors 'match:none' --no-line-number, and `grep` was run with --color=never).</p>
 </details>
 
 **2. Reads and writes regular or gzip-compressed FASTQ files**
@@ -54,9 +54,9 @@ Use the `--best` option for best compression, or the `--fast` option for faster 
 
 | tool    | time (s) | &times; grep speedup | &times; ripgrep speedup |
 |---------|----------|----------------------|-------------------------|
-| grepq   | 2.30     | 149                  | 1.6                     |
-| ripgrep | 3.59     | 95                   | NA                      |
-| grep    | 343.57   | NA                   | NA                      |
+| grepq   | 2.39     | 145                  | 1.5                     |
+| ripgrep | 3.64     | 95                   | NA                      |
+| grep    | 345.68   | NA                   | NA                      |
 
 <details>
   <summary>Details</summary>

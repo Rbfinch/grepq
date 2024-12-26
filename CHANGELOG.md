@@ -3,6 +3,13 @@ TBD
 
 Unreleased changes. Release notes have not yet been written.
 
+1.2.9
+=====
+
+* Updates to README.md
+* Updates to cookbook.md
+* Addition of cookbook.sh
+
 1.2.8
 =====
 
