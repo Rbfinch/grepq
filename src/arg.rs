@@ -5,8 +5,18 @@ use std::sync::LazyLock;
 static AFTER_HELP: LazyLock<String> = LazyLock::new(|| {
     format!(
         "{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}
-    {}{}{}{}{}{}{}{}{}{}{}{}{}{}{}",
-        "Examples:".bold().underline(),
+    {}{}{}{}{}{}{}",
+        "Overview:".bold().underline(),
+        "\n\n`grepq` searches the sequence line of FASTQ records for regular
+expressions that are contained in a text or JSON file, or it searches for the
+absence of those regular expressions when used with the `inverted` command. The 
+FASTQ file on which it operates can be supplied uncompressed or in gzip-compressed
+format. Use the `tune` command in a simple shell script to update the number
+and order of regex patterns in your pattern file according to their matched
+frequency (refer to the examples directory of the `grepq` GitHub repository:
+https://github.com/Rbfinch/grepq), further targeting and speeding up the
+filtering process.",
+        "\n\nExamples:".bold().underline(),
         "\n\nPrint only the matching sequences".italic(),
         "\n    grepq regex.txt file.fastq".bold(),
         "\n\nPrint the matching sequences with the record ID".italic(),
@@ -18,21 +28,21 @@ static AFTER_HELP: LazyLock<String> = LazyLock::new(|| {
         "\n\nRead the FASTQ file in gzip compressed format".italic(),
         "\n    grepq -x regex.txt file.fastq.gz".bold(),
         "\n\nRead and save the output in gzip compressed format, with fast
-compression"
+    compression"
             .italic(),
         "\n    grepq -xz --fast regex.txt file.fastq.gz > output.fastq.gz".bold(),
         "\n\nRead and save the output in gzip compressed format, with best
-compression"
+    compression"
             .italic(),
         "\n    grepq -xz --best regex.txt file.fastq.gz > output.fastq.gz".bold(),
         "\n\nCount the number of matching FASTQ records".italic(),
         "\n    grepq -c regex.txt file.fastq".bold(),
         "\n\nFor each matched pattern in a search of the first 100000 records,
-print the pattern and the number of matches"
+    print the pattern and the number of matches"
             .italic(),
         "\n    grepq regex.txt file.fastq tune -n 100000 -c".bold(),
         "\n\nFor each matched pattern in a search of the first 100000 records of
-a gzip-compressed FASTQ file, print the pattern and the number of matches"
+    a gzip-compressed FASTQ file, print the pattern and the number of matches"
             .italic(),
         "\n    grepq -x regex.txt file.fastq.gz tune -n 100000 -c".bold(),
         "\n\nFor each matched pattern in a search of the first 100000 records of
@@ -43,72 +53,84 @@ JSON file called matches.json"
         "\n\nPrint the records where none of the regex patterns are found".italic(),
         "\n    grepq regex.txt file.fastq inverted".bold(),
         "\n\nPrint the records where none of the regex patterns are found, with
-the record ID"
+    the record ID"
             .italic(),
         "\n    grepq -I regex.txt file.fastq inverted".bold(),
-        "\n\nPrint the records where none of the regex patterns are found, in 
-FASTQ format"
+        "\n\nPrint the records where none of the regex patterns are found, in
+    FASTQ format"
             .italic(),
         "\n    grepq -R regex.txt file.fastq inverted".bold(),
         "\n\nCount the number of records where none of the regex patterns are
-found"
+    found"
             .italic(),
         "\n    grepq -c regex.txt file.fastq inverted".bold(),
         "\n\nCount the total number of records in the FASTQ file using an empty
-pattern file"
+    pattern file"
             .italic(),
         "\n    grepq -c empty.txt file.fastq inverted".bold(),
-        "\n\nTips:".bold().underline(),
-        "\n\nPredicates can be used to filter on the header field (using a regex),
-minimum sequence length, and minimum average quality score (supports Phred+33 and
-Phred+64). 
+        "\nTips:".bold().underline(),
+        "\n\n1. Predicates can be used to filter on the header field (= record ID line)
+using a regex, minimum sequence length, and minimum average quality score
+(supports Phred+33 and Phred+64). Predicates are specified in a JSON pattern file.
+For an example, see regex-and-predicates.json in the examples directory of the
+`grepq` GitHub repository (https://github.com/Rbfinch/grepq). Note that regex 
+supplied to filter on the header field is first passed as a string to the regex
+engine, and then the regex engine is used to match the header field. If you get
+an error message, be sure to escape any special characters in the regex pattern.
 
-Predicates are specified in a JSON pattern file. For an example, see
-`regex-and-predicates.json` in the `examples` directory.
+2. Use the `tune` command (`grepq tune -h` for instructions) in a simple shell
+script to update the number and order of regex patterns in your pattern file
+according to their matched frequency, further targeting and speeding up the
+filtering process. When the patterns file is given in JSON format, then specifying
+the -c, --names and --json-matches options to the `tune` command will output the
+matched substrings and their frequencies in JSON format to a file called 
+matches.json, allowing named regex sets and named regex patterns. See 
+examples/16S-iupac.json for an example of a JSON pattern file and 
+examples/matches.json for an example of the output of the tune command in JSON
+format (both files are located in the examples directory of the `grepq` GitHub
+repository: https://github.com/Rbfinch/grepq) (see also the Examples and Notes
+sections).
 
-Note that regex supplied to filter on the header field is first passed as a
-string to the regex engine, and then the regex engine is used to match the header
-field. If you get an error message, be sure to escape any special characters in
-the regex pattern.
+3. Use the `inverted` command to identify records that do not match
+any of the regex patterns in your pattern file.
 
-Use the `tune` command (`grepq tune -h` for instructions) to analyze matched
-substrings and update the number and/or order of regex patterns in your pattern
-file according to their matched frequency. This can speed up the filtering
-process. Specify that `tune` should output to a JSON file if you want to save
-the results in a format that preserves the regex names and the name of the regex
-set (see also the Examples and Notes sections).",
-        "\nUse the `inverted` command to identify records that do not match
-any of the regex patterns in your pattern file.",
-        "\n\nEnsure you have enough storage space for output files.",
+4. Ensure you have enough storage space for output files.",
         "\n\nNotes:".bold().underline(),
-        "\n\nOnly supports FASTQ files or gzip compressed FASTQ files that contain
-DNA sequences.",
-        "\n\nPattern files must contain one regex pattern per line or be given
-in JSON format, and patterns are case-sensitive (you can supply an empty pattern
-file to count the total number of records in the FASTQ file). The regex patterns
-should only include the DNA sequence characters (A, C, G, T), or IUPAC ambiguity
-codes (N, R, Y, ...). See 16S-no-iupac.txt, 16S-iupac.json and 
-16S-iupac-and-predicates.json in the examples directory of `grepq`'s GitHub
-repository (https://github.com/Rbfinch/grepq) for examples of valid pattern files.",
-        "\n\nWhen no options are provided, only the matching sequences are
-printed.",
-        "\n\nOnly one of the -I, -R, or -c options can be used at a time.",
-        "\n\nThe -x and -z options can be used separately, or together, and in
-combination with any of the other filtering options (the -z option cannot be
-used with the tune command).",
-        "\n\nThe count option (-c) will support the output of the -R option 
-since it is in FASTQ format.",
-        "\n\nWhen the count option (-c) is given with the `tune` command,
-`grepq` will count the number of FASTQ records containing a sequence that is
-matched, for each matching regex in the pattern file. If, however, there are
-multiple occurrences of a given regex within a FASTQ record sequence field,
-`grepq` will count this as one match.",
-        "\n\nWhen the count option (-c) is not given with the `tune` command,
-`grepq` prints the total number of matching FASTQ records for the set of regex
-patterns in the pattern file.",
-        "\n\nRegex patterns with look-around and backreferences are not supported.",
+        "\n\n1. Only supports FASTQ files or gzip compressed FASTQ files that contain
+DNA sequences.
+
+2. Pattern files must contain one regex pattern per line or be given in JSON
+format, and patterns are case-sensitive (you can supply an empty pattern file to
+count the total number of records in the FASTQ file). The regex patterns should
+only include the DNA sequence characters (A, C, G, T), or IUPAC ambiguity codes
+(N, R, Y, ...). See 16S-no-iupac.txt, 16S-iupac.json and  
+16S-iupac-and-predicates.json in the examples directory of the `grepq` GitHub
+repository (https://github.com/Rbfinch/grepq) for examples of valid pattern files.
+
+3. When no options are provided, only the matching sequences are printed.
+
+4. Only one of the -I, -R, or -c options can be used at a time.
+
+5. The -x and -z options can be used separately, or together, and in combination
+with any of the other filtering options (the -z option cannot be used with the
+`tune` command).
+
+6. The count option (-c) will support the output of the -R option since it is in
+FASTQ format.
+        
+7. When the count option (-c) is given with the `tune` command, `grepq` will count
+the number of FASTQ records containing a sequence that is matched, for each
+matching regex in the pattern file. If, however, there are multiple occurrences
+of a given regex within a FASTQ record sequence field, `grepq` will count this as
+one match.
+
+8. When the count option (-c) is not given with the `tune` command, `grepq` prints
+the total number of matching FASTQ records for the set of regex patterns in the
+pattern file.
+
+9. Regex patterns with look-around and backreferences are not supported.",
         "\n\nCitation:".bold().underline(),
-        "\n\nIf you use `grepq` in your research, please cite as follows:",
+        "\n\nIf you use grepq in your research, please cite as follows:",
         "\n\nCrosbie, N.D. (2024). grepq: A Rust application that quickly filters
 FASTQ files by matching sequences to a set of regex patterns. 10.5281/zenodo.14031703"
     )

@@ -25,7 +25,7 @@ _Quickly filter FASTQ files_
 - IUPAC ambiguity code support
 - gzip support
 - JSON support for pattern file input and `tune` command output, allowing named regex sets and named regex patterns
-- use **predicates** to filter on header field (using a regex), minimum sequence length, and minimum average quality score (supports Phred+33 and Phred+64)
+- use **predicates** to filter on the header field (= record ID line) using a regex, minimum sequence length, and minimum average quality score (supports Phred+33 and Phred+64)
 - does not match false positives
 - output matched sequences to one of three formats
 - tune your pattern file with the `tune` command
@@ -65,10 +65,10 @@ Use the `--best` option for best compression, or the `--fast` option for faster 
 
 **3. Predicates**
 
-Predicates can be used to filter on the header field (using a regex), minimum sequence length, and minimum average quality score (supports Phred+33 and Phred+64).
+Predicates can be used to filter on the header field (= record ID line) using a regex, minimum sequence length, and minimum average quality score (supports Phred+33 and Phred+64).
 
 >[!NOTE]
-A regex supplied to filter on the header field is first passed as a string to the regex engine, and then the regex engine is used to match the header field. If you get an error message, be sure to escape any special characters in the regex pattern.
+A regex supplied to filter on the header field (= record ID line) is first passed as a string to the regex engine, and then the regex engine is used to match the header field. If you get an error message, be sure to escape any special characters in the regex pattern.
 
 Predicates are specified in a JSON pattern file. For an example, see `16S-iupac-and-predicates.json` in the `examples` directory.
 
@@ -84,7 +84,7 @@ Predicates are specified in a JSON pattern file. For an example, see `16S-iupac-
 
 **6. Will tune your pattern file with the `tune` command**
 
-Use the `tune` command to analyze matched substrings and update the number and/or order of regex patterns in your pattern file according to their matched frequency. This can speed up the filtering process.
+Use the `tune` command (`grepq tune -h` for instructions) in a simple shell script to update the number and order of regex patterns in your pattern file according to their matched frequency, further targeting and speeding up the filtering process.
 
 Specifying the `-c` option to the `tune` command will output the matched substrings and their frequencies, ranked from highest to lowest.
 
