@@ -1,6 +1,6 @@
 <img src="src/grepq-icon.svg" width="128" />
 
-_Quickly filter FASTQ files by matching sequences to a set of regex patterns_
+_Quickly filter FASTQ files_
 
 [![Crates.io](https://img.shields.io/crates/v/grepq.svg)](https://crates.io/crates/grepq)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)

@@ -119,7 +119,7 @@ FASTQ files by matching sequences to a set of regex patterns. 10.5281/zenodo.140
     name = "grepq",
     author = "Nicholas D. Crosbie",
     version = clap::crate_version!(),
-    about = "Quickly filter FASTQ files by matching sequences to a set of regex patterns",
+    about = "Quickly filter FASTQ files",
     long_about = "Copyright (c) 2024 Nicholas D. Crosbie, licensed under the MIT License.",
     after_help = &**AFTER_HELP
 )]
