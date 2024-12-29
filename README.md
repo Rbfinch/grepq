@@ -203,6 +203,10 @@ Obtain `SRX26602697.fastq` from the SRA using `fastq-dump --accession SRX2660269
 
 `grepq` can be tested using tools that generate synthetic FASTQ files, such as `spikeq` (<https://github.com/Rbfinch/spikeq>)
 
+You can verify that `grepq` has found the regex patterns by using tools such as `grep` and `ripgrep`, using their ability to color-match the regex patterns (this feature is not available in `grepq` as that would make the code more complicated; code maintainability is an objective as this is an "in my spare time" project). Recall, however, that `grep` and `ripgrep` will match the regex patterns to the entire FASTQ record, which includes the record ID, sequence, separator, and quality fields, occasionally leading to false positives.
+
+```bash
+
 ## Citation
 
 If you use `grepq` in your research, please cite as follows:
