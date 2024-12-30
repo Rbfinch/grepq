@@ -178,6 +178,8 @@ command was: ../target/release/grepq -c 16S-no-iupac.txt small.fastq <br>
 </span>
 <br>
 
+Further, you can run the `cookbook.sh` script in the `examples` directory to test the cookbook examples, and you can use `predate` (<https://crates.io/crates/predate>) if you prefer a Rust application to a shell script.
+
 **SARS-CoV-2 example**
 
 Count of the top five most frequently matched patterns found in SRX26602697.fastq using the pattern file SARS-CoV-2.txt (this pattern file contains 64 sequences of length 60 from Table II of this [preprint](https://doi.org/10.1101/2021.04.14.439840)):
@@ -201,7 +203,7 @@ Obtain `SRX26602697.fastq` from the SRA using `fastq-dump --accession SRX2660269
 
 ## Futher testing
 
-`grepq` can be tested using tools that generate synthetic FASTQ files, such as `spikeq` (<https://github.com/Rbfinch/spikeq>)
+`grepq` can be tested using tools that generate synthetic FASTQ files, such as `spikeq` (<https://crates.io/crates/spikeq>)
 
 You can verify that `grepq` has found the regex patterns by using tools such as `grep` and `ripgrep`, using their ability to color-match the regex patterns (this feature is not available in `grepq` as that would make the code more complicated; code maintainability is an objective as this is an "in my spare time" project). Recall, however, that `grep` and `ripgrep` will match the regex patterns to the entire FASTQ record, which includes the record ID, sequence, separator, and quality fields, occasionally leading to false positives.
 
