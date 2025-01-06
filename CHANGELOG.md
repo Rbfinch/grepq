@@ -3,6 +3,12 @@ TBD
 
 Unreleased changes. Release notes have not yet been written.
 
+1.3.5
+=====
+
+* Support for FASTA output
+* Minor updates to test.sh and README.md
+
 1.3.4
 =====
 

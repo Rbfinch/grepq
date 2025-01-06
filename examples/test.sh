@@ -2,15 +2,12 @@
 
 ### This script is used to test the grepq program and development build.
 # Author: Nicholas D. Crosbie
-# Date: December 2024 
+# Date: January 2025 
 ###
 
 ## Redirect all output to a file, with the current date and time as the filename
 # ./test.sh tests.yaml &> ../snapshots/$(date +"%Y-%m-%d-%H:%M:%S").txt
 # ./test.sh control tests.yaml &> ../snapshots/$(date +"%Y-%m-%d-%H:%M:%S").txt
-
-# Exit immediately if a command exits with a non-zero status
-set -e
 
 # Print the operating system and CPU architecture
 if [[ "$OSTYPE" == "linux-"* ]]; then
@@ -71,6 +68,10 @@ BOLD="\033[1m"
 ORANGE="\033[38;2;255;165;0m"
 RESET="\033[0m"
 
+# Initialize counters for passing and failing tests
+pass_count=0
+fail_count=0
+
 echo -e "\nTests run:"
 echo -e "$(date +"%Y-%m-%d %H:%M:%S")\n"
 
@@ -78,39 +79,50 @@ for test in "${test_order[@]}"; do
     echo -e "${BOLD}${test} ${RESET}"
     echo "${tests[$test]}"
     if [ "$test" == "test-7" ] || [ "$test" == "test-8" ]; then
-        actual_count=$(time ${tests[$test]})
+        actual_count=$(time ${tests[$test]}) || true
         if [ $actual_count -eq ${expected_sizes[$test]} ]; then
             echo -e "\n"
+            ((pass_count++))
         else
             echo -e "\n${ORANGE}${test} failed${RESET}"
             echo -e "${ORANGE}expected: ${expected_sizes[$test]} counts${RESET}"
             echo -e "${ORANGE}got: $actual_count counts${RESET}"
             echo -e "${ORANGE}command was: ${tests[$test]}${RESET}\n"
+            ((fail_count++))
         fi
     else
         if [ "$test" == "test-10" ]; then
-            time ${tests[$test]}
+            time ${tests[$test]} || true
             actual_size=$($STAT_CMD "matches.json")
             if [ $actual_size -eq ${expected_sizes[$test]} ]; then
                 echo -e "\n"
+                ((pass_count++))
             else
                 echo -e "\n${ORANGE}${test} failed${RESET}"
                 echo -e "${ORANGE}expected: ${expected_sizes[$test]} bytes${RESET}"
                 echo -e "${ORANGE}got: $actual_size bytes${RESET}"
                 echo -e "${ORANGE}command was: ${tests[$test]}${RESET}\n"
+                ((fail_count++))
             fi
         else
-            time ${tests[$test]} > /tmp/${test}.txt
+            time ${tests[$test]} > /tmp/${test}.txt || true
             actual_size=$($STAT_CMD "/tmp/${test}.txt")
             if [ $actual_size -eq ${expected_sizes[$test]} ]; then
                 echo -e "\n"
+                ((pass_count++))
             else
                 echo -e "\n${ORANGE}${test} failed${RESET}"
                 echo -e "${ORANGE}expected: ${expected_sizes[$test]} bytes${RESET}"
                 echo -e "${ORANGE}got: $actual_size bytes${RESET}"
                 echo -e "${ORANGE}command was: ${tests[$test]} > /tmp/${test}.txt${RESET}\n"
+                ((fail_count++))
             fi
         fi
     fi
 done
+
+# Print summary of passing and failing tests
+echo -e "Summary:"
+echo -e "Passing tests: ${pass_count}"
+echo -e "Failing tests: ${fail_count}"
 

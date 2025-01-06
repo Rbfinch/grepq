@@ -166,7 +166,7 @@ You may also run the test script (`test.sh`) in the `examples` directory to more
 ```
 
 If all tests pass, there will be no orange (warning) text in the output, and no test will
-report a failure.
+report a failure. A summary of the number of passing and failing tests will be displayed at the end of the output.
 
 _Example of failing test output:_
 
