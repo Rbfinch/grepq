@@ -9,10 +9,14 @@ pub fn average_quality(quality: &[u8], quality_encoding: &str) -> f32 {
         _ => 33, // Default to Phred+33 if unknown encoding
     };
 
-    // Calculate the sum of quality scores adjusted by the offset
-    let sum: i32 = quality.iter().map(|&q| (q as i32 - offset)).sum();
-    // Count the number of quality scores
+    // Initialize sum and count
+    let mut sum = 0;
     let count = quality.len() as i32;
+
+    // Calculate the sum of quality scores adjusted by the offset
+    for &q in quality {
+        sum += q as i32 - offset;
+    }
 
     // Calculate and return the average quality score
     if count > 0 {

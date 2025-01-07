@@ -33,7 +33,23 @@ Regular expressions are a powerful tool for matching sequences, but they can be 
 
 `grepq` obtains its performance by using the `seq_io` and `regex` crates (REFS). The `seq_io` crate is a well-tested Rust library for reading and writing FASTA and FASTQ files, and is designed to be fast and efficient. The `regex` crate is a Rust library for working with regular expressions and sets of regular expressions, and is known to be one of the fastest regular expression libraries currently available [REF]. The `regex` crate supports Perl-like regular expressions without look-around or backreferences (documented at <https://docs.rs/regex/1.*/regex/#syntax>).
 
-By leveraging these libraries, `grepq` is able to quickly filter FASTQ files by matching sequences to a set of regex patterns, while maintaining high performance and reliability. Further performance is obtained by using multi-threading to process the records within an input FASTQ file concurently through use of multiple CPU cores; by using an optimised global memory allocator (the mimalloc crate [REF]) and reuse of buffers to reduce memory allocations and deallocations; use of byte slices to avoid the overhead of converting to and from string types; inlining of performance-critical functions; and use of `write_all` I/O operation that ensures the data is written in one go, rather than writing data in smaller chunks.
+By leveraging these libraries, `grepq` is able to quickly filter FASTQ files by matching sequences to a set of regex patterns, while maintaining high performance and reliability.
+
+Further performance is obtained by:
+
+- use of the `RegexSet` struct from the `regex` crate to match multiple regular expressions against a sequence in a single pass, rather than matching each regular expression individually (the `RegexSet` is created and compiled once before entering any loop that processes the FASTQ records, avoiding the overhead of recompiling the regular expressions for each record).
+
+- multi-threading to process the records within an input FASTQ file concurently through use of multiple CPU cores.
+
+- using an optimised global memory allocator (the mimalloc crate [REF]).
+
+- buffer reuse to reduce memory allocations and deallocations.
+
+- use of byte slices to avoid the overhead of converting to and from string types.
+
+- inlining of performance-critical functions.
+
+- use of the `write_all` I/O operation that ensures the data is written in one go, rather than writing data in smaller chunks.
 
 # Usage
 
