@@ -20,6 +20,7 @@ use std::io::{self};
 fn main() {
     let cli = Cli::parse();
 
+    // Match the command and execute the corresponding function
     match &cli.command {
         Some(Commands::Tune(tune)) => {
             tune::run_tune(&cli, tune.num_records, tune.include_count).unwrap();
@@ -32,6 +33,7 @@ fn main() {
         None => {}
     }
 
+    // Parse the patterns file
     let (regex_set, header_regex, minimum_sequence_length, minimum_quality, quality_encoding) =
         parse_patterns_file(&cli.patterns)
             .map_err(|e| io::Error::new(io::ErrorKind::Other, e))
@@ -151,11 +153,13 @@ fn main() {
     }
 }
 
+// Calculate average quality of a sequence
 #[inline(always)]
 fn average_quality(qual: &[u8], encoding: &str) -> f32 {
     quality::average_quality(qual, encoding)
 }
 
+// Write record with ID
 #[inline(always)]
 fn write_record_with_id<W: Write>(
     writer: &mut W,
@@ -174,6 +178,7 @@ fn write_record_with_id<W: Write>(
     writer.write_all(b"\n").unwrap();
 }
 
+// Write full record
 #[inline(always)]
 fn write_full_record<W: Write>(
     writer: &mut W,
@@ -199,6 +204,7 @@ fn write_full_record<W: Write>(
     writer.write_all(b"\n").unwrap();
 }
 
+// Write record in FASTA format
 #[inline(always)]
 fn write_record_with_fasta<W: Write>(
     writer: &mut W,

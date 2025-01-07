@@ -5,12 +5,14 @@ use seq_io::fastq::Record;
 use seq_io::parallel::parallel_fastq;
 use std::io::Write;
 
+// Main function to run the inverted command
 pub fn run_inverted(cli: &Cli) {
     let with_id = cli.with_id;
     let with_full_record = cli.with_full_record;
     let with_fasta = cli.with_fasta;
     let count = cli.count;
 
+    // Parse the patterns file
     let (regex_set, header_regex, minimum_sequence_length, minimum_quality, quality_encoding) =
         parse_patterns_file(&cli.patterns)
             .map_err(|e| std::io::Error::new(std::io::ErrorKind::Other, e))
@@ -125,6 +127,7 @@ pub fn run_inverted(cli: &Cli) {
     }
 }
 
+// Write record with ID
 #[inline(always)]
 fn write_record_with_id<W: Write>(
     writer: &mut W,
@@ -143,6 +146,7 @@ fn write_record_with_id<W: Write>(
     writer.write_all(b"\n").unwrap();
 }
 
+// Write full record
 #[inline(always)]
 fn write_full_record<W: Write>(
     writer: &mut W,
@@ -168,6 +172,7 @@ fn write_full_record<W: Write>(
     writer.write_all(b"\n").unwrap();
 }
 
+// Write record with FASTA
 #[inline(always)]
 fn write_record_with_fasta<W: Write>(
     writer: &mut W,

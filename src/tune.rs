@@ -8,9 +8,11 @@ use std::collections::HashMap;
 use std::fs::File;
 use std::io::{self};
 
+// Main function to run the tune command
 pub fn run_tune(cli: &Cli, num_records: usize, include_count: bool) -> io::Result<()> {
     let patterns_path = &cli.patterns;
 
+    // Parse the patterns file
     let (regex_set, header_regex, minimum_sequence_length, minimum_quality, quality_encoding) =
         parse_patterns_file(patterns_path).map_err(|e| io::Error::new(io::ErrorKind::Other, e))?;
 
@@ -20,6 +22,7 @@ pub fn run_tune(cli: &Cli, num_records: usize, include_count: bool) -> io::Resul
     let mut match_counts: HashMap<String, usize> = HashMap::new();
     let mut total_matches = 0;
 
+    // Iterate through each record in the reader
     while let Some(result) = reader.next() {
         let record = result.map_err(|e| {
             io::Error::new(
@@ -31,6 +34,7 @@ pub fn run_tune(cli: &Cli, num_records: usize, include_count: bool) -> io::Resul
             )
         })?;
 
+        // Check sequence length, header, and quality
         let seq_len_check =
             minimum_sequence_length.map_or(true, |len| record.seq().len() >= len as usize);
         let header_check = header_regex
@@ -43,6 +47,7 @@ pub fn run_tune(cli: &Cli, num_records: usize, include_count: bool) -> io::Resul
             ) >= min_q as f32
         });
 
+        // If all checks pass, match the sequence against the regex set
         if seq_len_check && header_check && qual_check {
             for mat in regex_set.matches(record.seq()).into_iter() {
                 let matched_pattern = regex_set.patterns()[mat].to_string();
@@ -62,6 +67,7 @@ pub fn run_tune(cli: &Cli, num_records: usize, include_count: bool) -> io::Resul
     let mut match_counts: Vec<_> = match_counts.into_iter().collect();
     match_counts.sort_by(|a, b| b.1.cmp(&a.1));
 
+    // Handle JSON patterns file
     if patterns_path.ends_with(".json") {
         let json: serde_json::Value = serde_json::from_reader(std::fs::File::open(patterns_path)?)?;
         let regex_set_name = json["regexSet"]["regexSetName"]

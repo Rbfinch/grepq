@@ -99,6 +99,7 @@ pub fn convert_iupac_to_regex(pattern: &str) -> String {
         .replace('N', "[ACGT]")
 }
 
+// Parse patterns file (JSON or plain text)
 pub fn parse_patterns_file(patterns_path: &str) -> ParseResult {
     if patterns_path.ends_with(".json") {
         let json_file =
@@ -165,10 +166,12 @@ pub fn parse_patterns_file(patterns_path: &str) -> ParseResult {
     }
 }
 
+// Open a file and return the file handle
 pub fn open_file(file_path: &str) -> File {
     File::open(file_path).expect("Failed to open file")
 }
 
+// Create a reader for the input file
 pub fn create_reader(cli: &Cli) -> Reader<Box<dyn BufRead + Send>> {
     let file = open_file(&cli.file);
     let reader: Box<dyn BufRead + Send> = if cli.gzip_input {
@@ -179,6 +182,7 @@ pub fn create_reader(cli: &Cli) -> Reader<Box<dyn BufRead + Send>> {
     Reader::with_capacity(reader, 8 * 1024 * 1024)
 }
 
+// Create a writer for the output file
 pub fn create_writer(cli: &Cli) -> Box<dyn Write> {
     let stdout_lock = io::stdout().lock();
     let compression = if cli.fast_compression {
