@@ -42,6 +42,7 @@ fn main() {
 
     let with_id = cli.with_id;
     let with_full_record = cli.with_full_record;
+    let with_fasta = cli.with_fasta;
     let count = cli.count;
 
     let check_seq_len = minimum_sequence_length.is_some();
@@ -129,6 +130,14 @@ fn main() {
                             &mut seq_buffer,
                             &mut qual_buffer,
                         );
+                    } else if with_fasta {
+                        // With FASTA format
+                        write_record_with_fasta(
+                            &mut writer,
+                            &record,
+                            &mut head_buffer,
+                            &mut seq_buffer,
+                        );
                     } else {
                         // Default mode
                         writer.write_all(record.seq()).unwrap();
@@ -187,5 +196,23 @@ fn write_full_record<W: Write>(
     writer.write_all(b"+").unwrap();
     writer.write_all(b"\n").unwrap();
     writer.write_all(qual_buffer).unwrap();
+    writer.write_all(b"\n").unwrap();
+}
+
+#[inline(always)]
+fn write_record_with_fasta<W: Write>(
+    writer: &mut W,
+    record: &seq_io::fastq::RefRecord,
+    head_buffer: &mut Vec<u8>,
+    seq_buffer: &mut Vec<u8>,
+) {
+    head_buffer.clear();
+    seq_buffer.clear();
+    head_buffer.extend_from_slice(record.head());
+    seq_buffer.extend_from_slice(record.seq());
+    writer.write_all(b">").unwrap();
+    writer.write_all(head_buffer).unwrap();
+    writer.write_all(b"\n").unwrap();
+    writer.write_all(seq_buffer).unwrap();
     writer.write_all(b"\n").unwrap();
 }

@@ -4,8 +4,7 @@ use std::sync::LazyLock;
 
 static AFTER_HELP: LazyLock<String> = LazyLock::new(|| {
     format!(
-        "{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}
-    {}{}{}{}{}{}{}",
+        "{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}",
         "Overview:".bold().underline(),
         "\n\n`grepq` searches the sequence line of FASTQ records for regular
 expressions that are contained in a text or JSON file, or it searches for the
@@ -21,6 +20,8 @@ filtering process.",
         "\n    grepq regex.txt file.fastq".bold(),
         "\n\nPrint the matching sequences with the record ID".italic(),
         "\n    grepq -I regex.txt file.fastq".bold(),
+        "\n\nPrint the matching sequences in FASTA format".italic(),
+        "\n    grepq -F regex.txt file.fastq".bold(),
         "\n\nPrint the matching sequences in FASTQ format".italic(),
         "\n    grepq -R regex.txt file.fastq".bold(),
         "\n\nSave the matching sequences in gzip compressed FASTQ format".italic(),
@@ -109,7 +110,7 @@ repository (https://github.com/Rbfinch/grepq) for examples of valid pattern file
 
 3. When no options are provided, only the matching sequences are printed.
 
-4. Only one of the -I, -R, or -c options can be used at a time.
+4. Only one of the -I, -F, -R, or -c options can be used at a time.
 
 5. The -x and -z options can be used separately, or together, and in combination
 with any of the other filtering options (the -z option cannot be used with the
@@ -156,9 +157,12 @@ pub struct Cli {
     #[arg(
         short = 'R',
         long = "includeRecord",
-        help = "Include record ID, sequence, separator, and quality field in the output"
+        help = "Include record ID, sequence, separator, and quality field in the output (i.e. FASTQ format)"
     )]
     pub with_full_record: bool,
+
+    #[arg(short = 'F', long = "fasta", help = "Output in FASTA format")]
+    pub with_fasta: bool,
 
     #[arg(
         short = 'c',
