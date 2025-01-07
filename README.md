@@ -27,7 +27,7 @@ _Quickly filter FASTQ files_
 - JSON support for pattern file input and `tune` command output, allowing named regex sets and named regex patterns
 - use **predicates** to filter on the header field (= record ID line) using a regex, minimum sequence length, and minimum average quality score (supports Phred+33 and Phred+64)
 - does not match false positives
-- output matched sequences to one of three formats
+- output matched sequences to one of four formats
 - tune your pattern file with the `tune` command
 - supports inverted matching with the `inverted` command
 - plays nicely with your unix workflows
@@ -76,10 +76,11 @@ Predicates are specified in a JSON pattern file. For an example, see `16S-iupac-
 
 `grepq` will only match regex patterns to the sequence field of a FASTQ record, which is the most common use case. Unlike `ripgrep` and `grep`, which will match the regex patterns to the entire FASTQ record, which includes the record ID, sequence, separator, and quality fields. This can lead to false positives and slow down the filtering process.
 
-**5. Output matched sequences to one of three formats**
+**5. Output matched sequences to one of four formats**
 
 - sequences only (default)
 - sequences and their corresponding record IDs (`-I` option)
+- FASTA format (`-F` option)
 - FASTQ format (`-R` option)
 
 **6. Will tune your pattern file with the `tune` command**
@@ -166,7 +167,7 @@ You may also run the test script (`test.sh`) in the `examples` directory to more
 ```
 
 If all tests pass, there will be no orange (warning) text in the output, and no test will
-report a failure. A summary of the number of passing and failing tests will be displayed at the end of the output.
+report a failure. A summary of the number of passing and failing tests will be displayed at the end of the output. All tests should pass.
 
 _Example of failing test output:_
 
