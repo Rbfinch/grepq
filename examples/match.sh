@@ -21,11 +21,18 @@ BEGIN {
     }
     close(patterns_file)
 }
+{
+    buffer[NR % 4] = $0
+}
 /length/ { nextLine = 1; next }
 nextLine { 
     for (pattern in patterns) {
         if ($0 ~ pattern) {
+            print buffer[(NR-1) % 4]
+            print buffer[NR % 4]
             print
+            getline; print
+            getline; print
             break
         }
     }
