@@ -1,5 +1,5 @@
 ---
-title: "grepq: A Rust application that quickly filters FASTQ files by matching sequences to a set of regex patterns"
+title: "grepq: A Rust application that quickly filters FASTQ files by matching sequences to a set of regular expressions"
 author: "Nicholas D. Crosbie"
 date: "2025-01-09"
 header-includes:
@@ -13,9 +13,9 @@ header-includes:
   - \fontsize{12pt}{14pt}\selectfont
 ---
 
-# grepq: A Rust application that quickly filters FASTQ files by matching sequences to a set of regex patterns
+# grepq: A Rust application that quickly filters FASTQ files by matching sequences to a set of regular expressions
 
-\textit{Nicholas D. Crosbie, Melbourne Veterinary School, University of Melbourne, Parville, Victoria, Australia}
+\textit{Nicholas D. Crosbie, Melbourne Veterinary School, University of Melbourne, Parkville, Victoria, Australia}
 
 \fontsize{8pt}{10pt}\selectfont
 ORCID: [0000-0002-0319-4248](https://orcid.org/0000-0002-0319-4248)
@@ -29,11 +29,11 @@ January 9, 2025
 
 # Abstract
 
-Regular expressions (regex) [@kleene1951representationof] have been an important tool for finding patterns in biological codes for decades [@hodgman2000historical and citations therein], and unlike fuzzy-finding approaches, do not result in approximate matches. The performance of regular expressions can be slow, however, especially when searching for matching patterns in large files. *grepq* is a Rust application that quickly filters FASTQ files by matching sequences to a set of regex patterns. *grepq* is designed with a focus on performance and scalability. *grepq* is easy to install and easy to use, with a simple command-line interface that allows users to quickly filter large FASTQ files, and to update the order in which patterns are matched against sequences through an in-built *tune* command. *grepq* is open-source and available on *GitHub* and *Crates.io*.
+Regular expressions (regex) [@kleene1951representationof] have been an important tool for finding patterns in biological codes for decades [@hodgman2000historical and citations therein], and unlike fuzzy-finding approaches, do not result in approximate matches. The performance of regular expressions can be slow, however, especially when searching for matching patterns in large files. *grepq* is a Rust application that quickly filters FASTQ files by matching sequences to a set of regular expressions. *grepq* is designed with a focus on performance and scalability, is easy to install and easy to use, enabling users to quickly filter large FASTQ files, and to update the order in which patterns are matched against sequences through an in-built *tune* command. *grepq* is open-source and available on *GitHub* and *Crates.io*.
 
 # Statement of need
 
-The ability to quickly filter FASTQ files by matching sequences to a set of regex patterns is an important task in bioinformatics, especially when working with large datasets. The importance and challenge of this task will only grow as sequencing technologies continue to advance and produce ever larger datasets [@katz2022sequence]. The uses cases of *grepq* are diverse, and include pre-processing of FASTQ files before downstream analysis, quality control of sequencing data, and filtering out unwanted sequences. Where decisions need be made quickly, such as in a clinical settings [@bachurin2024structural], biosecurity [@valdivia2012biodefense], and wastewater-based epidemiology in support of public health measures [@choi2018wastewater;@sims2020future;@xylogiannopoulos2021pattern;@merrett2024highly], the ability to quickly filter FASTQ files by matching sequences to a set of regex patterns is attractive as it circumvents the need for more time-consuming bioinformatic workflows.
+The ability to quickly filter FASTQ files by matching sequences to a set of regular expressions is an important task in bioinformatics, especially when working with large datasets. The importance and challenge of this task will only grow as sequencing technologies continue to advance and produce ever larger datasets [@katz2022sequence]. The uses cases of *grepq* are diverse, and include pre-processing of FASTQ files before downstream analysis, quality control of sequencing data, and filtering out unwanted sequences. Where decisions need be made quickly, such as in a clinical settings [@bachurin2024structural], biosecurity [@valdivia2012biodefense], and wastewater-based epidemiology in support of public health measures [@choi2018wastewater;@sims2020future;@xylogiannopoulos2021pattern;@merrett2024highly], the ability to quickly filter FASTQ files by matching sequences to a set of regular expressions is attractive as it circumvents the need for more time-consuming bioinformatic workflows.
 
 Regular expressions are a powerful tool for matching sequences, but they can be slow and inefficient when working with large datasets. Furthermore, general purpose tools like *grep* [@gnugrep] and *ripgrep* [@ripgrep] are not optimized for the specific task of filtering FASTQ files, and ocassionaly yield false positives as they scan the entire FASTQ record, including the sequence quality field. Tools such *awk* [@awk] and *gawk* [@gawk]  can be used to filter FASTQ files without yielding false positives, but they are significantly slower than *grepq* and can require the development of more complex scripts to achieve the same result.
 
@@ -61,13 +61,13 @@ Further performance gains were obtained by:
 - support for presence and absence (inverted) matching of a set of regular expressions
 - IUPAC ambiguity code support (N, R, Y, etc.)
 - gzip support (reading and writing)
-- JSON support for pattern file input and *tune* command output, allowing named regex sets and named regex patterns (pattern files can also be in plain text)
+- JSON support for pattern file input and *tune* command output, allowing named regular expression sets and named regular expressions (pattern files can also be in plain text)
 - the ability to set predicates to filter FASTQ records on the header field (= record ID line) using a regular expression, minimum sequence length, and minimum average quality score (supports Phred+33 and Phred+64)
 - the ability to output matched sequences to one of four formats (including FASTQ and FASTA)
 - the ability to tune the pattern file with the *tune* command: this command will output a plain text or JSON file with the patterns sorted by their frequency of occurrence in the input FASTQ file or gzip-compressed FASTQ file (or a user-specified number of FASTQ records). This can be useful for optimizing the pattern file for performance, for example, by removing patterns that are rarely matched
 - the ability to count and summarise the total number of records and the number of matching records (or records that don't match in the case of inverted matching) in the input FASTQ file
 
-Other than when the *tune* command is run, a FASTQ record is deemed to match (and hence provided in the output) when any of the regex patterns in the pattern file match the sequence field of the FASTQ record. An example (abridged) output of the *tune* command (when given with the **--json-matches** flag) is shown below:
+Other than when the *tune* command is run, a FASTQ record is deemed to match (and hence provided in the output) when any of the regular expressions in the pattern file match the sequence field of the FASTQ record. An example (abridged) output of the *tune* command (when given with the **--json-matches** flag) is shown below:
 
 ```json
 {
@@ -94,9 +94,9 @@ Other than when the *tune* command is run, a FASTQ record is deemed to match (an
 }
 ```
 
-When the count option (**-c**) is given with the *tune* command, *grepq* will count the number of FASTQ records containing a sequence that is matched, for each matching regex in the pattern file. If, however, there are multiple occurrences of a given regex within a FASTQ record sequence field, *grepq* will count this as one match. When the count option (**-c**) is not given with the *tune* command, *grepq* provides the total number of matching FASTQ records for the set of regex patterns in the pattern file.
+When the count option (**-c**) is given with the *tune* command, *grepq* will count the number of FASTQ records containing a sequence that is matched, for each matching regular expression in the pattern file. If, however, there are multiple occurrences of a given regular expression within a FASTQ record sequence field, *grepq* will count this as one match. When the count option (**-c**) is not given with the *tune* command, *grepq* provides the total number of matching FASTQ records for the set of regular expressions in the pattern file.
 
-Colorized output for matching regex patterns is not implemented to maximise speed and minimise code complexity, but can be achieved by piping the output to *grep* or *ripgrep* for testing purposes.
+Colorized output for matching regular expressions is not implemented to maximise speed and minimise code complexity, but can be achieved by piping the output to *grep* or *ripgrep* for testing purposes.
 
 # Performance
 
@@ -194,7 +194,7 @@ Finally, a bash test script (see *examples/test.sh*, available at *grepq*'s Gith
 
 Documentation and installation instructions for *grepq* are available at the same GitHub repository, and through the **-h** and **--help** command-line options, which includes a list of all available commands and options, and examples of how to use them. Example pattern files in plain text and JSON format are also provided, as well as test scripts. *grepq* is distributed under the MIT license.
 
-# Discussion and conclusion
+# Conclusion
 
 The performance of *grepq* was compared to that of *fqgrep*, *seqkit* *grep*, *ripgrep*, *grep*, *awk*, and *gawk* using the benchmarking tool *hyperfine*. The results show that *grepq* is significantly faster than the other tools tested, with a speedup of 1814.71 times over *grep*, 870.79 times over *awk*, and 18.74 times over *ripgrep*. The performance of *grepq* was also compared to that of *fqgrep* and *ripgrep* when filtering gzip-compressed FASTQ files, with *grepq* being 2.09 times faster than *ripgrep* and 1.94 times faster than *fqgrep*. When coupled with its exceptional runtime performance, *grepq*'s feature set make it a powerful and flexible tool for filtering large FASTQ files.
 
