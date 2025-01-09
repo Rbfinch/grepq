@@ -56,11 +56,11 @@ _Quickly filter FASTQ files_
 
 Use the `--best` option for best compression, or the `--fast` option for faster compression.
 
-| tool      | mean clock time (s) | S.D. clock time (s) | speedup (× grep) |
-|-----------|---------------------|---------------------|------------------|
-| _grepq_   | 1.707               | 0.002               | 2.09             |
-| _fqgrep_  | 1.84                | 0.01                | 1.94             |
-| _ripgrep_ | 3.57                | 0.01                | 1.00             |
+| tool      | mean clock time (s) | S.D. clock time (s) | speedup (× ripgrep) |
+|-----------|---------------------|---------------------|---------------------|
+| _grepq_   | 1.707               | 0.002               | 2.09                |
+| _fqgrep_  | 1.84                | 0.01                | 1.94                |
+| _ripgrep_ | 3.57                | 0.01                | 1.00                |
 
 <details>
   <summary>Details</summary>
