@@ -98,3 +98,4 @@ target/
 *.gz
 
 # Other project specific ignores
+paper/
