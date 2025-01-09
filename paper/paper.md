@@ -8,6 +8,8 @@ header-includes:
   - \doublespacing
   - \usepackage{fontspec}
   - \setmainfont{Arial}
+  - \usepackage{lineno}
+  - \linenumbers
   - \fontsize{12pt}{14pt}\selectfont
 ---
 
