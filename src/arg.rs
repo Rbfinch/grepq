@@ -118,18 +118,22 @@ with any of the other filtering options (the -z option cannot be used with the
 
 6. The count option (-c) will support the output of the -R option since it is in
 FASTQ format.
+
+7. Other than when the `tune` command is run, a FASTQ record is deemed to match
+(and hence provided in the output) when any of the regex patterns in the pattern
+file match the sequence field of the FASTQ record.
         
-7. When the count option (-c) is given with the `tune` command, `grepq` will count
+8. When the count option (-c) is given with the `tune` command, `grepq` will count
 the number of FASTQ records containing a sequence that is matched, for each
 matching regex in the pattern file. If, however, there are multiple occurrences
 of a given regex within a FASTQ record sequence field, `grepq` will count this as
 one match.
 
-8. When the count option (-c) is not given with the `tune` command, `grepq` prints
+9. When the count option (-c) is not given with the `tune` command, `grepq` prints
 the total number of matching FASTQ records for the set of regex patterns in the
 pattern file.
 
-9. Regex patterns with look-around and backreferences are not supported.",
+10. Regex patterns with look-around and backreferences are not supported.",
         "\n\nCitation:".bold().underline(),
         "\n\nIf you use grepq in your research, please cite as follows:",
         "\n\nCrosbie, N.D. (2024). grepq: A Rust application that quickly filters
