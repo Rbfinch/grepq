@@ -96,3 +96,5 @@ target/
 *.csv
 *.tsv
 *.gz
+
+# Other project specific ignores
