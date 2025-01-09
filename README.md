@@ -85,6 +85,9 @@ Predicates are specified in a JSON pattern file. For an example, see `16S-iupac-
 - FASTA format (`-F` option)
 - FASTQ format (`-R` option)
 
+>[!NOTE]
+Other than when the `tune` command is run (see below), a FASTQ record is deemed to match (and hence provided in the output) when _any_ of the regex patterns in the pattern file match the sequence field of the FASTQ record.
+
 **6. Will tune your pattern file with the `tune` command**
 
 Use the `tune` command (`grepq tune -h` for instructions) in a simple shell script to update the number and order of regex patterns in your pattern file according to their matched frequency, further targeting and speeding up the filtering process.

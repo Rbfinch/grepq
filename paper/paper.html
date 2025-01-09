@@ -3,117 +3,114 @@ id="grepq-a-rust-application-that-quickly-filters-fastq-files-by-matching-sequen
 A Rust application that quickly filters FASTQ files by matching
 sequences to a set of regex patterns</h1>
 <h1 id="summary">Summary</h1>
-<p>Regular expressions <span class="citation"
+<p>Regular expressions (regex) <span class="citation"
 data-cites="kleene1951representationof">(Kleene 1951)</span> have been
 an important tool for finding patterns in biological codes for decades
 <span class="citation" data-cites="hodgman2000historical">(Hodgman 2000
-and citations therein)</span>. However, the performance of regular
-expressions can be slow, especially when matching large datasets.
-<strong>grepq</strong> is a Rust application that quickly filters FASTQ
-files by matching sequences to a set of regex patterns.
-<strong>grepq</strong> is designed to be fast and efficient, with a
-focus on performance and scalability. It is written in Rust, a systems
-programming language that is known for its speed and safety.
-<strong>grepq</strong> is designed to be easy to use, with a simple
-command-line interface that allows users to quickly filter large FASTQ
-files, and to update the order in which patterns are matched against
-sequences through an in-built <code>tune</code> command.
-<strong>grepq</strong> is open-source and available on GitHub.</p>
+and citations therein)</span>, and unlike fuzzy-finding approaches, do
+not result in approximate matches. The performance of regular
+expressions can be slow, however, especially when searching for matching
+patterns in large files. <em>grepq</em> is a Rust application that
+quickly filters FASTQ files by matching sequences to a set of regex
+patterns. <em>grepq</em> is designed with a focus on performance and
+scalability. It is written in Rust, a systems programming language that
+is known for its speed and safety. <em>grepq</em> is easy to install and
+easy to use, with a simple command-line interface that allows users to
+quickly filter large FASTQ files, and to update the order in which
+patterns are matched against sequences through an in-built <em>tune</em>
+command. <em>grepq</em> is open-source and available on <em>GitHub</em>
+and <em>Crates.io</em>.</p>
 <h1 id="statement-of-need">Statement of need</h1>
 <p>The ability to quickly filter FASTQ files by matching sequences to a
 set of regex patterns is an important task in bioinformatics, especially
 when working with large datasets. The importance and challenge of this
 task will only grow as sequencing technologies continue to advance and
-produce larger and larger datasets. The uses cases are diverse, and
-include pre-processing of FASTQ files before downstream analysis,
-quality control of sequencing data, and filtering out unwanted sequences
-from a dataset. Where decisions need be made quickly, such as in a
-clinical settings <span class="citation"
+produce larger and larger datasets <span class="citation"
+data-cites="katz2022sequence">(Katz et al. 2022)</span>. The uses cases
+of <em>grepq</em> are diverse, and include pre-processing of FASTQ files
+before downstream analysis, quality control of sequencing data, and
+filtering out unwanted sequences from a dataset. Where decisions need be
+made quickly, such as in a clinical settings <span class="citation"
 data-cites="bachurin2024structural">(Bachurin et al. 2024)</span>,
 biosecurity <span class="citation"
 data-cites="valdivia2012biodefense">(Valdivia-Granda 2012)</span>, and
 wastewater-based epidemiology in support of public health measures <span
 class="citation"
-data-cites="choi2018wastewater sims2020future xylogiannopoulos2021pattern">(Choi
-et al. 2018; Sims and Kasprzyk-Hordern 2020; Xylogiannopoulos
-2021)</span>, the ability to quickly filter FASTQ files by matching
-sequences to a set of regex patterns is attractive as it circumvents the
-need for more time-consuming bioinformatic workflows.</p>
+data-cites="choi2018wastewater sims2020future xylogiannopoulos2021pattern merrett2024highly">(Choi
+et al. 2018; Sims and Kasprzyk-Hordern 2020; Xylogiannopoulos 2021;
+Merrett et al. 2024)</span>, the ability to quickly filter FASTQ files
+by matching sequences to a set of regex patterns is attractive as it
+circumvents the need for more time-consuming bioinformatic
+workflows.</p>
 <p>Regular expressions are a powerful tool for matching sequences, but
 they can be slow and inefficient when working with large datasets.
-Furthermore, general purpose tools like <strong>grep</strong> <span
+Furthermore, general purpose tools like <em>grep</em> <span
 class="citation" data-cites="gnugrep">(Free Software Foundation
-2023)</span> and <strong>ripgrep</strong> <span class="citation"
+2023)</span> and <em>ripgrep</em> <span class="citation"
 data-cites="ripgrep">(A. Gallant 2025)</span> are not optimized for the
 specific task of filtering FASTQ files, and ocassionaly yield false
-positives as they scan the entire FASTQ record. Tools such
-<strong>awk</strong> <span class="citation" data-cites="awk">(Aho,
-Kernighan, and Weinberger 1988)</span> and <strong>gawk</strong> <span
-class="citation" data-cites="gawk">(Free Software Foundation
-2024)</span> can be used to filter FASTQ files without yielding false
-positives, but they are significantly slower than <strong>grepq</strong>
-and can require the development of more complex scripts to achieve the
-same result.</p>
+positives as they scan the entire FASTQ record, including the sequence
+quality field. Tools such <em>awk</em> <span class="citation"
+data-cites="awk">(Aho, Kernighan, and Weinberger 1988)</span> and
+<em>gawk</em> <span class="citation" data-cites="gawk">(Free Software
+Foundation 2024)</span> can be used to filter FASTQ files without
+yielding false positives, but they are significantly slower than
+<em>grepq</em> and can require the development of more complex scripts
+to achieve the same result.</p>
 <h1 id="implementation">Implementation</h1>
-<p><strong>grepq</strong> is implemented in Rust, a systems programming
-language that is known for its speed and safety. Rust is a modern
-language that is designed to be fast and efficient, with a focus on
-performance and scalability. Rust is also known for its safety features,
-which help prevent common programming errors such as null pointer
-dereferences and buffer overflows. These features make Rust an ideal
-choice for implementing a tool like <strong>grepq</strong>, which needs
-to be fast, efficient, and reliable.</p>
-<p><strong>grepq</strong> obtains its performance and reliability, in
-part, by using the <strong>seq_io</strong> <span class="citation"
+<p><em>grepq</em> is implemented in Rust, a systems programming language
+known for its safety features, which help prevent common programming
+errors such as null pointer dereferences and buffer overflows. These
+features make Rust an ideal choice for implementing a tool like
+<em>grepq</em>, which needs to be fast, efficient, and reliable.</p>
+<p>Furthermore, <em>grepq</em> obtains its performance and reliability,
+in part, by using the <em>seq_io</em> <span class="citation"
 data-cites="seq_io">(Schlegel and Seyboldt 2025)</span> and
-<strong>regex</strong> <span class="citation"
-data-cites="regex">(Gallant et al. 2025b)</span> Rust libraries. The
-<strong>seq_io</strong> library is a well-tested library for reading and
-writing FASTA and FASTQ files, designed to be fast and efficient, and
-which includes a module for parallel processing through multi-threading.
-The <strong>regex</strong> library is designed to work with regular
-expressions and sets of regular expressions, and is known to be one of
-the fastest regular expression libraries currently available <span
-class="citation" data-cites="rebar">(Gallant et al. 2025a)</span>. The
-<strong>regex</strong> library supports Perl-like regular expressions
+<em>regex</em> <span class="citation" data-cites="regex">(Gallant et al.
+2025b)</span> libraries. The <em>seq_io</em> library is a well-tested
+library for parsing FASTQ files, designed to be fast and efficient, and
+which includes a module for parallel processing of FASTQ records through
+multi-threading. The <em>regex</em> library is designed to work with
+regular expressions and sets of regular expressions, and is known to be
+one of the fastest regular expression libraries currently available
+<span class="citation" data-cites="rebar">(Gallant et al. 2025a)</span>.
+The <em>regex</em> library supports Perl-like regular expressions
 without look-around or backreferences (documented at <a
 href="https://docs.rs/regex/1.*/regex/#syntax"
 class="uri">https://docs.rs/regex/1.*/regex/#syntax</a>).</p>
-<p>By leveraging these libraries, <strong>grepq</strong> is able to
-quickly filter FASTQ files by matching sequences to a set of regex
-patterns, while maintaining high performance and reliability.</p>
 <p>Further performance gains were obtained by:</p>
 <ul>
-<li>use of the <code>RegexSet</code> struct from the
-<strong>regex</strong> library to match multiple regular expressions
-against a sequence in a single pass, rather than matching each regular
-expression individually (the <code>RegexSet</code> is created and
-compiled once before entering any loop that processes the FASTQ records,
-avoiding the overhead of recompiling the regular expressions for each
-record)</li>
+<li>use of the <em>RegexSet</em> struct from the <em>regex</em> library
+to match multiple regular expressions against a sequence in a single
+pass, rather than matching each regular expression individually (the
+<em>RegexSet</em> is created and compiled once before entering any loop
+that processes the FASTQ records, avoiding the overhead of recompiling
+the regular expressions for each record)</li>
 <li>multi-threading to process the records within an input FASTQ file in
 parallel through use of multiple CPU cores</li>
-<li>use of an optimised global memory allocator (the
-<strong>mimalloc</strong> library <span class="citation"
-data-cites="mimalloc">(Mutiple, n.d.)</span>) to reduce memory
-fragmentation and improve memory allocation and deallocation
-performance</li>
-<li>buffer reuse to reduce memory allocations and deallocations</li>
+<li>use of the <em>zlib-ng</em> backend to the <em>flate2</em> library
+to read and write gzip-compressed FASTQ files, which is faster than the
+default <em>miniz_oxide</em> backend</li>
+<li>use of an optimised global memory allocator (the <em>mimalloc</em>
+library <span class="citation" data-cites="mimalloc">(Mutiple,
+n.d.)</span>) to reduce memory fragmentation and improve memory
+allocation and deallocation performance</li>
+<li>buffer reuse to reduce the number of memory allocations and
+deallocations</li>
 <li>use of byte slices to avoid the overhead of converting to and from
 string types</li>
-<li>inlining of performance-critical functions</li>
-<li>use of the <code>write_all</code> I/O operation that ensures the
-data is written in one go, rather than writing data in smaller
-chunks</li>
+<li>in-lining of performance-critical functions</li>
+<li>use of the <em>write_all</em> I/O operation that ensures the data is
+written in one go, rather than writing data in smaller chunks</li>
 </ul>
 <h1 id="feature-set">Feature set</h1>
-<p><strong>grepq</strong> has the following features:</p>
+<p><em>grepq</em> has the following features:</p>
 <ul>
 <li>support for presence and absence (inverted) matching of a set of
 regular expressions</li>
 <li>IUPAC ambiguity code support (e.g. N, R, Y, etc.)</li>
 <li>gzip support (reading and writing)</li>
-<li>JSON support for pattern file input and <code>tune</code> command
+<li>JSON support for pattern file input and <em>tune</em> command
 output, allowing named regex sets and named regex patterns (pattern
 files can also be in plain text)</li>
 <li>the ability to set predicates to filter FASTQ records on the header
@@ -122,10 +119,10 @@ length, and minimum average quality score (supports Phred+33 and
 Phred+64)</li>
 <li>the ability to output matched sequences to one of four formats
 (including FASTQ and FASTA)</li>
-<li>the ability to tune the pattern file with the <code>tune</code>
-command: this command will output a plain text or JSON file with the
-patterns sorted by their frequency of occurrence in the input FASTQ file
-or gzip-compressed FASTQ file (or a user-specified number of FASTQ
+<li>the ability to tune the pattern file with the <em>tune</em> command:
+this command will output a plain text or JSON file with the patterns
+sorted by their frequency of occurrence in the input FASTQ file or
+gzip-compressed FASTQ file (or a user-specified number of FASTQ
 records). This can be useful for optimizing the pattern file for
 performance, for example, by removing patterns that are rarely
 matched</li>
@@ -133,30 +130,47 @@ matched</li>
 the number of matching records (or records that don’t match in the case
 of inverted matching) in the input FASTQ file</li>
 </ul>
-<p>When coupled with its excellent runtime performance (see below), this
-feature set makes <strong>grepq</strong> a powerful and flexible tool
-for filtering FASTQ files by matching sequences to a set of regex
-patterns. Colorized output of for matching regex patterns is not
-implemented to maximise speed and minimise code complexity, but can be
-achieved by piping the output to <strong>grep</strong> or
-<strong>ripgrep</strong> for testing purposes.</p>
+<p>Other than when the <em>tune</em> command is run, a FASTQ record is
+deemed to match (and hence provided in the output) when <em>any</em> of
+the regex patterns in the pattern file match the sequence field of the
+FASTQ record.</p>
+<p>When the count option (<strong>-c</strong>) is given with the
+<em>tune</em> command, <em>grepq</em> will count the number of FASTQ
+records containing a sequence that is matched, for each matching regex
+in the pattern file. If, however, there are multiple occurrences of a
+given regex within a FASTQ record sequence field, grepq will count this
+as one match. When the count option (<strong>-c</strong>) is not given
+with the <em>tune</em> command, <em>grepq</em> provides the total number
+of matching FASTQ records for the set of regex patterns in the pattern
+file.</p>
+<p>When coupled with its exceptional runtime performance (see below),
+this feature set makes <em>grepq</em> a powerful and flexible tool for
+filtering FASTQ records in FASTQ files. Colorized output for matching
+regex patterns is not implemented to maximise speed and minimise code
+complexity, but can be achieved by piping the output to <em>grep</em> or
+<em>ripgrep</em> for testing purposes.</p>
 <h1 id="performance">Performance</h1>
-<p>The benchmarking tool <strong>hyperfine</strong> <span
-class="citation" data-cites="Peter_hyperfine_2023">(Peter 2024)</span>
-was used to compare the runtime of <strong>grepq</strong>,
-<strong>fqgrep</strong>, <strong>ripgrep</strong>,
-<strong>fqgrep</strong>, <strong>awk</strong>, and <strong>gawk</strong>
-for filtering FASTQ records against a set of regular expressions. The
+<p>The benchmarking tool <em>hyperfine</em> <span class="citation"
+data-cites="Peter_hyperfine_2023">(Peter 2024)</span> was used to
+compare the runtime of <em>grepq</em>, <em>fqgrep</em>, <em>seqkit</em>
+<em>grep</em>, <em>ripgrep</em>, <em>awk</em>, and <em>gawk</em> for
+filtering FASTQ records against a set of regular expressions. The
 benchmarking was performed on a 2022 model Mac Studio with 32GB RAM and
-Apple M1 max chip running macOS 15.0.1. The FASTQ file
-(SRX26365298.fastq) was 874MB in size and was stored on the internal SSD
-(APPLE SSD AP0512R). The pattern file contained 30 regex patterns (see
-<code>examples/16S-no-iupac.txt</code> for the patterns used). The
-<strong>awk</strong> and <strong>gawk</strong> commands were run with a
-bash script, see <code>examples/match.sh</code>.</p>
-<p>The following shows the speedup of <strong>grepq</strong> for
-filtering FASTQ records against a set of regular expressions, for a
-874MB FASTQ file (SRX26365298.fastq) containing 869034 records:</p>
+Apple M1 max chip running macOS 15.0.1. All test and output files were
+stored on and written to the internal SSD (APPLE SSD AP0512R). The
+pattern file contained 30 regex patterns (see
+<em>examples/16S-no-iupac.txt</em> for the patterns used, available at
+<em>grepq</em>’s GitHub repository), representing the 12-mer contigs
+(and their reverse compliment) listed in <strong>Table 3</strong> of
+<span class="citation"
+data-cites="martinez2017conserved">Martinez-Porchas et al.
+(2017)</span>. The <em>awk</em> and <em>gawk</em> commands were run with
+a bash script, see <em>examples/match.sh</em>, available at
+<em>grepq</em>’s GitHub repository.</p>
+<p>The following shows the clock times and speedup of <em>grepq</em> and
+comparison tools for filtering FASTQ records against a set of regular
+expressions, for a 874MB FASTQ file (SRX26365298.fastq) containing
+869,034 records:</p>
 <table>
 <colgroup>
 <col style="width: 10%" />
@@ -219,15 +233,20 @@ filtering FASTQ records against a set of regular expressions, for a
 </tr>
 </tbody>
 </table>
-<p>(<strong>grepq</strong> v1.3.5, <strong>fqgrep</strong> v.1.02,
-<strong>ripgrep</strong> v14.1.1, <strong>grep</strong> 2.6.0-FreeBSD,
-<strong>awk</strong> v. 20200816, and <strong>gawk</strong> v.5.3.1.
-<strong>ripgrep</strong> was run with –colors ‘match:none’
-–no-line-number, and <strong>grep</strong> was run with
-–color=never)</p>
-<p>Speedup of <strong>grepq</strong> over <strong>ripgrep</strong> and
-<strong>grep</strong> for filtering FASTQ records against a set of
-regular expressions, where the FASTQ file was gzip-compressed:</p>
+<p><em>grepq</em> v1.3.6, <em>fqgrep</em> v.1.02, <em>ripgrep</em>
+v14.1.1, <em>seqkit</em> <em>grep</em> v.2.9.0, <em>grep</em>
+2.6.0-FreeBSD, <em>awk</em> v. 20200816, and <em>gawk</em> v.5.3.1.</p>
+<p><em>fqgrep</em> and <em>seqkit</em> <em>grep</em> were run with
+default settings, <em>ripgrep</em> was run with <strong>–colors
+‘match:none’ –no-line-number</strong>, and <em>grep</em> was run with
+<strong>–color=never</strong>. The tools were configured to output
+matching records in FASTQ format.</p>
+<p>Clock times and speedup of <em>grepq</em> over <em>ripgrep</em> and
+<em>grep</em> where the FASTQ file was gzip-compressed (conditions and
+versions as above, but <em>grepq</em> was run with the
+<strong>-x</strong> option, <em>ripgrep</em> with the
+<strong>-z</strong> option, and <em>grep</em> with the
+<strong>-Z</strong> option):</p>
 <table>
 <thead>
 <tr>
@@ -258,60 +277,52 @@ regular expressions, where the FASTQ file was gzip-compressed:</p>
 </tr>
 </tbody>
 </table>
-<details>
-<summary>
-Details
-</summary>
-<p>
-Conditions and versions as above, but the FASTQ file was
-gzip-compressed. <strong>grepq</strong> was run with the <code>-x</code>
-option, <strong>ripgrep</strong> with the <code>-z</code> option, and
-<strong>grep</strong> with the <code>-Z</code> option.
-</p>
-</details>
 <h1 id="testing">Testing</h1>
-<p>The output of <strong>grepq</strong> was compared against the output
-of output of <strong>fqgrep</strong>, <strong>ripgrep</strong>,
-<strong>grep</strong>, <strong>awk</strong> and <strong>gawk</strong>,
-using the <strong>stat</strong> command <span class="citation"
-data-cites="stat">(Brown 2017)</span>, and any difference investigated
-using the <strong>diff</strong> command <span class="citation"
-data-cites="diff">(Hunt and McIlroy 2024)</span>. Furthermore, a custom
-utility, <strong>spikeq</strong> <span class="citation"
-data-cites="spikeq">(Crosbie 2024b)</span> was developed to generate
-synthetic FASTQ files with a known number of records and sequences that
-match a set of regular expressions. This utility was used to test the
-performance of <strong>grepq</strong> and other tools under different
-conditions, such as the number of records and sequences that match the
-regular expressions.</p>
-<p>Finally, a bash test script (<code>examples/test.sh</code>) and a
-simple Rust CLI application, <strong>predate</strong> <span
-class="citation" data-cites="predate">(Crosbie 2024a)</span>, were
-developed and utilised to automate system testing, and to monitor for
-performance regressions.</p>
-<p><strong>grepq</strong> has been tested on macOS 15.0.1 (Apple M1 Max)
-and Linux Ubuntu 20.04.6 LTS (AMD EPYC 7763 64-Core Processor). It may
-work on other platforms, but this has not been tested.</p>
+<p>The output of <em>grepq</em> was compared against the output of
+<em>fqgrep</em>, <em>seqkit</em> <em>grep</em>, <em>ripgrep</em>,
+<em>grep</em>, <em>awk</em> and <em>gawk</em>, using the <em>stat</em>
+command <span class="citation" data-cites="stat">(Brown 2017)</span>,
+and any difference investigated using the <em>diff</em> command <span
+class="citation" data-cites="diff">(Hunt and McIlroy 2024)</span>.
+Furthermore, a custom utility, <em>spikeq</em> <span class="citation"
+data-cites="spikeq">(Crosbie 2024b)</span>, was developed to generate
+synthetic FASTQ files with a known number of records and sequences with
+user-specified lengths that were spiked with a set of regular
+expressions a known number of times. This utility was used to test the
+performance of <em>grepq</em> and the aforementioned tools under
+controlled conditions.</p>
+<p>Finally, a bash test script (see <em>examples/test.sh</em>, available
+at <em>grepq</em>’s Github repository) and a simple Rust CLI
+application, <em>predate</em> <span class="citation"
+data-cites="predate">(Crosbie 2024a)</span>, were developed and utilised
+to automate system testing, and to monitor for performance
+regressions.</p>
+<p><em>grepq</em> has been tested on macOS 15.0.1 (Apple M1 Max) and
+Linux Ubuntu 20.04.6 LTS (AMD EPYC 7763 64-Core Processor). It may work
+on other platforms, but this has not been tested.</p>
 <h1 id="availability-and-documentation">Availability and
 documentation</h1>
-<p><strong>grepq</strong> is open-source and available on GitHub at: <a
+<p><em>grepq</em> is open-source and available at <em>GitHub</em> (<a
 href="https://github.com/Rbfinch/grepq"
-class="uri">https://github.com/Rbfinch/grepq</a></p>
-<p>Documentation for <strong>grepq</strong> is available at the same
-GitHub repository, and through the <code>-h</code> and
-<code>--help</code> command-line options, which includes a list of all
-available commands and options, and examples of how to use them, as well
-as a large number of examples in the <code>examples</code> directory.
-Example pattern files are also provided in the <code>examples</code>
-directory. <strong>grepq</strong> is distributed under the MIT
-license.</p>
+class="uri">https://github.com/Rbfinch/grepq</a>) and <em>Crates.io</em>
+(<a href="https://crates.io/crates/grepq"
+class="uri">https://crates.io/crates/grepq</a>).</p>
+<p>Documentation and installation instructions for <em>grepq</em> is
+available at the same GitHub repository, and through the
+<strong>-h</strong> and <strong>–help</strong> command-line options,
+which includes a list of all available commands and options, and
+examples of how to use them. Example pattern files in plain text and
+JSON format are also provided, as well as test scripts. <em>grepq</em>
+is distributed under the MIT license.</p>
 <h1 id="acknowledgements">Acknowledgements</h1>
 <p>I’m grateful to my family for their patience and support during the
-development of <strong>grepq</strong>. I would also like to thank the
-developers of the <strong>seq_io</strong> and <strong>regex</strong>
-Rust libraries for their excellent work, and the developers of the
-<code>hyperfine</code> benchmarking tool for making it easy to compare
-the performance of different tools.</p>
+development of <em>grepq</em>. I would also like to thank the developers
+of the <em>seq_io</em>, <em>regex</em>, <em>mimalloc</em> and
+<em>flate2</em> libraries for their excellent work, and the developers
+of the <em>hyperfine</em> benchmarking tool for making it easy to
+compare the performance of different tools. Finally, I would like to
+thank the authors of the <em>ripgrep</em> and <em>fqgrep</em> tools for
+providing inspiration for <em>grepq</em>.</p>
 <h1 class="unnumbered" id="references">References</h1>
 <div id="refs" class="references csl-bib-body hanging-indent"
 data-entry-spacing="0" role="list">
@@ -382,10 +393,29 @@ Gene/Protein Functional Assignment.”</span> <em>Bioinformatics</em> 16
 Hunt, James W., and M. Douglas McIlroy. 2024. <span>“<span
 class="nocase">diff</span>.”</span>
 </div>
+<div id="ref-katz2022sequence" class="csl-entry" role="listitem">
+Katz, Kenneth, Oleg Shutov, Richard Lapoint, Michael Kimelman, J Rodney
+Brister, and Christopher O’Sullivan. 2022. <span>“The Sequence Read
+Archive: A Decade More of Explosive Growth.”</span> <em>Nucleic Acids
+Research</em> 50 (D1): D387–90.
+</div>
 <div id="ref-kleene1951representationof" class="csl-entry"
 role="listitem">
 Kleene, SC. 1951. <span>“Representationof Events in Nerve Nets and
 Finite Automata.”</span> <em>CE Shannon and J. McCarthy</em>.
+</div>
+<div id="ref-martinez2017conserved" class="csl-entry" role="listitem">
+Martinez-Porchas, Marcel, Enrique Villalpando-Canchola, Luis Enrique
+Ortiz Suarez, and Francisco Vargas-Albores. 2017. <span>“How Conserved
+Are the Conserved 16S-rRNA Regions?”</span> <em>PeerJ</em> 5: e3036.
+</div>
+<div id="ref-merrett2024highly" class="csl-entry" role="listitem">
+Merrett, James E, Monica Nolan, Leon Hartman, Nijoy John, Brianna Flynn,
+Louise Baker, Christelle Schang, et al. 2024. <span>“Highly Sensitive
+Wastewater Surveillance of SARS-CoV-2 Variants by Targeted
+Next-Generation Amplicon Sequencing Provides Early Warning of Incursion
+in Victoria, Australia.”</span> <em>Applied and Environmental
+Microbiology</em> 90 (8): e01497–23.
 </div>
 <div id="ref-mimalloc" class="csl-entry" role="listitem">
 Mutiple. n.d. <span>“Mimalloc: A Rust Wrapper over Microsoft’s MiMalloc
