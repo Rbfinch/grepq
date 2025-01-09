@@ -171,109 +171,246 @@ a bash script, see <em>examples/match.sh</em>, available at
 comparison tools for filtering FASTQ records against a set of regular
 expressions, for a 874MB FASTQ file (SRX26365298.fastq) containing
 869,034 records:</p>
-<table>
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 12%" />
-<col style="width: 25%" />
-<col style="width: 29%" />
-<col style="width: 22%" />
-</colgroup>
+<table border="1">
 <thead>
 <tr>
-<th>tool</th>
-<th>time (s)</th>
-<th>× grep speedup</th>
-<th>× ripgrep speedup</th>
-<th>× awk speedup</th>
+<th>
+tool
+</th>
+<th>
+mean clock time (s)
+</th>
+<th>
+σ clock time (s)
+</th>
+<th>
+× grep speedup
+</th>
+<th>
+× ripgrep speedup
+</th>
+<th>
+× awk speedup
+</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>grepq</td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
+<td>
+grepq
+</td>
+<td>
+0.19
+</td>
+<td>
+0.0021
+</td>
+<td>
+1814.71
+</td>
+<td>
+18.74
+</td>
+<td>
+870.79
+</td>
 </tr>
 <tr>
-<td>fqgrep</td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
+<td>
+fqgrep
+</td>
+<td>
+0.34
+</td>
+<td>
+0.01
+</td>
+<td>
+1010.24
+</td>
+<td>
+10.43
+</td>
+<td>
+484.77
+</td>
 </tr>
 <tr>
-<td>ripgrep</td>
-<td></td>
-<td>95.99</td>
-<td>1.00</td>
-<td>45.77</td>
+<td>
+ripgrep
+</td>
+<td>
+3.56
+</td>
+<td>
+0.01
+</td>
+<td>
+96.85
+</td>
+<td>
+1.00
+</td>
+<td>
+46.48
+</td>
 </tr>
 <tr>
-<td>grep</td>
-<td>343.64</td>
-<td>1.00</td>
-<td>0.01</td>
-<td>0.48</td>
+<td>
+seqkit grep
+</td>
+<td>
+122.05
+</td>
+<td>
+0.90
+</td>
+<td>
+2.83
+</td>
+<td>
+0.03
+</td>
+<td>
+1.36
+</td>
 </tr>
 <tr>
-<td>awk</td>
-<td>163.87</td>
-<td>2.10</td>
-<td>0.02</td>
-<td>1.00</td>
+<td>
+grep
+</td>
+<td>
+344.79
+</td>
+<td>
+1.24
+</td>
+<td>
+1.00
+</td>
+<td>
+0.01
+</td>
+<td>
+0.48
+</td>
 </tr>
 <tr>
-<td>gawk</td>
-<td>285.62</td>
-<td>1.20</td>
-<td>0.01</td>
-<td>0.57</td>
+<td>
+awk
+</td>
+<td>
+165.45
+</td>
+<td>
+1.59
+</td>
+<td>
+2.08
+</td>
+<td>
+0.02
+</td>
+<td>
+1.00
+</td>
+</tr>
+<tr>
+<td>
+gawk
+</td>
+<td>
+287.66
+</td>
+<td>
+1.68
+</td>
+<td>
+1.20
+</td>
+<td>
+0.01
+</td>
+<td>
+0.58
+</td>
 </tr>
 </tbody>
 </table>
-<p><em>grepq</em> v1.3.6, <em>fqgrep</em> v.1.02, <em>ripgrep</em>
+<p>(<em>grepq</em> v1.3.6, <em>fqgrep</em> v.1.02, <em>ripgrep</em>
 v14.1.1, <em>seqkit</em> <em>grep</em> v.2.9.0, <em>grep</em>
-2.6.0-FreeBSD, <em>awk</em> v. 20200816, and <em>gawk</em> v.5.3.1.</p>
-<p><em>fqgrep</em> and <em>seqkit</em> <em>grep</em> were run with
-default settings, <em>ripgrep</em> was run with <strong>–colors
-‘match:none’ –no-line-number</strong>, and <em>grep</em> was run with
+2.6.0-FreeBSD, <em>awk</em> v. 20200816, and <em>gawk</em> v.5.3.1.
+<em>fqgrep</em> and <em>seqkit</em> <em>grep</em> were run with default
+settings, <em>ripgrep</em> was run with <strong>–colors ‘match:none’
+–no-line-number</strong>, and <em>grep</em> was run with
 <strong>–color=never</strong>. The tools were configured to output
-matching records in FASTQ format.</p>
+matching records in FASTQ format. σ is the standard deviation of the
+mean clock time. The clock times are the mean of 10 runs.)</p>
 <p>Clock times and speedup of <em>grepq</em> over <em>ripgrep</em> and
-<em>grep</em> where the FASTQ file was gzip-compressed (conditions and
-versions as above, but <em>grepq</em> was run with the
-<strong>-x</strong> option, <em>ripgrep</em> with the
+<em>grep</em> where the FASTQ file was gzip-compressed (FASTQ file, test
+conditions and tool versions as above, but <em>grepq</em> was run with
+the <strong>-x</strong> option, <em>ripgrep</em> with the
 <strong>-z</strong> option, and <em>grep</em> with the
 <strong>-Z</strong> option):</p>
-<table>
+<table border="1">
 <thead>
 <tr>
-<th>tool</th>
-<th>time (s)</th>
-<th>× grep speedup</th>
-<th>× ripgrep speedup</th>
+<th>
+tool
+</th>
+<th>
+mean clock time (s)
+</th>
+<th>
+σ clock time (s)
+</th>
+<th>
+× grep speedup
+</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>grepq</td>
-<td>2.38</td>
-<td>145.24</td>
-<td>1.51</td>
+<td>
+grepq
+</td>
+<td>
+1.707
+</td>
+<td>
+0.002
+</td>
+<td>
+2.09
+</td>
 </tr>
 <tr>
-<td>fqgrep</td>
-<td>2.38</td>
-<td>145.24</td>
-<td>1.51</td>
+<td>
+fqgrep
+</td>
+<td>
+1.84
+</td>
+<td>
+0.01
+</td>
+<td>
+1.94
+</td>
 </tr>
 <tr>
-<td>ripgrep</td>
-<td>3.59</td>
-<td>96.29</td>
-<td>1.00</td>
+<td>
+ripgrep
+</td>
+<td>
+3.57
+</td>
+<td>
+0.01
+</td>
+<td>
+1.00
+</td>
 </tr>
 </tbody>
 </table>
