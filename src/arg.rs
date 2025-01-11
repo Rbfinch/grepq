@@ -177,14 +177,14 @@ pub struct Cli {
 
     #[arg(
         short = 'x',
-        long = "extract",
+        long = "read-gzip",
         help = "Read the FASTQ file in gzip compressed format"
     )]
     pub gzip_input: bool,
 
     #[arg(
         short = 'z',
-        long = "zip",
+        long = "write-gzip",
         help = "Write the output in gzip compressed format"
     )]
     pub gzip_output: bool,
@@ -194,6 +194,18 @@ pub struct Cli {
 
     #[arg(short = 'b', long = "best", help = "Use best compression")]
     pub best_compression: bool,
+
+    #[arg(
+        long = "read-zstd",
+        help = "Read the FASTQ file in zstd compressed format"
+    )]
+    pub zstd_input: bool,
+
+    #[arg(
+        long = "write-zstd",
+        help = "Write the output in zstd compressed format"
+    )]
+    pub zstd_output: bool,
 
     #[arg(help = "Path to the patterns file in plain text or JSON format")]
     pub patterns: String,

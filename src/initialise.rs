@@ -6,7 +6,9 @@ use regex::bytes::RegexSet;
 use seq_io::fastq::Reader;
 use serde_json::Value;
 use std::fs::File;
+use std::io::BufWriter;
 use std::io::{self, BufRead, BufReader, Write};
+use zstd::stream::{read::Decoder as ZstdDecoder, write::Encoder as ZstdEncoder};
 
 static SCHEMA: &str = r#"
 {
@@ -175,25 +177,90 @@ pub fn open_file(file_path: &str) -> File {
 pub fn create_reader(cli: &Cli) -> Reader<Box<dyn BufRead + Send>> {
     let file = open_file(&cli.file);
     let reader: Box<dyn BufRead + Send> = if cli.gzip_input {
-        Box::new(BufReader::new(MultiGzDecoder::new(file))) as Box<dyn BufRead + Send>
+        Box::new(BufReader::new(MultiGzDecoder::new(file)))
+    } else if cli.zstd_input {
+        match ZstdDecoder::new(file) {
+            Ok(decoder) => Box::new(BufReader::new(decoder)),
+            Err(e) => {
+                eprintln!("Error: Failed to read zstd compressed file. The file may be corrupted or incomplete.");
+                eprintln!("Underlying error: {}", e);
+                std::process::exit(1);
+            }
+        }
     } else {
-        Box::new(BufReader::new(file)) as Box<dyn BufRead + Send>
+        Box::new(BufReader::new(file))
     };
     Reader::with_capacity(reader, 8 * 1024 * 1024)
+}
+
+// Add this new struct and implementation
+struct ZstdWriter<W: Write> {
+    encoder: Option<ZstdEncoder<'static, W>>,
+}
+
+impl<W: Write> ZstdWriter<W> {
+    fn new(writer: W, compression_level: i32) -> io::Result<Self> {
+        let mut encoder = ZstdEncoder::new(writer, compression_level)?;
+        encoder.include_checksum(true)?;
+        Ok(Self {
+            encoder: Some(encoder),
+        })
+    }
+}
+
+impl<W: Write> Write for ZstdWriter<W> {
+    fn write(&mut self, buf: &[u8]) -> io::Result<usize> {
+        if let Some(encoder) = &mut self.encoder {
+            encoder.write(buf)
+        } else {
+            Err(io::Error::new(
+                io::ErrorKind::Other,
+                "Encoder has been finalized",
+            ))
+        }
+    }
+
+    fn flush(&mut self) -> io::Result<()> {
+        if let Some(encoder) = &mut self.encoder {
+            encoder.flush()
+        } else {
+            Ok(())
+        }
+    }
+}
+
+impl<W: Write> Drop for ZstdWriter<W> {
+    fn drop(&mut self) {
+        if let Some(encoder) = self.encoder.take() {
+            let _ = encoder.finish();
+        }
+    }
 }
 
 // Create a writer for the output file
 pub fn create_writer(cli: &Cli) -> Box<dyn Write> {
     let stdout_lock = io::stdout().lock();
-    let compression = if cli.fast_compression {
-        Compression::fast()
-    } else if cli.best_compression {
-        Compression::best()
-    } else {
-        Compression::default()
-    };
+
     if cli.gzip_output {
+        let compression = if cli.fast_compression {
+            Compression::fast()
+        } else if cli.best_compression {
+            Compression::best()
+        } else {
+            Compression::default()
+        };
         Box::new(MultiGzEncoder::new(stdout_lock, compression))
+    } else if cli.zstd_output {
+        let level = if cli.fast_compression {
+            1
+        } else if cli.best_compression {
+            21
+        } else {
+            3
+        };
+        Box::new(ZstdWriter::new(stdout_lock, level).unwrap())
+    } else if cli.with_fasta {
+        Box::new(BufWriter::new(stdout_lock))
     } else {
         Box::new(stdout_lock)
     }
