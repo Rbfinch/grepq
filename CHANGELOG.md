@@ -3,6 +3,13 @@ TBD
 
 Unreleased changes. Release notes have not yet been written.
 
+1.3.8
+=====
+
+* support for zstd compression
+* corresponding changes to README.md,
+--help, cookbook.sh and cookbook.md
+
 1.3.7
 =====
 

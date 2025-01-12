@@ -23,7 +23,7 @@ _Quickly filter FASTQ files_
 
 - very fast and scales to large FASTQ files
 - IUPAC ambiguity code support
-- gzip support
+- support for gzip and zstd compression
 - JSON support for pattern file input and `tune` command output, allowing named regex sets and named regex patterns
 - use **predicates** to filter on the header field (= record ID line) using a regex, minimum sequence length, and minimum average quality score (supports Phred+33 and Phred+64)
 - does not match false positives
@@ -52,7 +52,7 @@ _Quickly filter FASTQ files_
   <p>2022 model Mac Studio with 32GB RAM and Apple M1 max chip running macOS 15.0.1. The FASTQ file (SRX26365298.fastq) was 874MB in size and was stored on the internal SSD (APPLE SSD AP0512R). The pattern file contained 30 regex patterns (see `examples/16S-no-iupac.txt` for the patterns used). grepq v1.3.6, fqgrep v.1.02, ripgrep v14.1.1, seqkit grep v.2.9.0, grep 2.6.0-FreeBSD, awk v. 20200816, and gawk v.5.3.1. fqgrep and seqkit grep were run with default settings, ripgrep was run with --colors 'match:none' --no-line-number, and grep was run with --color=never. The tools were configured to output matching records in FASTQ format. The clock times, given in seconds, are the mean of 10 runs, and S.D. is the standard deviation of the clock times, also given in seconds.</p>
 </details>
 
-**2. Reads and writes regular or gzip-compressed FASTQ files**
+**2. Reads and writes regular or gzip or zstd-compressed FASTQ files**
 
 Use the `--best` option for best compression, or the `--fast` option for faster compression.
 
@@ -64,7 +64,7 @@ Use the `--best` option for best compression, or the `--fast` option for faster 
 
 <details>
   <summary>Details</summary>
-  <p>Conditions and versions as above, but the FASTQ file was gzip-compressed. `grepq` was run with the `-x` option, `ripgrep` with the `-z` option, and `grep` with the `-Z` option. The clock times, given in seconds, are the mean of 10 runs, and S.D. is the standard deviation of the clock times, also given in seconds.</p>
+  <p>Conditions and versions as above, but the FASTQ file was gzip-compressed. `grepq` was run with the `--read-gzip` option, `ripgrep` with the `-z` option, and `grep` with the `-Z` option. The clock times, given in seconds, are the mean of 10 runs, and S.D. is the standard deviation of the clock times, also given in seconds.</p>
 </details>
 
 **3. Predicates**

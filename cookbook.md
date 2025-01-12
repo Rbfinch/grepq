@@ -30,27 +30,27 @@
 
 *Save the matching sequences in gzip compressed FASTQ format*
 
-**grepq -R -z regex.txt file.fastq > output.fastq.gz**
+**grepq -R --write-gzip regex.txt file.fastq > output.fastq.gz**
 
 <br>
 
 *Read the FASTQ file in gzip compressed format*
 
-**grepq -x regex.txt file.fastq.gz**
+**grepq --read-gzip regex.txt file.fastq.gz**
 
 <br>
 
 *Read and save the output in gzip compressed format, with fast
 compression*
 
-**grepq -xz --fast regex.txt file.fastq.gz > output.fastq.gz**
+**grepq --read-gzip --write-gzip --fast regex.txt file.fastq.gz > output.fastq.gz**
 
 <br>
 
 Read and save the output in gzip compressed format, with best
 compression
 
-**grepq -xz --best regex.txt file.fastq.gz > output.fastq.gz**
+**grepq --read-gzip --write-gzip --best regex.txt file.fastq.gz > output.fastq.gz**
 
 <br>
 
@@ -70,7 +70,7 @@ print the pattern and the number of matches*
 *For each matched pattern in a search of the first 100000 records of
 a gzip-compressed FASTQ file, print the pattern and the number of matches*
 
-**grepq -x regex.txt file.fastq.gz tune -n 100000 -c**
+**grepq --read-gzip regex.txt file.fastq.gz tune -n 100000 -c**
 
 <br>
 
@@ -78,7 +78,7 @@ a gzip-compressed FASTQ file, print the pattern and the number of matches*
 a gzip-compressed FASTQ file, print the pattern and the number of matches to a
 JSON file called matches.json*
 
-**grepq -x regex.json file.fastq.gz tune -n 100000 -c --names --json-matches**
+**grepq --read-gzip regex.json file.fastq.gz tune -n 100000 -c --names --json-matches**
 
 <br>
 

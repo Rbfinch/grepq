@@ -9,9 +9,9 @@ static AFTER_HELP: LazyLock<String> = LazyLock::new(|| {
         "\n\n`grepq` searches the sequence line of FASTQ records for regular
 expressions that are contained in a text or JSON file, or it searches for the
 absence of those regular expressions when used with the `inverted` command. The 
-FASTQ file on which it operates can be supplied uncompressed or in gzip-compressed
-format. Use the `tune` command in a simple shell script to update the number
-and order of regex patterns in your pattern file according to their matched
+FASTQ file on which it operates can be supplied uncompressed or in gzip or zstd
+compressed format. Use the `tune` command in a simple shell script to update the
+number and order of regex patterns in your pattern file according to their matched
 frequency (refer to the examples directory of the `grepq` GitHub repository:
 https://github.com/Rbfinch/grepq), further targeting and speeding up the
 filtering process.",
@@ -25,17 +25,19 @@ filtering process.",
         "\n\nPrint the matching sequences in FASTQ format".italic(),
         "\n    grepq -R regex.txt file.fastq".bold(),
         "\n\nSave the matching sequences in gzip compressed FASTQ format".italic(),
-        "\n    grepq -R -z regex.txt file.fastq > output.fastq.gz".bold(),
+        "\n    grepq -R --write-gzip regex.txt file.fastq > output.fastq.gz".bold(),
         "\n\nRead the FASTQ file in gzip compressed format".italic(),
-        "\n    grepq -x regex.txt file.fastq.gz".bold(),
+        "\n    grepq --read-gzip regex.txt file.fastq.gz".bold(),
         "\n\nRead and save the output in gzip compressed format, with fast
     compression"
             .italic(),
-        "\n    grepq -xz --fast regex.txt file.fastq.gz > output.fastq.gz".bold(),
+        "\n    grepq --read-gzip --write-gzip --fast regex.txt file.fastq.gz > output.fastq.gz"
+            .bold(),
         "\n\nRead and save the output in gzip compressed format, with best
     compression"
             .italic(),
-        "\n    grepq -xz --best regex.txt file.fastq.gz > output.fastq.gz".bold(),
+        "\n    grepq --read-gzip --write-gzip --best regex.txt file.fastq.gz > output.fastq.gz"
+            .bold(),
         "\n\nCount the number of matching FASTQ records".italic(),
         "\n    grepq -c regex.txt file.fastq".bold(),
         "\n\nFor each matched pattern in a search of the first 100000 records,
@@ -45,12 +47,13 @@ filtering process.",
         "\n\nFor each matched pattern in a search of the first 100000 records of
     a gzip-compressed FASTQ file, print the pattern and the number of matches"
             .italic(),
-        "\n    grepq -x regex.txt file.fastq.gz tune -n 100000 -c".bold(),
+        "\n    grepq --read-gzip regex.txt file.fastq.gz tune -n 100000 -c".bold(),
         "\n\nFor each matched pattern in a search of the first 100000 records of
 a gzip-compressed FASTQ file, print the pattern and the number of matches to a 
 JSON file called matches.json"
             .italic(),
-        "\n    grepq -x regex.json file.fastq.gz tune -n 100000 -c --names --json-matches".bold(),
+        "\n    grepq --read-gzip regex.json file.fastq.gz tune -n 100000 -c --names --json-matches"
+            .bold(),
         "\n\nPrint the records where none of the regex patterns are found".italic(),
         "\n    grepq regex.txt file.fastq inverted".bold(),
         "\n\nPrint the records where none of the regex patterns are found, with
@@ -97,8 +100,13 @@ any of the regex patterns in your pattern file.
 
 4. Ensure you have enough storage space for output files.",
         "\n\nNotes:".bold().underline(),
-        "\n\n1. Only supports FASTQ files or gzip compressed FASTQ files that contain
-DNA sequences.
+        "\n\n1. `grepq` can output to several formats, including those that are
+gzip or zstd compressed. `grepq`, however, will only accept a FASTQ file or a 
+compressed (gzip or zstd) FASTQ file as the sequence data file. If you get an
+error message, check that the input data file is a FASTQ file or a gzip or zstd
+compressed FASTQ file, and that you have specified the correct file format 
+(--read-gzip or --read-zstd for FASTQ files compressed by gzip and zstd,
+respectively), and file path.
 
 2. Pattern files must contain one regex pattern per line or be given in JSON
 format, and patterns are case-sensitive (you can supply an empty pattern file to
@@ -107,14 +115,19 @@ only include the DNA sequence characters (A, C, G, T), or IUPAC ambiguity codes
 (N, R, Y, ...). See 16S-no-iupac.txt, 16S-iupac.json and  
 16S-iupac-and-predicates.json in the examples directory of the `grepq` GitHub
 repository (https://github.com/Rbfinch/grepq) for examples of valid pattern files.
+Regex patterns to match the header field (= record ID line) must comply with the
+Rust regex library syntax (<https://docs.rs/regex/latest/regex/#syntax>). If you
+get an error message, be sure to escape any special characters in the regex 
+pattern.
 
 3. When no options are provided, only the matching sequences are printed.
 
 4. Only one of the -I, -F, -R, or -c options can be used at a time.
 
-5. The -x and -z options can be used separately, or together, and in combination
-with any of the other filtering options (the -z option cannot be used with the
-`tune` command).
+5. The --read-gzip [--read-zstd] and --write-gzip [--write-zstd] options can be
+used separately, or together, and in combination with any of the other filtering
+options (the --write-gzip [--write-zstd] option cannot be used with the `tune` 
+command).
 
 6. The count option (-c) will support the output of the -R option since it is in
 FASTQ format.
@@ -176,24 +189,18 @@ pub struct Cli {
     pub count: bool,
 
     #[arg(
-        short = 'x',
+ //       short = 'x',
         long = "read-gzip",
         help = "Read the FASTQ file in gzip compressed format"
     )]
     pub gzip_input: bool,
 
     #[arg(
-        short = 'z',
+ //       short = 'z',
         long = "write-gzip",
         help = "Write the output in gzip compressed format"
     )]
     pub gzip_output: bool,
-
-    #[arg(short = 'f', long = "fast", help = "Use fast compression")]
-    pub fast_compression: bool,
-
-    #[arg(short = 'b', long = "best", help = "Use best compression")]
-    pub best_compression: bool,
 
     #[arg(
         long = "read-zstd",
@@ -206,6 +213,12 @@ pub struct Cli {
         help = "Write the output in zstd compressed format"
     )]
     pub zstd_output: bool,
+
+    #[arg(short = 'f', long = "fast", help = "Use fast compression")]
+    pub fast_compression: bool,
+
+    #[arg(short = 'b', long = "best", help = "Use best compression")]
+    pub best_compression: bool,
 
     #[arg(help = "Path to the patterns file in plain text or JSON format")]
     pub patterns: String,
