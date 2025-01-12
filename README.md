@@ -14,7 +14,7 @@ _Quickly filter FASTQ files_
 - [Requirements](#requirements)
 - [Installation](#installation)
 - [Examples and tests](#examples-and-tests)
-- [Futher testing](#futher-testing)
+- [Further testing](#futher-testing)
 - [Citation](#citation)
 - [Update changes](#update-changes)
 - [License](#license)
@@ -72,7 +72,7 @@ Use the `--best` option for best compression, or the `--fast` option for faster 
 Predicates can be used to filter on the header field (= record ID line) using a regex, minimum sequence length, and minimum average quality score (supports Phred+33 and Phred+64).
 
 >[!NOTE]
-A regex supplied to filter on the header field (= record ID line) is first passed as a string to the regex engine, and then the regex engine is used to match the header field. If you get an error message, be sure to escape any special characters in the regex pattern.
+A regex supplied to filter on the header field (= record ID line) is first passed as a string to the regex engine, and then the regex engine is used to match the header field. Regex patterns to match the header field (= record ID line) must comply with the Rust regex library syntax (<https://docs.rs/regex/latest/regex/#syntax>). If you get an error message, be sure to escape any special characters in the regex pattern.
 
 Predicates are specified in a JSON pattern file. For an example, see `16S-iupac-and-predicates.json` in the `examples` directory.
 
@@ -139,11 +139,13 @@ For example, see `tune.sh` in the `examples` directory. This simple script will 
 Get instructions and examples using `grepq -h`, and `grepq tune -h` and `grepq inverted -h` for more information on the `tune` and `inverted` commands, respectively.
 
 >[!NOTE]
-Pattern files must contain one regex pattern per line or be provided in JSON format, and patterns are case-sensitive. You can supply an empty pattern file to count the total number of records in the FASTQ file. The regex patterns should only include the DNA sequence characters (A, C, G, T), or IUPAC ambiguity codes (N, R, Y, etc.). See `16S-no-iupac.txt`, `16S-iupac.json` and `16S-iupac-and-predicates.json` in the `examples` directory for examples of valid pattern files.
+`grepq` can output to several formats, including those that are gzip or zstd compressed. `grepq`, however, will only accept a FASTQ file or a compressed (gzip or zstd) FASTQ file as the sequence data file. If you get an error message, check that the input data file is a FASTQ file or a gzip or zstd compressed FASTQ file, and that you have specified the correct file format (--read-gzip or --read-zstd for FASTQ files compressed by gzip and zstd, respectively), and file path. Pattern files must contain one regex pattern per line or be provided in JSON format, and patterns are case-sensitive. You can supply an empty pattern file to count the total number of records in the FASTQ file. The regex patterns for matching FASTQ sequences should only include the DNA sequence characters (A, C, G, T), or IUPAC ambiguity codes (N, R, Y, etc.). See `16S-no-iupac.txt`, `16S-iupac.json` and `16S-iupac-and-predicates.json` in the `examples` directory for examples of valid pattern files. Regex patterns to match the header field (= record ID line) must comply with the Rust regex library syntax (<https://docs.rs/regex/latest/regex/#syntax>). If you get an error message, be sure to escape any special characters in the regex pattern.
+
+```bash
 
 ## Requirements
 
-- `grepq` has been tested on Linux and macOS. It might work on Windows, but it has not been tested.
+- `grepq` has been tested on Linux and macOS. It might work on Windows WSL, but it has not been tested.
 - Ensure that Rust is installed on your system (<https://www.rust-lang.org/tools/install>)
 - If the build fails, make sure you have the latest version of the Rust compiler by running `rustup update`
 - To run the `test.sh` and `cookbook.sh` scripts in the `examples` directory, you will need `yq` (v4.44.6 or later), `gunzip` and version 4 or later of `bash`.
@@ -234,7 +236,7 @@ Executed in  218.80 millis    fish           external
 
 Obtain `SRX26602697.fastq` from the SRA using `fastq-dump --accession SRX26602697`.
 
-## Futher testing
+## Further testing
 
 `grepq` can be tested using tools that generate synthetic FASTQ files, such as `spikeq` (<https://crates.io/crates/spikeq>)
 
