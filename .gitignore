@@ -100,5 +100,7 @@ target/
 *.xz
 *.fq
 
-# Other project specific ignores
+# Other project specific ignores and allows
 paper/
+!examples/small-copy.fastq.gz
+!examples/small-copy.fastq.zst

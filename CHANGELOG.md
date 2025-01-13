@@ -3,6 +3,12 @@ TBD
 
 Unreleased changes. Release notes have not yet been written.
 
+1.4.0
+=====
+
+* Inclusion of unit tests and benchmarks via cfg(test) & criterion
+* Updates to README.md, --help, cookbook.sh and cookbook.md
+
 1.3.9
 =====
 

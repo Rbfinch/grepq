@@ -4,7 +4,7 @@ use std::sync::LazyLock;
 
 static AFTER_HELP: LazyLock<String> = LazyLock::new(|| {
     format!(
-        "{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}",
+        "{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}",
         "Overview:".bold().underline(),
         "\n\n`grepq` searches the sequence line of FASTQ records for regular
 expressions that are contained in a text or JSON file, or it searches for the
@@ -28,51 +28,49 @@ filtering process.",
         "\n    grepq -R --write-gzip regex.txt file.fastq > output.fastq.gz".bold(),
         "\n\nRead the FASTQ file in gzip compressed format".italic(),
         "\n    grepq --read-gzip regex.txt file.fastq.gz".bold(),
-        "\n\nRead and save the output in gzip compressed format, with fast
-    compression"
+        "\n\nRead and save the output in gzip compressed format, with fast compression"
             .italic(),
         "\n    grepq --read-gzip --write-gzip --fast regex.txt file.fastq.gz > output.fastq.gz"
             .bold(),
-        "\n\nRead and save the output in gzip compressed format, with best
-    compression"
+        "\n\nRead and save the output in gzip compressed format, with best compression"
             .italic(),
         "\n    grepq --read-gzip --write-gzip --best regex.txt file.fastq.gz > output.fastq.gz"
             .bold(),
+        "\n\nRead and save the output in zstd compressed format, with best compression"
+            .italic(),
+        "\n    grepq --read-zstd --write-zstd --best regex.txt file.fastq.zst > output.fastq.zst"
+            .bold(),
         "\n\nCount the number of matching FASTQ records".italic(),
         "\n    grepq -c regex.txt file.fastq".bold(),
-        "\n\nFor each matched pattern in a search of the first 100000 records,
-    print the pattern and the number of matches"
+        "\n\nFor each matched pattern in a search of the first 100000 records, print the
+pattern and the number of matches"
             .italic(),
         "\n    grepq regex.txt file.fastq tune -n 100000 -c".bold(),
-        "\n\nFor each matched pattern in a search of the first 100000 records of
-    a gzip-compressed FASTQ file, print the pattern and the number of matches"
+        "\n\nFor each matched pattern in a search of the first 100000 records of a
+gzip-compressed FASTQ file, print the pattern and the number of matches"
             .italic(),
         "\n    grepq --read-gzip regex.txt file.fastq.gz tune -n 100000 -c".bold(),
-        "\n\nFor each matched pattern in a search of the first 100000 records of
-a gzip-compressed FASTQ file, print the pattern and the number of matches to a 
+        "\n\nFor each matched pattern in a search of the first 100000 records of a
+gzip-compressed FASTQ file, print the pattern and the number of matches to a 
 JSON file called matches.json"
             .italic(),
         "\n    grepq --read-gzip regex.json file.fastq.gz tune -n 100000 -c --names --json-matches"
             .bold(),
         "\n\nPrint the records where none of the regex patterns are found".italic(),
         "\n    grepq regex.txt file.fastq inverted".bold(),
-        "\n\nPrint the records where none of the regex patterns are found, with
-    the record ID"
+        "\n\nPrint the records where none of the regex patterns are found, with the record ID"
             .italic(),
         "\n    grepq -I regex.txt file.fastq inverted".bold(),
-        "\n\nPrint the records where none of the regex patterns are found, in
-    FASTQ format"
+        "\n\nPrint the records where none of the regex patterns are found, in FASTQ format"
             .italic(),
         "\n    grepq -R regex.txt file.fastq inverted".bold(),
-        "\n\nCount the number of records where none of the regex patterns are
-    found"
+        "\n\nCount the number of records where none of the regex patterns are found"
             .italic(),
         "\n    grepq -c regex.txt file.fastq inverted".bold(),
-        "\n\nCount the total number of records in the FASTQ file using an empty
-    pattern file"
+        "\n\nCount the total number of records in the FASTQ file using an empty pattern file"
             .italic(),
         "\n    grepq -c empty.txt file.fastq inverted".bold(),
-        "\nTips:".bold().underline(),
+        "\n\nTips:".bold().underline(),
         "\n\n1. Predicates can be used to filter on the header field (= record ID line)
 using a regex, minimum sequence length, and minimum average quality score
 (supports Phred+33 and Phred+64). Predicates are specified in a JSON pattern file.

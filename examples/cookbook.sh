@@ -2,17 +2,12 @@
 
 ### cookbook.sh
 # Author: Nicholas D. Crosbie
-# Date: December 2024 
+# Date: January 2025 
 ###
 
 # This script provides examples of how to use the grepq tool to search FASTQ 
 # files for sequences that match a regular expression pattern. Run from the
 # /examples directory.
-
-# To run all examples, make sure to download the file SRX26365298.fastq.gz from
-# the SRA and place it in the `examples` directory. You can download the file 
-# with `fastq-dump --accession SRX26365298`. Obtain `fastq-dump` from the 
-# SRA Toolkit, available at NCBI. 
 
 # Exit immediately if a command exits with a non-zero status
 set -e
@@ -42,37 +37,49 @@ gunzip -q out.fastq.gz
 head -n 10 out.fastq
 
 echo -e "${BLUE}\nRead the FASTQ file in gzip compressed format and save only the matching sequences${NC}"
-echo -e "${BLUE}\nCommand: grepq --read-gzip 16S-no-iupac.txt SRX26365298.fastq.gz > out.txt \n${NC}"
-grepq --read-gzip 16S-no-iupac.txt SRX26365298.fastq.gz > out.txt
+echo -e "${BLUE}\nCommand: grepq --read-gzip 16S-no-iupac.txt small-copy.fastq.gz > out.txt \n${NC}"
+grepq --read-gzip 16S-no-iupac.txt small-copy.fastq.gz > out.txt
 head -n 10 out.txt
 
-echo -e "${BLUE}\nRead and save the out in gzip compressed format, with fast compression${NC}"
-echo -e "${BLUE}\nCommand: grepq --read-gzip --write-gzip --fast 16S-no-iupac.txt SRX26365298.fastq.gz > out.fastq.gz \n${NC}"
-grepq --read-gzip --write-gzip --fast 16S-no-iupac.txt SRX26365298.fastq.gz > out.fastq.gz
+echo -e "${BLUE}\nRead and save the output in gzip compressed format, with fast compression${NC}"
+echo -e "${BLUE}\nCommand: grepq --read-gzip --write-gzip --fast 16S-no-iupac.txt small-copy.fastq.gz > out.fastq.gz \n${NC}"
+grepq --read-gzip --write-gzip --fast 16S-no-iupac.txt small-copy.fastq.gz > out.fastq.gz
 gunzip -q out.fastq.gz
 head -n 10 out.fastq
 
-echo -e "${BLUE}\nRead and save the out in gzip compressed format, with best compression${NC}"
-echo -e "${BLUE}\nCommand: grepq --read-gzip --write-gzip --best 16S-no-iupac.txt SRX26365298.fastq.gz > out.fastq.gz \n${NC}"
-grepq --read-gzip --write-gzip --best 16S-no-iupac.txt SRX26365298.fastq.gz > out.fastq.gz
+echo -e "${BLUE}\nRead and save the output in gzip compressed format, with best compression${NC}"
+echo -e "${BLUE}\nCommand: grepq --read-gzip --write-gzip --best 16S-no-iupac.txt small-copy.fastq.gz > out.fastq.gz \n${NC}"
+grepq --read-gzip --write-gzip --best 16S-no-iupac.txt small-copy.fastq.gz > out.fastq.gz
 gunzip -q out.fastq.gz
+head -n 10 out.fastq
+
+echo -e "${BLUE}\nRead and save the output in zstd compressed format, with fast compression${NC}"
+echo -e "${BLUE}\nCommand: grepq --read-zstd --write-zstd --fast 16S-no-iupac.txt small-copy.fastq.zst > out.fastq.zst \n${NC}"
+grepq --read-zstd --write-zstd --fast 16S-no-iupac.txt small-copy.fastq.zst > out.fastq.zst
+zstd -d out.fastq.zst -o out.fastq
+head -n 10 out.fastq
+
+echo -e "${BLUE}\nRead and save the output in zstd compressed format, with best compression${NC}"
+echo -e "${BLUE}\nCommand: grepq --read-zstd --write-zstd --best 16S-no-iupac.txt small-copy.fastq.zst > out.fastq.zst \n${NC}"
+grepq --read-zstd --write-zstd --best 16S-no-iupac.txt small-copy.fastq.zst > out.fastq.zst
+zstd -d out.fastq.zst -o out.fastq
 head -n 10 out.fastq
 
 echo -e "${BLUE}\nCount the number of matching FASTQ records${NC}"
 echo -e "${BLUE}\nCommand: grepq -c 16S-no-iupac.txt small.fastq \n${NC}"
 grepq -c 16S-no-iupac.txt small.fastq
 
-echo -e "${BLUE}\nFor each matched pattern in a search of the first 100000 records, print the pattern and the number of matches${NC}"
-echo -e "${BLUE}\nCommand: grepq 16S-no-iupac.txt small.fastq tune -n 100000 -c \n${NC}"
-grepq 16S-no-iupac.txt small.fastq tune -n 100000 -c
+echo -e "${BLUE}\nFor each matched pattern in a search of the first 2000 records, print the pattern and the number of matches${NC}"
+echo -e "${BLUE}\nCommand: grepq 16S-no-iupac.txt small.fastq tune -n 2000 -c \n${NC}"
+grepq 16S-no-iupac.txt small.fastq tune -n 2000 -c
 
-echo -e "${BLUE}\nFor each matched pattern in a search of the first 100000 records of a gzip-compressed FASTQ file, print the pattern and the number of matches${NC}"
-echo -e "${BLUE}\nCommand: grepq --read-gzip 16S-no-iupac.txt SRX26365298.fastq.gz tune -n 100000 -c \n${NC}"
-grepq --read-gzip 16S-no-iupac.txt SRX26365298.fastq.gz tune -n 100000 -c
+echo -e "${BLUE}\nFor each matched pattern in a search of the first 2000 records of a gzip-compressed FASTQ file, print the pattern and the number of matches${NC}"
+echo -e "${BLUE}\nCommand: grepq --read-gzip 16S-no-iupac.txt small-copy.fastq.gz tune -n 2000 -c \n${NC}"
+grepq --read-gzip 16S-no-iupac.txt small-copy.fastq.gz tune -n 2000 -c
 
-echo -e "${BLUE}\nFor each matched pattern in a search of the first 100000 records of a gzip-compressed FASTQ file, print the pattern and the number of matches to a JSON file called matches.json${NC}"
-echo -e "${BLUE}\nCommand: grepq --read-gzip 16S-no-iupac.json SRX26365298.fastq.gz tune -n 100000 -c --names --json-matches \n${NC}"
-grepq --read-gzip 16S-no-iupac.json SRX26365298.fastq.gz tune -n 100000 -c --names --json-matches
+echo -e "${BLUE}\nFor each matched pattern in a search of the first 2000 records of a gzip-compressed FASTQ file, print the pattern and the number of matches to a JSON file called matches.json${NC}"
+echo -e "${BLUE}\nCommand: grepq --read-gzip 16S-no-iupac.json small-copy.fastq.gz tune -n 2000 -c --names --json-matches \n${NC}"
+grepq --read-gzip 16S-no-iupac.json small-copy.fastq.gz tune -n 2000 -c --names --json-matches
 
 echo -e "${BLUE}\nSave the records where none of the regex patterns are found${NC}"
 echo -e "${BLUE}\nCommand: grepq 16S-no-iupac.txt small.fastq inverted > out.txt \n${NC}"

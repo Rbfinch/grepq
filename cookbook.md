@@ -47,10 +47,24 @@ compression*
 
 <br>
 
-Read and save the output in gzip compressed format, with best
-compression
+*Read and save the output in gzip compressed format, with best
+compression*
 
 **grepq --read-gzip --write-gzip --best regex.txt file.fastq.gz > output.fastq.gz**
+
+<br>
+
+*Read and save the output in zstd compressed format, with best
+compression*
+
+**grepq --read-zstd --write-zstd --best regex.txt file.fastq.zst > output.fastq.zst**
+
+<br>
+
+*Read and save the output in zstd compressed format, with fast
+compression*
+
+**grepq --read-zstd --write-zstd --fast regex.txt file.fastq.zst > output.fastq.zst**
 
 <br>
 

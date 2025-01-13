@@ -147,7 +147,6 @@ Get instructions and examples using `grepq -h`, and `grepq tune -h` and `grepq i
 - Ensure that Rust is installed on your system (<https://www.rust-lang.org/tools/install>)
 - If the build fails, make sure you have the latest version of the Rust compiler by running `rustup update`
 - To run the `test.sh` and `cookbook.sh` scripts in the `examples` directory, you will need `yq` (v4.44.6 or later), `gunzip` and version 4 or later of `bash`.
-- To run "test-10" in `commands-1.yaml`, `commands-2.yaml`, `commands-3.yaml` and `commands-4.yaml`, you will need to download the file SRX26365298.fastq.gz from the SRA and place it in the `examples` directory. You can download the file with `fastq-dump --accession SRX26365298`. Obtain `fastq-dump` from the SRA Toolkit, available at NCBI.
 
 ## Installation
 
