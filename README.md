@@ -37,34 +37,34 @@ _Quickly filter FASTQ files_
 
 **1. Very fast and scales to large FASTQ files**
 
-| tool          | mean clock time (s) | S.D. clock time (s) | speedup (× grep) | speedup (× ripgrep) | speedup (× awk) |
-|---------------|---------------------|---------------------|------------------|---------------------|-----------------|
-| _grepq_       | 0.19                | 0.0021              | 1814.71          | 18.74               | 870.79          |
-| _fqgrep_      | 0.34                | 0.01                | 1010.24          | 10.43               | 484.77          |
-| _ripgrep_     | 3.56                | 0.01                | 96.85            | 1.00                | 46.48           |
-| _seqkit grep_ | 122.05              | 0.90                | 2.83             | 0.03                | 1.36            |
-| _grep_        | 344.79              | 1.24                | 1.00             | 0.01                | 0.48            |
-| _awk_         | 165.45              | 1.59                | 2.08             | 0.02                | 1.00            |
-| _gawk_        | 287.66              | 1.68                | 1.20             | 0.01                | 0.58            |
+| tool          | mean wall time (s) | S.D. wall time (s) | speedup (× grep) | speedup (× ripgrep) | speedup (× awk) |
+|---------------|--------------------|--------------------|------------------|---------------------|-----------------|
+| _grepq_       | 0.19               | 0.01               | 1796.76          | 18.62               | 863.52          |
+| _fqgrep_      | 0.34               | 0.01               | 1017.61          | 10.55               | 489.07          |
+| _ripgrep_     | 3.57               | 0.01               | 96.49            | 1.00                | 46.37           |
+| _seqkit grep_ | 2.89               | 0.01               | 119.33           | 1.24                | 57.35           |
+| _grep_        | 344.26             | 0.55               | 1.00             | 0.01                | 0.48            |
+| _awk_         | 165.45             | 1.59               | 2.08             | 0.02                | 1.00            |
+| _gawk_        | 287.66             | 1.68               | 1.20             | 0.01                | 0.58            |
 
 <details>
   <summary>Details</summary>
-  <p>2022 model Mac Studio with 32GB RAM and Apple M1 max chip running macOS 15.0.1. The FASTQ file (SRX26365298.fastq) was 874MB in size and was stored on the internal SSD (APPLE SSD AP0512R). The pattern file contained 30 regex patterns (see `examples/16S-no-iupac.txt` for the patterns used). grepq v1.3.6, fqgrep v.1.02, ripgrep v14.1.1, seqkit grep v.2.9.0, grep 2.6.0-FreeBSD, awk v. 20200816, and gawk v.5.3.1. fqgrep and seqkit grep were run with default settings, ripgrep was run with --colors 'match:none' --no-line-number, and grep was run with --color=never. The tools were configured to output matching records in FASTQ format. The clock times, given in seconds, are the mean of 10 runs, and S.D. is the standard deviation of the clock times, also given in seconds.</p>
+  <p>2022 model Mac Studio with 32GB RAM and Apple M1 max chip running macOS 15.0.1. The FASTQ file (SRX26365298.fastq) was 874MB in size and was stored on the internal SSD (APPLE SSD AP0512R). The pattern file contained 30 regex patterns (see `examples/16S-no-iupac.txt` for the patterns used). grepq v1.4.0, fqgrep v.1.02, ripgrep v14.1.1, seqkit grep v.2.9.0, grep 2.6.0-FreeBSD, awk v. 20200816, and gawk v.5.3.1. fqgrep and seqkit grep were run with default settings, ripgrep was run with -B 1 -A 2 --colors 'match:none' --no-line-number, and grep -B 1 -A 2 was run with --color=never. The tools were configured to output matching records in FASTQ format. The wall times, given in seconds, are the mean of 10 runs, and S.D. is the standard deviation of the wall times, also given in seconds.</p>
 </details>
 
 **2. Reads and writes regular or gzip or zstd-compressed FASTQ files**
 
 Use the `--best` option for best compression, or the `--fast` option for faster compression.
 
-| tool      | mean clock time (s) | S.D. clock time (s) | speedup (× ripgrep) |
-|-----------|---------------------|---------------------|---------------------|
-| _grepq_   | 1.707               | 0.002               | 2.09                |
-| _fqgrep_  | 1.84                | 0.01                | 1.94                |
-| _ripgrep_ | 3.57                | 0.01                | 1.00                |
+| tool      | mean wall time (s) | S.D. wall time (s) | speedup (× ripgrep) |
+|-----------|--------------------|--------------------|---------------------|
+| _grepq_   | 1.71               | 0.00               | 2.10                |
+| _fqgrep_  | 1.83               | 0.01               | 1.95                |
+| _ripgrep_ | 3.58               | 0.01               | 1.00                |
 
 <details>
   <summary>Details</summary>
-  <p>Conditions and versions as above, but the FASTQ file was gzip-compressed. `grepq` was run with the `--read-gzip` option, `ripgrep` with the `-z` option, and `grep` with the `-Z` option. The clock times, given in seconds, are the mean of 10 runs, and S.D. is the standard deviation of the clock times, also given in seconds.</p>
+  <p>Conditions and versions as above, but the FASTQ file was gzip-compressed. `grepq` was run with the `--read-gzip` option, `ripgrep` with the `-z` option, and `grep` with the `-Z` option. The wall times, given in seconds, are the mean of 10 runs, and S.D. is the standard deviation of the wall times, also given in seconds.</p>
 </details>
 
 **3. Predicates**
