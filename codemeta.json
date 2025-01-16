@@ -1,0 +1,23 @@
+{
+  "@context": "https://raw.githubusercontent.com/codemeta/codemeta/master/codemeta.jsonld",
+  "@type": "Code",
+  "author": [
+    {
+      "@id": "https://orcid.org/0000-0002-0319-4248",
+      "@type": "Person",
+      "email": "",
+      "name": "Nicholas D. Crosbie",
+      "affiliation": "University of Melbourne"
+    }
+  ],
+  "identifier": "https://zenodo.org/records/14649271",
+  "codeRepository": "https://github.com/Rbfinch/grepq",
+  "datePublished": "2025-01-17",
+  "dateModified": "2025-01-17",
+  "dateCreated": "2025-01-17",
+  "description": "Quickly filter FASTQ files",
+  "keywords": "bioinformatics, FASTQ, REGEX, JSON, CLI",
+  "license": "MIT",
+  "title": "grepq",
+  "version": "v1.4.1"
+}
