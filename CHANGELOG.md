@@ -3,7 +3,7 @@ TBD
 
 Unreleased changes. Release notes have not yet been written.
 
-1.4.0
+1.4.1
 =====
 
 * Updates to README.md
