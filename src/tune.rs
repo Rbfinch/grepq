@@ -20,6 +20,7 @@ pub fn run_tune(cli: &Cli, num_records: usize, include_count: bool) -> io::Resul
     let mut reader = create_reader(cli);
 
     let mut match_counts: HashMap<String, usize> = HashMap::new();
+    let mut match_strings: HashMap<String, HashMap<String, usize>> = HashMap::new();
     let mut total_matches = 0;
 
     // Iterate through each record in the reader
@@ -52,7 +53,18 @@ pub fn run_tune(cli: &Cli, num_records: usize, include_count: bool) -> io::Resul
             for mat in regex_set.matches(record.seq()).into_iter() {
                 let matched_pattern = regex_set.patterns()[mat].to_string();
                 let converted_pattern = crate::initialise::convert_iupac_to_regex(&matched_pattern);
-                *match_counts.entry(converted_pattern).or_insert(0) += 1;
+                *match_counts.entry(converted_pattern.clone()).or_insert(0) += 1;
+                let entry = match_strings.entry(converted_pattern.clone()).or_default();
+                let matched_substring = Regex::new(&regex_set.patterns()[mat])
+                    .unwrap()
+                    .find_iter(record.seq())
+                    .next()
+                    .unwrap();
+                let matched_substring =
+                    &record.seq()[matched_substring.start()..matched_substring.end()];
+                *entry
+                    .entry(String::from_utf8_lossy(matched_substring).to_string())
+                    .or_insert(0) += 1;
                 total_matches += 1;
                 if total_matches >= num_records {
                     break;
@@ -94,10 +106,24 @@ pub fn run_tune(cli: &Cli, num_records: usize, include_count: bool) -> io::Resul
                 .map(|(_, count)| count)
                 .unwrap_or(&0);
 
+            let most_frequent_match = match_strings
+                .get(&converted_regex_string)
+                .and_then(|matches| matches.iter().max_by_key(|&(_, count)| count))
+                .map(|(seq, _)| seq.clone())
+                .unwrap_or_default();
+
+            let most_frequent_match_count = match_strings
+                .get(&converted_regex_string)
+                .and_then(|matches| matches.iter().max_by_key(|&(_, count)| count))
+                .map(|(_, count)| *count)
+                .unwrap_or(0);
+
             regex_matches.push(json!({
                 "regexName": regex_name,
                 "regexString": regex_string,
-                "regexCount": count
+                "regexCount": count,
+                "mostFrequentMatch": most_frequent_match,
+                "mostFrequentMatchCount": most_frequent_match_count
             }));
 
             if cli.command.as_ref().map_or(
