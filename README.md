@@ -28,7 +28,7 @@ _Quickly filter FASTQ files_
 - use **predicates** to filter on the header field (= record ID line) using a regex, minimum sequence length, and minimum average quality score (supports Phred+33 and Phred+64)
 - does not match false positives
 - output matched sequences to one of four formats
-- tune your pattern file with the `tune` command
+- tune your pattern file and enumerate variants with the `tune` command
 - supports inverted matching with the `inverted` command
 - plays nicely with your unix workflows
 - comprehensive help, examples and testing script
@@ -90,33 +90,64 @@ Predicates are specified in a JSON pattern file. For an example, see `16S-iupac-
 >[!NOTE]
 Other than when the `tune` command is run (see below), a FASTQ record is deemed to match (and hence provided in the output) when _any_ of the regex patterns in the pattern file match the sequence field of the FASTQ record.
 
-**6. Will tune your pattern file with the `tune` command**
+**6. Tune your pattern file and enumerate variants with the `tune` command**
 
 Use the `tune` command (`grepq tune -h` for instructions) in a simple shell script to update the number and order of regex patterns in your pattern file according to their matched frequency, further targeting and speeding up the filtering process.
 
 Specifying the `-c` option to the `tune` command will output the matched substrings and their frequencies, ranked from highest to lowest.
 
-When the patterns file is given in JSON format, then specifying the `-c`, `--names` and `--json-matches` options to the `tune` command will output the matched substrings and their frequencies in JSON format to a file called `matches.json`, allowing named regex sets and named regex patterns. See `examples/16S-iupac.json` for an example of a JSON pattern file and `examples/matches.json` for an example of the output of the `tune` command in JSON format. Example (abridged) output:
+When the patterns file is given in JSON format, then specifying the `-c`, `--names`, `--json-matches` and `--variants` options to the `tune` command will output the matched pattern variants and their corresponding counts in JSON format to a file called `matches.json`, allowing named regex sets and named regex patterns. See `examples/16S-iupac.json` for an example of a JSON pattern file and `examples/matches.json` for an example of the output of the `tune` command in JSON format.
+
+```bash
+# For each matched pattern in a search of the first 20000 records of a gzip-compressed FASTQ file, print the pattern and the number of matches to a JSON file called matches.json, and include the top three most frequent variants of each pattern, and their respective counts
+
+grepq --read-gzip 16S-no-iupac.json SRX26365298.fastq.gz tune -n 20000 -c --names --json-matches --variants 3
+```
+
+Abridged output (see `examples/matches.json` for the full output):
 
 ```json
 {
   "regexSet": {
     "regex": [
-      {
-        "regexCount": 287,
-        "regexName": "Primer contig 06a",
-        "regexString": "[AG]AAT[AT]G[AG]CGGGG"
-      },
-      {
-        "regexCount": 298,
-        "regexName": "Primer contig 06aR",
-        "regexString": "CCCCG[CT]C[AT]ATT[CT]"
-      },
-      {
-        "regexCount": 1143,
-        "regexName": "Primer contig 03",
-        "regexString": "GG[AG][ACGT]GGC[ACGT]GCAG"
-      }
+{
+                "mostFrequentVariants": [
+                    {
+                        "count": 219,
+                        "variant": "GAATTGACGGGG"
+                    },
+                    {
+                        "count": 43,
+                        "variant": "AAATTGACGGGG"
+                    },
+                    {
+                        "count": 21,
+                        "variant": "GAATTGGCGGGG"
+                    }
+                ],
+                "regexCount": 287,
+                "regexName": "Primer contig 06a",
+                "regexString": "[AG]AAT[AT]G[AG]CGGGG"
+            },
+            {
+                "mostFrequentVariants": [
+                    {
+                        "count": 221,
+                        "variant": "CCCCGTCAATTC"
+                    },
+                    {
+                        "count": 43,
+                        "variant": "CCCCGTCAATTT"
+                    },
+                    {
+                        "count": 25,
+                        "variant": "CCCCGCCAATTC"
+                    }
+                ],
+                "regexCount": 298,
+                "regexName": "Primer contig 06aR",
+                "regexString": "CCCCG[CT]C[AT]ATT[CT]"
+            }
     ],
     "regexSetName": "conserved 16S rRNA regions"
   }

@@ -91,14 +91,14 @@ an error message, be sure to escape any special characters in the regex pattern.
 script to update the number and order of regex patterns in your pattern file
 according to their matched frequency, further targeting and speeding up the
 filtering process. When the patterns file is given in JSON format, then specifying
-the -c, --names and --json-matches options to the `tune` command will output the
-matched substrings and their frequencies in JSON format to a file called 
-matches.json, allowing named regex sets and named regex patterns. See 
-examples/16S-iupac.json for an example of a JSON pattern file and 
-examples/matches.json for an example of the output of the tune command in JSON
-format (both files are located in the examples directory of the `grepq` GitHub
-repository: https://github.com/Rbfinch/grepq) (see also the Examples and Notes
-sections).
+the `-c`, `--names`, `--json-matches` and `--variants` options to the `tune` 
+command will output the matched pattern variants and their corresponding counts
+in JSON format to a file called `matches.json`, allowing named regex sets and 
+named regex patterns. See examples/16S-iupac.json for an example of a JSON pattern
+file and examples/matches.json for an example of the output of the tune command
+in JSON format (both files are located in the examples directory of the `grepq`
+GitHub repository: https://github.com/Rbfinch/grepq) (see also the Examples and
+Notes sections).
 
 3. Use the `inverted` command to identify records that do not match
 any of the regex patterns in your pattern file.
