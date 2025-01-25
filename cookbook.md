@@ -10,6 +10,18 @@
 
 <br>
 
+*Print the help message for the **tune** command*
+
+**grepq tune -h**
+
+<br>
+
+*Print the help message for the **inverted** command*
+
+**grepq inverted -h**
+
+<br>
+
 *Print only the matching sequences*
 
 **grepq regex.txt file.fastq**
@@ -93,6 +105,15 @@ a gzip-compressed FASTQ file, print the pattern and the number of matches to a
 JSON file called matches.json*
 
 **grepq --read-gzip regex.json file.fastq.gz tune -n 100000 -c --names --json-matches**
+
+<br>
+
+*For each matched pattern in a search of the first 100000 records of a
+gzip-compressed FASTQ file, print the pattern and the number of matches
+to a JSON file called matches.json, and include the top three most frequent
+variants of each pattern, and their respective counts*
+
+**grepq --read-gzip regex.json file.fastq.gz tune -n 100000 -c --names --json-matches --variants 3**
 
 <br>
 

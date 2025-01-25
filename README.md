@@ -15,7 +15,7 @@ _Quickly filter FASTQ files_
 - [Installation](#installation)
 - [Examples and tests](#examples-and-tests)
 - [Further testing](#futher-testing)
-- [Citation](#citation)
+- [Citation and preprint](#citation)
 - [Update changes](#update-changes)
 - [License](#license)
 
@@ -28,10 +28,11 @@ _Quickly filter FASTQ files_
 - use **predicates** to filter on the header field (= record ID line) using a regex, minimum sequence length, and minimum average quality score (supports Phred+33 and Phred+64)
 - does not match false positives
 - output matched sequences to one of four formats
-- tune your pattern file and enumerate variants with the `tune` command
+- tune your pattern file and **enumerate variants** with the `tune` command
 - supports inverted matching with the `inverted` command
 - plays nicely with your unix workflows
 - comprehensive help, examples and testing script
+- read the preprint at **bioRxiv**: <https://doi.org/10.1101/2025.01.09.632104>
 
 ## Features and performance in detail
 
@@ -270,11 +271,11 @@ Obtain `SRX26602697.fastq` from the SRA using `fastq-dump --accession SRX2660269
 
 You can verify that `grepq` has found the regex patterns by using tools such as `grep` and `ripgrep`, using their ability to color-match the regex patterns (this feature is not available in `grepq` as that would make the code more complicated; code maintainability is an objective of this project). Recall, however, that `grep` and `ripgrep` will match the regex patterns to the entire FASTQ record, which includes the record ID, sequence, separator, and quality fields, occasionally leading to false positives.
 
-## Citation
+## Citation and preprint
 
 If you use `grepq` in your research, please cite as follows:
 
-Crosbie, N.D. (2024). grepq: A Rust application that quickly filters FASTQ files by matching sequences to a set of regex patterns. 10.5281/zenodo.14031703
+Crosbie, N.D. (2025). grepq: A Rust application that quickly filters FASTQ files by matching sequences to a set of regular expressions. **bioRxiv**, doi: <https://doi.org/10.1101/2025.01.09.632104>
 
 ## Update changes
 

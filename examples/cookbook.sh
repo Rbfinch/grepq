@@ -81,6 +81,11 @@ echo -e "${BLUE}\nFor each matched pattern in a search of the first 2000 records
 echo -e "${BLUE}\nCommand: grepq --read-gzip 16S-no-iupac.json small-copy.fastq.gz tune -n 2000 -c --names --json-matches \n${NC}"
 grepq --read-gzip 16S-no-iupac.json small-copy.fastq.gz tune -n 2000 -c --names --json-matches
 
+echo -e "${BLUE}\nFor each matched pattern in a search of the first 2000 records of a gzip-compressed FASTQ file, print the pattern and the number of matches to a JSON file called matches.json, and include the top three most frequent
+variants of each pattern, and their respective counts${NC}"
+echo -e "${BLUE}\nCommand: grepq --read-gzip 16S-no-iupac.json small-copy.fastq.gz tune -n 2000 -c --names --json-matches --variants 3 \n${NC}"
+grepq --read-gzip 16S-no-iupac.json small-copy.fastq.gz tune -n 2000 -c --names --json-matches --variants 3
+
 echo -e "${BLUE}\nSave the records where none of the regex patterns are found${NC}"
 echo -e "${BLUE}\nCommand: grepq 16S-no-iupac.txt small.fastq inverted > out.txt \n${NC}"
 grepq 16S-no-iupac.txt small.fastq inverted > out.txt

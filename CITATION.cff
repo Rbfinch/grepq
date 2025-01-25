@@ -4,8 +4,8 @@ authors:
 - family-names: "Crosbie"
   given-names: "Nicholas D."
   orcid: "https://orcid.org/0000-0002-0319-4248"
-title: "grepq: A Rust application that quickly filters FASTQ files by matching sequences to a set of regex patterns."
-version: 1.1.6
-doi: 10.5281/zenodo.14031703
-date-released: 2024-11-12
+title: "grepq: A Rust application that quickly filters FASTQ files by matching sequences to a set of regular expressions"
+version: 1.4.2
+doi: 10.1101/2025.01.09.632104
+date-released: 2025-01-25
 url: "https://github.com/Rbfinch/grepq"
