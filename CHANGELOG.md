@@ -6,7 +6,7 @@ Unreleased changes. Release notes have not yet been written.
 1.4.2
 =====
 
-* Addition of mostFrequentMatch and mostFrequentMatchCount to matches.json output
+* Addition of variants output to matches.json
 * Corresponding changes documentation
 
 1.4.1

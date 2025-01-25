@@ -255,4 +255,12 @@ pub struct Tune {
         help = "Write the output to a JSON file called matches.json"
     )]
     pub json_matches: bool,
+
+    #[arg(
+        short = 'v',
+        long = "variants",
+        help = "Number of top most frequent variants to include in the output",
+        default_value_t = 1
+    )]
+    pub variants: usize,
 }

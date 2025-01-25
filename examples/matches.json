@@ -2,211 +2,519 @@
     "regexSet": {
         "regex": [
             {
-                "mostFrequentMatch": "GAATTGACGGGG",
-                "mostFrequentMatchCount": 219,
+                "mostFrequentVariants": [
+                    {
+                        "count": 219,
+                        "variant": "GAATTGACGGGG"
+                    },
+                    {
+                        "count": 43,
+                        "variant": "AAATTGACGGGG"
+                    },
+                    {
+                        "count": 21,
+                        "variant": "GAATTGGCGGGG"
+                    }
+                ],
                 "regexCount": 287,
                 "regexName": "Primer contig 06a",
                 "regexString": "[AG]AAT[AT]G[AG]CGGGG"
             },
             {
-                "mostFrequentMatch": "CCCCGTCAATTC",
-                "mostFrequentMatchCount": 221,
+                "mostFrequentVariants": [
+                    {
+                        "count": 221,
+                        "variant": "CCCCGTCAATTC"
+                    },
+                    {
+                        "count": 43,
+                        "variant": "CCCCGTCAATTT"
+                    },
+                    {
+                        "count": 25,
+                        "variant": "CCCCGCCAATTC"
+                    }
+                ],
                 "regexCount": 298,
                 "regexName": "Primer contig 06aR",
                 "regexString": "CCCCG[CT]C[AT]ATT[CT]"
             },
             {
-                "mostFrequentMatch": "GGGAGGCAGCAG",
-                "mostFrequentMatchCount": 242,
+                "mostFrequentVariants": [
+                    {
+                        "count": 242,
+                        "variant": "GGGAGGCAGCAG"
+                    },
+                    {
+                        "count": 164,
+                        "variant": "GGACGGCAGCAG"
+                    },
+                    {
+                        "count": 135,
+                        "variant": "GGGCGGCGGCAG"
+                    }
+                ],
                 "regexCount": 1143,
                 "regexName": "Primer contig 03",
                 "regexString": "GG[AG][ACGT]GGC[ACGT]GCAG"
             },
             {
-                "mostFrequentMatch": "CTGCTGCCTCCC",
-                "mostFrequentMatchCount": 238,
+                "mostFrequentVariants": [
+                    {
+                        "count": 238,
+                        "variant": "CTGCTGCCTCCC"
+                    },
+                    {
+                        "count": 199,
+                        "variant": "CTGCCGCCGCCC"
+                    },
+                    {
+                        "count": 160,
+                        "variant": "CTGCTGCCGTCC"
+                    }
+                ],
                 "regexCount": 1290,
                 "regexName": "Primer contig 03R",
                 "regexString": "CTGC[ACGT]GCC[ACTG][CT]CC"
             },
             {
-                "mostFrequentMatch": "GCTGTCGTCAGC",
-                "mostFrequentMatchCount": 252,
+                "mostFrequentVariants": [
+                    {
+                        "count": 252,
+                        "variant": "GCTGTCGTCAGC"
+                    },
+                    {
+                        "count": 244,
+                        "variant": "GCTGCCGTCAGC"
+                    },
+                    {
+                        "count": 199,
+                        "variant": "GTTGCCGTCAGC"
+                    }
+                ],
                 "regexCount": 1130,
                 "regexName": "Primer contig 07a",
                 "regexString": "G[CT][CT]G[CT]CGTCAGC"
             },
             {
-                "mostFrequentMatch": "GCTGACGACAGC",
-                "mostFrequentMatchCount": 248,
+                "mostFrequentVariants": [
+                    {
+                        "count": 248,
+                        "variant": "GCTGACGACAGC"
+                    },
+                    {
+                        "count": 237,
+                        "variant": "GCTGACGGCAGC"
+                    },
+                    {
+                        "count": 194,
+                        "variant": "GCTGACGGCGGC"
+                    }
+                ],
                 "regexCount": 1258,
                 "regexName": "Primer contig 07aR",
                 "regexString": "GCTGACG[AG]C[AG][AG]C"
             },
             {
-                "mostFrequentMatch": "CAGCGGCTGCGG",
-                "mostFrequentMatchCount": 400,
+                "mostFrequentVariants": [
+                    {
+                        "count": 400,
+                        "variant": "CAGCGGCTGCGG"
+                    },
+                    {
+                        "count": 340,
+                        "variant": "CAGCCGCTGCGG"
+                    },
+                    {
+                        "count": 289,
+                        "variant": "CAGCAGCCGCGG"
+                    }
+                ],
                 "regexCount": 2482,
                 "regexName": "Primer contig 04",
                 "regexString": "C[ACG]GC[ACGT]GC[CT]GCGG"
             },
             {
-                "mostFrequentMatch": "CCGCAGCCGCTG",
-                "mostFrequentMatchCount": 379,
+                "mostFrequentVariants": [
+                    {
+                        "count": 379,
+                        "variant": "CCGCAGCCGCTG"
+                    },
+                    {
+                        "count": 310,
+                        "variant": "CCGCAGCGGCTG"
+                    },
+                    {
+                        "count": 290,
+                        "variant": "CCGCAGCTGCCG"
+                    }
+                ],
                 "regexCount": 2403,
                 "regexName": "Primer contig 04R",
                 "regexString": "CCGC[AG]GC[AGCT]GC[CGT]G"
             },
             {
-                "mostFrequentMatch": "TAGATACCCTGG",
-                "mostFrequentMatchCount": 245,
+                "mostFrequentVariants": [
+                    {
+                        "count": 245,
+                        "variant": "TAGATACCCTGG"
+                    },
+                    {
+                        "count": 67,
+                        "variant": "TAGAAACCCAGG"
+                    },
+                    {
+                        "count": 36,
+                        "variant": "TAGAAACCCACG"
+                    }
+                ],
                 "regexCount": 484,
                 "regexName": "Primer contig 05b",
                 "regexString": "TAGA[AT]ACCC[ACGT][ACGT]G"
             },
             {
-                "mostFrequentMatch": "CCAGGGTATCTA",
-                "mostFrequentMatchCount": 239,
+                "mostFrequentVariants": [
+                    {
+                        "count": 239,
+                        "variant": "CCAGGGTATCTA"
+                    },
+                    {
+                        "count": 80,
+                        "variant": "CCTGGGTTTCTA"
+                    },
+                    {
+                        "count": 30,
+                        "variant": "CTTGGGTATCTA"
+                    }
+                ],
                 "regexCount": 468,
                 "regexName": "Primer contig 05bR",
                 "regexString": "C[ACGT][ACGT]GGGT[AT]TCTA"
             },
             {
-                "mostFrequentMatch": "CGAGCGCAACCC",
-                "mostFrequentMatchCount": 243,
+                "mostFrequentVariants": [
+                    {
+                        "count": 243,
+                        "variant": "CGAGCGCAACCC"
+                    }
+                ],
                 "regexCount": 243,
                 "regexName": "Primer contig 07b",
                 "regexString": "CGAGCGCAACCC"
             },
             {
-                "mostFrequentMatch": "GGGTTGCGCTCG",
-                "mostFrequentMatchCount": 246,
+                "mostFrequentVariants": [
+                    {
+                        "count": 246,
+                        "variant": "GGGTTGCGCTCG"
+                    }
+                ],
                 "regexCount": 246,
                 "regexName": "Primer contig 07bR",
                 "regexString": "GGGTTGCGCTCG"
             },
             {
-                "mostFrequentMatch": "AGGTGGGGATGA",
-                "mostFrequentMatchCount": 269,
+                "mostFrequentVariants": [
+                    {
+                        "count": 269,
+                        "variant": "AGGTGGGGATGA"
+                    },
+                    {
+                        "count": 66,
+                        "variant": "AGGCGGGGATGA"
+                    },
+                    {
+                        "count": 2,
+                        "variant": "AGGCGGGGACGA"
+                    }
+                ],
                 "regexCount": 338,
                 "regexName": "Primer contig 08a",
                 "regexString": "AGG[CT]GGGGA[CT]GA"
             },
             {
-                "mostFrequentMatch": "TCATCCCCACCT",
-                "mostFrequentMatchCount": 291,
+                "mostFrequentVariants": [
+                    {
+                        "count": 291,
+                        "variant": "TCATCCCCACCT"
+                    },
+                    {
+                        "count": 69,
+                        "variant": "TCATCCCCGCCT"
+                    },
+                    {
+                        "count": 1,
+                        "variant": "TCGTCCCCACCT"
+                    }
+                ],
                 "regexCount": 361,
                 "regexName": "Primer contig 08aR",
                 "regexString": "TC[AG]TCCCC[AG]CCT"
             },
             {
-                "mostFrequentMatch": "GTGGCGGACGGG",
-                "mostFrequentMatchCount": 249,
+                "mostFrequentVariants": [
+                    {
+                        "count": 249,
+                        "variant": "GTGGCGGACGGG"
+                    },
+                    {
+                        "count": 118,
+                        "variant": "CTGGCGAACGGG"
+                    },
+                    {
+                        "count": 73,
+                        "variant": "GCGGCGTACGGG"
+                    }
+                ],
                 "regexCount": 844,
                 "regexName": "Primer contig 02",
                 "regexString": "[GC][CT]GGCG[ACGT]ACGGG"
             },
             {
-                "mostFrequentMatch": "CCCGTCCGCCAC",
-                "mostFrequentMatchCount": 293,
+                "mostFrequentVariants": [
+                    {
+                        "count": 293,
+                        "variant": "CCCGTCCGCCAC"
+                    },
+                    {
+                        "count": 110,
+                        "variant": "CCCGTTCGCCAG"
+                    },
+                    {
+                        "count": 79,
+                        "variant": "CCCGTGCGCCGC"
+                    }
+                ],
                 "regexCount": 914,
                 "regexName": "Primer contig 02R",
                 "regexString": "CCCGT[ACGT]CGCC[AG][GC]"
             },
             {
-                "mostFrequentMatch": "GAAGAACCTTAC",
-                "mostFrequentMatchCount": 218,
+                "mostFrequentVariants": [
+                    {
+                        "count": 218,
+                        "variant": "GAAGAACCTTAC"
+                    },
+                    {
+                        "count": 1,
+                        "variant": "GAGGAACCTTAC"
+                    }
+                ],
                 "regexCount": 219,
                 "regexName": "Primer contig 06c",
                 "regexString": "GA[AG]GAACCTTAC"
             },
             {
-                "mostFrequentMatch": "GTAAGGTTCTTC",
-                "mostFrequentMatchCount": 213,
+                "mostFrequentVariants": [
+                    {
+                        "count": 213,
+                        "variant": "GTAAGGTTCTTC"
+                    }
+                ],
                 "regexCount": 213,
                 "regexName": "Primer contig 06cR",
                 "regexString": "GTAAGGTTC[CT]TC"
             },
             {
-                "mostFrequentMatch": "GTGGTTTAATTC",
-                "mostFrequentMatchCount": 216,
+                "mostFrequentVariants": [
+                    {
+                        "count": 216,
+                        "variant": "GTGGTTTAATTC"
+                    }
+                ],
                 "regexCount": 216,
                 "regexName": "Primer contig 06b",
                 "regexString": "GTGGTTTAATTC"
             },
             {
-                "mostFrequentMatch": "GAATTAAACCAC",
-                "mostFrequentMatchCount": 213,
+                "mostFrequentVariants": [
+                    {
+                        "count": 213,
+                        "variant": "GAATTAAACCAC"
+                    }
+                ],
                 "regexCount": 213,
                 "regexName": "Primer contig 06bR",
                 "regexString": "GAATTAAACCAC"
             },
             {
-                "mostFrequentMatch": "GTACACACCGCC",
-                "mostFrequentMatchCount": 244,
+                "mostFrequentVariants": [
+                    {
+                        "count": 244,
+                        "variant": "GTACACACCGCC"
+                    },
+                    {
+                        "count": 59,
+                        "variant": "GCACTCACCGCC"
+                    },
+                    {
+                        "count": 32,
+                        "variant": "GTACTCTCCGCC"
+                    }
+                ],
                 "regexCount": 372,
                 "regexName": "Primer contig 09",
                 "regexString": "G[CT]AC[AT]C[AT]CCGCC"
             },
             {
-                "mostFrequentMatch": "GGCGGTGTGTAC",
-                "mostFrequentMatchCount": 215,
+                "mostFrequentVariants": [
+                    {
+                        "count": 215,
+                        "variant": "GGCGGTGTGTAC"
+                    },
+                    {
+                        "count": 64,
+                        "variant": "GGCGGTGAGTGC"
+                    },
+                    {
+                        "count": 30,
+                        "variant": "GGCGGAGAGTAC"
+                    }
+                ],
                 "regexCount": 347,
                 "regexName": "Primer contig 09R",
                 "regexString": "GGCGG[AT]G[AT]GT[AG]C"
             },
             {
-                "mostFrequentMatch": "GCTACACACGTG",
-                "mostFrequentMatchCount": 234,
+                "mostFrequentVariants": [
+                    {
+                        "count": 234,
+                        "variant": "GCTACACACGTG"
+                    },
+                    {
+                        "count": 4,
+                        "variant": "GCGACACACGTG"
+                    },
+                    {
+                        "count": 2,
+                        "variant": "GCGACACACGCG"
+                    }
+                ],
                 "regexCount": 241,
                 "regexName": "Primer contig 08b",
                 "regexString": "GC[TG]ACACACG[CT]G"
             },
             {
-                "mostFrequentMatch": "CACGTGTGTAGC",
-                "mostFrequentMatchCount": 224,
+                "mostFrequentVariants": [
+                    {
+                        "count": 224,
+                        "variant": "CACGTGTGTAGC"
+                    },
+                    {
+                        "count": 4,
+                        "variant": "CACGTGTGTCGC"
+                    },
+                    {
+                        "count": 4,
+                        "variant": "CGCGTGTGTAGC"
+                    }
+                ],
                 "regexCount": 233,
                 "regexName": "Primer contig 08bR",
                 "regexString": "C[AG]CGTGTGT[AC]GC"
             },
             {
-                "mostFrequentMatch": "GCGGTGAAATGC",
-                "mostFrequentMatchCount": 364,
+                "mostFrequentVariants": [
+                    {
+                        "count": 364,
+                        "variant": "GCGGTGAAATGC"
+                    },
+                    {
+                        "count": 41,
+                        "variant": "GCGGTGAAATTC"
+                    },
+                    {
+                        "count": 36,
+                        "variant": "GAGGTGAAATTC"
+                    }
+                ],
                 "regexCount": 446,
                 "regexName": "Primer contig 05a",
                 "regexString": "G[AC]GGTGAAAT[TG]C"
             },
             {
-                "mostFrequentMatch": "GCATTTCACCGC",
-                "mostFrequentMatchCount": 359,
+                "mostFrequentVariants": [
+                    {
+                        "count": 359,
+                        "variant": "GCATTTCACCGC"
+                    },
+                    {
+                        "count": 41,
+                        "variant": "GAATTTCACCGC"
+                    },
+                    {
+                        "count": 38,
+                        "variant": "GAATTTCACCTC"
+                    }
+                ],
                 "regexCount": 443,
                 "regexName": "Primer contig 05aR",
                 "regexString": "G[AC]ATTTCACC[TG]C"
             },
             {
-                "mostFrequentMatch": "ATCATGGCTCAG",
-                "mostFrequentMatchCount": 236,
+                "mostFrequentVariants": [
+                    {
+                        "count": 236,
+                        "variant": "ATCATGGCTCAG"
+                    },
+                    {
+                        "count": 40,
+                        "variant": "ATTCTGGCTCAG"
+                    },
+                    {
+                        "count": 1,
+                        "variant": "ATCCTGGCTCAG"
+                    }
+                ],
                 "regexCount": 277,
                 "regexName": "Primer contig 01",
                 "regexString": "AT[CT][AC]TGGCTCAG"
             },
             {
-                "mostFrequentMatch": "CTGAGCCATGAT",
-                "mostFrequentMatchCount": 249,
+                "mostFrequentVariants": [
+                    {
+                        "count": 249,
+                        "variant": "CTGAGCCATGAT"
+                    },
+                    {
+                        "count": 40,
+                        "variant": "CTGAGCCAGAAT"
+                    },
+                    {
+                        "count": 2,
+                        "variant": "CTGAGCCATAAT"
+                    }
+                ],
                 "regexCount": 291,
                 "regexName": "Primer contig 01R",
                 "regexString": "CTGAGCCA[TG][AG]AT"
             },
             {
-                "mostFrequentMatch": "AGTCGTAACAAG",
-                "mostFrequentMatchCount": 236,
+                "mostFrequentVariants": [
+                    {
+                        "count": 236,
+                        "variant": "AGTCGTAACAAG"
+                    },
+                    {
+                        "count": 22,
+                        "variant": "AGTCATAACAAG"
+                    }
+                ],
                 "regexCount": 258,
                 "regexName": "Primer contig 10",
                 "regexString": "AGTC[AG]TAACAAG"
             },
             {
-                "mostFrequentMatch": "CTTGTTACGACT",
-                "mostFrequentMatchCount": 235,
+                "mostFrequentVariants": [
+                    {
+                        "count": 235,
+                        "variant": "CTTGTTACGACT"
+                    },
+                    {
+                        "count": 22,
+                        "variant": "CTTGTTATGACT"
+                    }
+                ],
                 "regexCount": 257,
                 "regexName": "Primer contig 10R",
                 "regexString": "CTTGTTA[CT]GACT"

@@ -106,24 +106,39 @@ pub fn run_tune(cli: &Cli, num_records: usize, include_count: bool) -> io::Resul
                 .map(|(_, count)| count)
                 .unwrap_or(&0);
 
-            let most_frequent_match = match_strings
+            let mut most_frequent_matches: Vec<_> = match_strings
                 .get(&converted_regex_string)
-                .and_then(|matches| matches.iter().max_by_key(|&(_, count)| count))
-                .map(|(seq, _)| seq.clone())
+                .map(|matches| {
+                    let mut matches_vec: Vec<_> = matches.iter().collect();
+                    matches_vec.sort_by_key(|&(_, count)| std::cmp::Reverse(count));
+                    matches_vec
+                })
                 .unwrap_or_default();
 
-            let most_frequent_match_count = match_strings
-                .get(&converted_regex_string)
-                .and_then(|matches| matches.iter().max_by_key(|&(_, count)| count))
-                .map(|(_, count)| *count)
-                .unwrap_or(0);
+            let top_n = cli
+                .command
+                .as_ref()
+                .and_then(|cmd| {
+                    if let crate::arg::Commands::Tune(tune) = cmd {
+                        Some(tune.variants)
+                    } else {
+                        None
+                    }
+                })
+                .unwrap_or(1);
+
+            most_frequent_matches.truncate(top_n);
+
+            let most_frequent_matches_json: Vec<_> = most_frequent_matches
+                .into_iter()
+                .map(|(seq, count)| json!({"variant": seq, "count": count}))
+                .collect();
 
             regex_matches.push(json!({
                 "regexName": regex_name,
                 "regexString": regex_string,
                 "regexCount": count,
-                "mostFrequentMatch": most_frequent_match,
-                "mostFrequentMatchCount": most_frequent_match_count
+                "mostFrequentVariants": most_frequent_matches_json
             }));
 
             if cli.command.as_ref().map_or(
