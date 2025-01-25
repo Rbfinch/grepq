@@ -4,7 +4,7 @@ use std::sync::LazyLock;
 
 static AFTER_HELP: LazyLock<String> = LazyLock::new(|| {
     format!(
-        "{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}",
+        "{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}",
         "Overview:".bold().underline(),
         "\n\n`grepq` searches the sequence line of FASTQ records for regular
 expressions that are contained in a text or JSON file, or it searches for the
@@ -55,6 +55,13 @@ gzip-compressed FASTQ file, print the pattern and the number of matches to a
 JSON file called matches.json"
             .italic(),
         "\n    grepq --read-gzip regex.json file.fastq.gz tune -n 100000 -c --names --json-matches"
+            .bold(),
+        "\n\nFor each matched pattern in a search of the first 100000 records of a
+gzip-compressed FASTQ file, print the pattern and the number of matches to a 
+JSON file called matches.json, and include the top three most frequent variants of
+each pattern, and their respective counts"
+            .italic(),
+        "\n    grepq --read-gzip regex.json file.fastq.gz tune -n 100000 -c --names --json-matches --variants 3"
             .bold(),
         "\n\nPrint the records where none of the regex patterns are found".italic(),
         "\n    grepq regex.txt file.fastq inverted".bold(),
