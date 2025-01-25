@@ -264,7 +264,6 @@ pub struct Tune {
     pub json_matches: bool,
 
     #[arg(
-        short = 'v',
         long = "variants",
         help = "Number of top most frequent variants to include in the output",
         default_value_t = 1
