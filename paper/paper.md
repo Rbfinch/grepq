@@ -10,13 +10,14 @@ authors:
 affiliations:
   - index: 1
     name: Melbourne Veterinary School, University of Melbourne, Parkville, Victoria, Australia
-date: "17 January 2025"
+date: "26 January 2025"
 bibliography: paper.bib
 tags: 
   - FASTQ records
   - regular expressions
   - Rust
   - bioinformatics
+  - variants
 ---
 
 # Summary
@@ -25,7 +26,7 @@ Regular expressions (regex) [@kleene1951representationof] have been an important
 
 # Statement of need
 
-The ability to quickly filter FASTQ files by matching sequences to a set of regular expressions is an important task in bioinformatics, especially when working with large datasets. The importance and challenge of this task will only grow as sequencing technologies continue to advance and produce ever larger datasets [@katz2022sequence]. The uses cases of *grepq* are diverse, and include pre-processing of FASTQ files before downstream analysis, quality control of sequencing data, and filtering out unwanted sequences. Where decisions need be made quickly, such as in a clinical settings [@bachurin2024structural], biosecurity [@valdivia2012biodefense], and wastewater-based epidemiology in support of public health measures [@choi2018wastewater;@sims2020future;@xylogiannopoulos2021pattern;@merrett2024highly], the ability to quickly filter FASTQ files by matching sequences to a set of regular expressions is attractive as it circumvents the need for more time-consuming bioinformatic workflows.
+The ability to quickly filter FASTQ files by matching sequences to a set of regular expressions is an important task in bioinformatics, especially when working with large datasets. The importance and challenge of this task will only grow as sequencing technologies continue to advance and produce ever larger datasets [@katz2022sequence]. The uses cases of *grepq* are diverse, and include pre-processing of FASTQ files before downstream analysis, quality control of sequencing data, and filtering out unwanted sequences. Where decisions need be made quickly, such as in a clinical settings [@bachurin2024structural], biosecurity [@valdivia2012biodefense], and wastewater-based epidemiology in support of public health measures [@choi2018wastewater;@sims2020future;@xylogiannopoulos2021pattern;@merrett2024highly], the ability to quickly filter FASTQ files and enumerate variants by matching sequences to a set of regular expressions is attractive as it circumvents the need for more time-consuming bioinformatic workflows.
 
 Regular expressions are a powerful tool for matching sequences, but they can be slow and inefficient when working with large datasets. Furthermore, general purpose tools like *grep* [@gnugrep] and *ripgrep* [@ripgrep] are not optimized for the specific task of filtering FASTQ files, and ocassionaly yield false positives as they scan the entire FASTQ record, including the sequence quality field. Tools such *awk* [@awk] and *gawk* [@gawk]  can be used to filter FASTQ files without yielding false positives, but they are significantly slower than *grepq* and can require the development of more complex scripts to achieve the same result.
 
@@ -56,30 +57,67 @@ Further performance gains were obtained by:
 - JSON support for pattern file input and *tune* command output, allowing named regular expression sets and named regular expressions (pattern files can also be in plain text)
 - the ability to set predicates to filter FASTQ records on the header field (= record ID line) using a regular expression, minimum sequence length, and minimum average quality score (supports Phred+33 and Phred+64)
 - the ability to output matched sequences to one of four formats (including FASTQ and FASTA)
-- the ability to tune the pattern file with the *tune* command: this command will output a plain text or JSON file with the patterns sorted by their frequency of occurrence in the input FASTQ file or gzip-compressed FASTQ file (or a user-specified number of FASTQ records). This can be useful for optimizing the pattern file for performance, for example, by removing patterns that are rarely matched
+- the ability to tune the pattern file and enumerate variants with the *tune* command: this command will output a plain text or JSON file with the patterns sorted by their frequency of occurrence in the input FASTQ file or gzip-compressed FASTQ file (or a user-specified number of FASTQ records). This can be useful for optimizing the pattern file for performance, for example by removing patterns that are rarely matched and reordering nucleotides within the variable regions of the patterns to improve matching efficiency
 - the ability to count and summarise the total number of records and the number of matching records (or records that don't match in the case of inverted matching) in the input FASTQ file
 
 Other than when the *tune* command is run, a FASTQ record is deemed to match (and hence provided in the output) when any of the regular expressions in the pattern file match the sequence field of the FASTQ record. An example (abridged) output of the *tune* command (when given with the **`--`json-matches** flag) is shown below:
+
+```bash
+# For each matched pattern in a search of the first
+# 20000 records of a gzip-compressed FASTQ file, print
+# the pattern and the number of matches to a JSON file
+# called matches.json, and include the top three most
+# frequent variants of each pattern, and their respective
+# counts
+
+grepq --read-gzip 16S-no-iupac.json SRX26365298.fastq.gz \
+ tune -n 20000 -c --names --json-matches --variants 3
+```
+
+Output (abridged) written to matches.json:
 
 ```json
 {
   "regexSet": {
     "regex": [
-      {
-        "regexCount": 287,
-        "regexName": "Primer contig 06a",
-        "regexString": "[AG]AAT[AT]G[AG]CGGGG"
-      },
-      {
-        "regexCount": 298,
-        "regexName": "Primer contig 06aR",
-        "regexString": "CCCCG[CT]C[AT]ATT[CT]"
-      },
-      {
-        "regexCount": 1143,
-        "regexName": "Primer contig 03",
-        "regexString": "GG[AG][ACGT]GGC[ACGT]GCAG"
-      }
+{
+                "mostFrequentVariants": [
+                    {
+                        "count": 219,
+                        "variant": "GAATTGACGGGG"
+                    },
+                    {
+                        "count": 43,
+                        "variant": "AAATTGACGGGG"
+                    },
+                    {
+                        "count": 21,
+                        "variant": "GAATTGGCGGGG"
+                    }
+                ],
+                "regexCount": 287,
+                "regexName": "Primer contig 06a",
+                "regexString": "[AG]AAT[AT]G[AG]CGGGG"
+            },
+            {
+                "mostFrequentVariants": [
+                    {
+                        "count": 221,
+                        "variant": "CCCCGTCAATTC"
+                    },
+                    {
+                        "count": 43,
+                        "variant": "CCCCGTCAATTT"
+                    },
+                    {
+                        "count": 25,
+                        "variant": "CCCCGCCAATTC"
+                    }
+                ],
+                "regexCount": 298,
+                "regexName": "Primer contig 06aR",
+                "regexString": "CCCCG[CT]C[AT]ATT[CT]"
+            }
     ],
     "regexSetName": "conserved 16S rRNA regions"
   }
