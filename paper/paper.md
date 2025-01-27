@@ -10,7 +10,7 @@ authors:
 affiliations:
   - index: 1
     name: Melbourne Veterinary School, University of Melbourne, Parkville, Victoria, Australia
-date: "26 January 2025"
+date: "27 January 2025"
 bibliography: paper.bib
 tags: 
   - FASTQ records
@@ -60,7 +60,7 @@ Further performance gains were obtained by:
 - the ability to tune the pattern file and enumerate variants with the *tune* command: this command will output a plain text or JSON file with the patterns sorted by their frequency of occurrence in the input FASTQ file or gzip-compressed FASTQ file (or a user-specified number of FASTQ records). This can be useful for optimizing the pattern file for performance, for example by removing patterns that are rarely matched and reordering nucleotides within the variable regions of the patterns to improve matching efficiency
 - the ability to count and summarise the total number of records and the number of matching records (or records that don't match in the case of inverted matching) in the input FASTQ file
 
-Other than when the *tune* command is run, a FASTQ record is deemed to match (and hence provided in the output) when any of the regular expressions in the pattern file match the sequence field of the FASTQ record. An example (abridged) output of the *tune* command (when given with the **`--`json-matches** flag) is shown below:
+Other than when the *tune* command is run, a FASTQ record is deemed to match (and hence provided in the output) when any of the regular expressions in the pattern file match the sequence field of the FASTQ record. An example (abridged) output of the *tune* command (when given with the **`--`json-matches** and **--variants** flags) is shown below:
 
 ```bash
 # For each matched pattern in a search of the first
@@ -69,7 +69,6 @@ Other than when the *tune* command is run, a FASTQ record is deemed to match (an
 # called matches.json, and include the top three most
 # frequent variants of each pattern, and their respective
 # counts
-
 grepq --read-gzip 16S-no-iupac.json SRX26365298.fastq.gz \
  tune -n 20000 -c --names --json-matches --variants 3
 ```
@@ -81,7 +80,7 @@ Output (abridged) written to matches.json:
   "regexSet": {
     "regex": [
 {
-                "mostFrequentVariants": [
+                "variants": [
                     {
                         "count": 219,
                         "variant": "GAATTGACGGGG"
@@ -100,7 +99,7 @@ Output (abridged) written to matches.json:
                 "regexString": "[AG]AAT[AT]G[AG]CGGGG"
             },
             {
-                "mostFrequentVariants": [
+                "variants": [
                     {
                         "count": 221,
                         "variant": "CCCCGTCAATTC"
@@ -122,6 +121,19 @@ Output (abridged) written to matches.json:
     "regexSetName": "conserved 16S rRNA regions"
   }
 }
+```
+
+To output all variants of each pattern, use the `--all` argument, for example:
+
+```bash
+# For each matched pattern in a search of the first
+# 20000 records of a gzip-compressed FASTQ file, print
+# the pattern and the number of matches to a JSON file
+# called matches.json, and include all variants of each
+# pattern, and their respective counts. Note that the
+# --variants argument is not given when --all is specified.
+grepq --read-gzip 16S-no-iupac.json SRX26365298.fastq.gz \
+ tune -n 20000 -c --names --json-matches --all
 ```
 
 When the count option (**-c**) is given with the *tune* command, *grepq* will count the number of FASTQ records containing a sequence that is matched, for each matching regular expression in the pattern file. If, however, there are multiple occurrences of a given regular expression within a FASTQ record sequence field, *grepq* will count this as one match. When the count option (**-c**) is not given with the *tune* command, *grepq* provides the total number of matching FASTQ records for the set of regular expressions in the pattern file.
