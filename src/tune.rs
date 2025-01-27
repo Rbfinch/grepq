@@ -120,12 +120,16 @@ pub fn run_tune(cli: &Cli, num_records: usize, include_count: bool) -> io::Resul
                 .as_ref()
                 .and_then(|cmd| {
                     if let crate::arg::Commands::Tune(tune) = cmd {
-                        Some(tune.variants)
+                        if tune.all_variants {
+                            Some(usize::MAX) // Include all variants
+                        } else {
+                            tune.variants
+                        }
                     } else {
                         None
                     }
                 })
-                .unwrap_or(1);
+                .unwrap_or(1); // Default to 1 variant
 
             most_frequent_matches.truncate(top_n);
 
@@ -138,7 +142,7 @@ pub fn run_tune(cli: &Cli, num_records: usize, include_count: bool) -> io::Resul
                 "regexName": regex_name,
                 "regexString": regex_string,
                 "regexCount": count,
-                "mostFrequentVariants": most_frequent_matches_json
+                "variants": most_frequent_matches_json
             }));
 
             if cli.command.as_ref().map_or(

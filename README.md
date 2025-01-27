@@ -109,10 +109,13 @@ Abridged output (see `examples/matches.json` for the full output):
 
 ```json
 {
-  "regexSet": {
-    "regex": [
-{
-                "mostFrequentVariants": [
+    "regexSet": {
+        "regex": [
+            {
+                "regexCount": 287,
+                "regexName": "Primer contig 06a",
+                "regexString": "[AG]AAT[AT]G[AG]CGGGG",
+                "variants": [
                     {
                         "count": 219,
                         "variant": "GAATTGACGGGG"
@@ -125,13 +128,13 @@ Abridged output (see `examples/matches.json` for the full output):
                         "count": 21,
                         "variant": "GAATTGGCGGGG"
                     }
-                ],
-                "regexCount": 287,
-                "regexName": "Primer contig 06a",
-                "regexString": "[AG]AAT[AT]G[AG]CGGGG"
+                ]
             },
             {
-                "mostFrequentVariants": [
+                "regexCount": 298,
+                "regexName": "Primer contig 06aR",
+                "regexString": "CCCCG[CT]C[AT]ATT[CT]",
+                "variants": [
                     {
                         "count": 221,
                         "variant": "CCCCGTCAATTC"
@@ -144,15 +147,20 @@ Abridged output (see `examples/matches.json` for the full output):
                         "count": 25,
                         "variant": "CCCCGCCAATTC"
                     }
-                ],
-                "regexCount": 298,
-                "regexName": "Primer contig 06aR",
-                "regexString": "CCCCG[CT]C[AT]ATT[CT]"
+                ]
             }
     ],
     "regexSetName": "conserved 16S rRNA regions"
   }
 }
+```
+
+To output all variants of each pattern, use the `--all` argument, for example:
+
+```bash
+# For each matched pattern in a search of the first 20000 records of a gzip-compressed FASTQ file, print the pattern and the number of matches to a JSON file called matches.json, and include all variants of each pattern, and their respective counts. Note that the --variants argument is not given when --all is specified.
+
+grepq --read-gzip 16S-no-iupac.json SRX26365298.fastq.gz tune -n 20000 -c --names --json-matches --all
 ```
 
 >[!NOTE]

@@ -3,6 +3,12 @@ TBD
 
 Unreleased changes. Release notes have not yet been written.
 
+1.4.3
+=====
+
+* Addtion of the --all option to output all variants to matches.json
+* Corresponding changes documentation
+
 1.4.2
 =====
 

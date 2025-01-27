@@ -4,7 +4,7 @@ use std::sync::LazyLock;
 
 static AFTER_HELP: LazyLock<String> = LazyLock::new(|| {
     format!(
-        "{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}",
+        "{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}",
         "Overview:".bold().underline(),
         "\n\n`grepq` searches the sequence line of FASTQ records for regular
 expressions that are contained in a text or JSON file, or it searches for the
@@ -63,6 +63,14 @@ each pattern, and their respective counts"
             .italic(),
         "\n    grepq --read-gzip regex.json file.fastq.gz tune -n 100000 -c --names --json-matches --variants 3"
             .bold(),
+        "\n\nFor each matched pattern in a search of the first 100000 records of a
+gzip-compressed FASTQ file, print the pattern and the number of matches to a JSON
+file called matches.json, and include all variants of each pattern, and their
+respective counts. Note that the `--variants` argument is not given when `--all`
+is specified."
+            .italic(),
+        "\n    grepq --read-gzip regex.json file.fastq.gz tune -n 100000 -c --names --json-matches --all"
+            .bold(),
         "\n\nPrint the records where none of the regex patterns are found".italic(),
         "\n    grepq regex.txt file.fastq inverted".bold(),
         "\n\nPrint the records where none of the regex patterns are found, with the record ID"
@@ -98,7 +106,8 @@ named regex patterns. See examples/16S-iupac.json for an example of a JSON patte
 file and examples/matches.json for an example of the output of the tune command
 in JSON format (both files are located in the examples directory of the `grepq`
 GitHub repository: https://github.com/Rbfinch/grepq) (see also the Examples and
-Notes sections).
+Notes sections). To list all variants of a pattern, use the `--all` option. Note
+that the `--variants` argument is not given when `--all` is specified.
 
 3. Use the `inverted` command to identify records that do not match
 any of the regex patterns in your pattern file.
@@ -265,8 +274,10 @@ pub struct Tune {
 
     #[arg(
         long = "variants",
-        help = "Number of top most frequent variants to include in the output",
-        default_value_t = 1
+        help = "Number of top most frequent variants to include in the output"
     )]
-    pub variants: usize,
+    pub variants: Option<usize>,
+
+    #[arg(long = "all", help = "Include all variants in the output")]
+    pub all_variants: bool,
 }
