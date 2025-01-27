@@ -117,6 +117,16 @@ variants of each pattern, and their respective counts*
 
 <br>
 
+*For each matched pattern in a search of the first 100000 records of a
+gzip-compressed FASTQ file, print the pattern and the number of matches to a JSON
+file called matches.json, and include all variants of each pattern, and their
+respective counts. Note that the `--variants` argument is not given when `--all`
+is specified."*
+
+**grepq --read-gzip regex.json file.fastq.gz tune -n 100000 -c --names --json-matches --all**
+
+<br>
+
 *Print the records where none of the regex patterns are found*
 
 **grepq regex.txt file.fastq inverted**
