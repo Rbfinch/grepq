@@ -34,6 +34,24 @@ static SCHEMA: &str = r#"
                             },
                             "regexString": {
                                 "type": "string"
+                            },
+                            "variants": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "variantName": {
+                                            "type": "string"
+                                        },
+                                        "variantString": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "variantName",
+                                        "variantString"
+                                    ]
+                                }
                             }
                         },
                         "required": [
@@ -74,6 +92,7 @@ type ParseResult = Result<
         Option<u64>,
         Option<f64>,
         Option<String>,
+        Vec<(String, String)>, // Add this line
     ),
     String,
 >;
@@ -99,6 +118,14 @@ pub fn convert_iupac_to_regex(pattern: &str) -> String {
         .replace('H', "[ACT]")
         .replace('V', "[ACG]")
         .replace('N', "[ACGT]")
+}
+
+fn validate_dna_sequence(sequence: &str) -> Result<(), String> {
+    if sequence.chars().all(|c| "ACTG".contains(c)) {
+        Ok(())
+    } else {
+        Err(format!("Invalid DNA sequence: {}", sequence))
+    }
 }
 
 // Parse patterns file (JSON or plain text)
@@ -145,12 +172,33 @@ pub fn parse_patterns_file(patterns_path: &str) -> ParseResult {
             .as_str()
             .map(|s| s.to_string());
 
+        let variants: Vec<_> = json["regexSet"]["regex"]
+            .as_array()
+            .ok_or("Invalid JSON structure")?
+            .iter()
+            .filter_map(|r| r.get("variants"))
+            .flat_map(|v| v.as_array().unwrap_or(&Vec::new()).clone())
+            .map(|variant| -> Result<_, String> {
+                let variant_name = variant["variantName"]
+                    .as_str()
+                    .ok_or("Invalid variantName")?
+                    .to_string();
+                let variant_string = variant["variantString"]
+                    .as_str()
+                    .ok_or("Invalid variantString")?
+                    .to_string();
+                validate_dna_sequence(&variant_string)?;
+                Ok((variant_name, variant_string))
+            })
+            .collect::<Result<Vec<_>, _>>()?;
+
         Ok((
             regex_set,
             header_regex,
             minimum_sequence_length,
             minimum_quality,
             quality_encoding,
+            variants, // Add this line
         ))
     } else {
         let file = File::open(patterns_path)
@@ -164,7 +212,7 @@ pub fn parse_patterns_file(patterns_path: &str) -> ParseResult {
             .collect();
         let regex_set = RegexSet::new(&regex_strings)
             .map_err(|e| format!("Failed to compile regex patterns: {}", e))?;
-        Ok((regex_set, None, None, None, None))
+        Ok((regex_set, None, None, None, None, Vec::new())) // Add an empty Vec for variants
     }
 }
 

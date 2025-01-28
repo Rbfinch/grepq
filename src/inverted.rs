@@ -13,7 +13,7 @@ pub fn run_inverted(cli: &Cli) {
     let count = cli.count;
 
     // Parse the patterns file
-    let (regex_set, header_regex, minimum_sequence_length, minimum_quality, quality_encoding) =
+    let (regex_set, header_regex, minimum_sequence_length, minimum_quality, quality_encoding, _) =
         parse_patterns_file(&cli.patterns)
             .map_err(|e| std::io::Error::new(std::io::ErrorKind::Other, e))
             .unwrap();

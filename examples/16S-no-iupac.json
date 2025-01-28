@@ -4,7 +4,25 @@
         "regex": [
             {
                 "regexName": "Primer contig 06a",
-                "regexString": "[AG]AAT[AT]G[AG]CGGGG"
+                "regexString": "[AG]AAT[AT]G[AG]CGGGG",
+                "variants": [
+                    {
+                        "variantName": "variant1",
+                        "variantString": "GAATTGACGGGG"
+                    },
+                    {
+                        "variantName": "variant2",
+                        "variantString": "AAATTGACGGGG"
+                    },
+                    {
+                        "variantName": "variant3",
+                        "variantString": "GAATTGGCGGGG"
+                    },
+                    {
+                        "variantName": "poo-bar",
+                        "variantString": "AAATAGGCGGGG"
+                    }
+                ]
             },
             {
                 "regexName": "Primer contig 06aR",
@@ -20,7 +38,21 @@
             },
             {
                 "regexName": "Primer contig 07a",
-                "regexString": "G[CT][CT]G[CT]CGTCAGC"
+                "regexString": "G[CT][CT]G[CT]CGTCAGC",
+                "variants": [
+                    {
+                        "variantName": "blah",
+                        "variantString": "GCTGTCGTCAGC"
+                    },
+                    {
+                        "variantName": "foo",
+                        "variantString": "GCTGCCGTCAGC"
+                    },
+                    {
+                        "variantName": "bah",
+                        "variantString": "GTTGCCGTCAGC"
+                    }
+                ]
             },
             {
                 "regexName": "Primer contig 07aR",

@@ -34,7 +34,7 @@ fn main() {
     }
 
     // Parse the patterns file
-    let (regex_set, header_regex, minimum_sequence_length, minimum_quality, quality_encoding) =
+    let (regex_set, header_regex, minimum_sequence_length, minimum_quality, quality_encoding, _) =
         parse_patterns_file(&cli.patterns)
             .map_err(|e| io::Error::new(io::ErrorKind::Other, e))
             .unwrap();

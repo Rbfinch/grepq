@@ -8,15 +8,28 @@
                 "variants": [
                     {
                         "count": 219,
-                        "variant": "GAATTGACGGGG"
+                        "variant": "GAATTGACGGGG",
+                        "variantName": "variant1"
                     },
                     {
                         "count": 43,
-                        "variant": "AAATTGACGGGG"
+                        "variant": "AAATTGACGGGG",
+                        "variantName": "variant2"
                     },
                     {
                         "count": 21,
-                        "variant": "GAATTGGCGGGG"
+                        "variant": "GAATTGGCGGGG",
+                        "variantName": "variant3"
+                    },
+                    {
+                        "count": 3,
+                        "variant": "AAATTGGCGGGG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 1,
+                        "variant": "AAATAGGCGGGG",
+                        "variantName": "poo-bar"
                     }
                 ]
             },
@@ -27,15 +40,38 @@
                 "variants": [
                     {
                         "count": 221,
-                        "variant": "CCCCGTCAATTC"
+                        "variant": "CCCCGTCAATTC",
+                        "variantName": null
                     },
                     {
                         "count": 43,
-                        "variant": "CCCCGTCAATTT"
+                        "variant": "CCCCGTCAATTT",
+                        "variantName": null
                     },
                     {
                         "count": 25,
-                        "variant": "CCCCGCCAATTC"
+                        "variant": "CCCCGCCAATTC",
+                        "variantName": null
+                    },
+                    {
+                        "count": 4,
+                        "variant": "CCCCGCCAATTT",
+                        "variantName": null
+                    },
+                    {
+                        "count": 2,
+                        "variant": "CCCCGTCTATTT",
+                        "variantName": null
+                    },
+                    {
+                        "count": 2,
+                        "variant": "CCCCGCCTATTT",
+                        "variantName": null
+                    },
+                    {
+                        "count": 1,
+                        "variant": "CCCCGTCTATTC",
+                        "variantName": null
                     }
                 ]
             },
@@ -46,15 +82,143 @@
                 "variants": [
                     {
                         "count": 242,
-                        "variant": "GGGAGGCAGCAG"
+                        "variant": "GGGAGGCAGCAG",
+                        "variantName": null
                     },
                     {
                         "count": 164,
-                        "variant": "GGACGGCAGCAG"
+                        "variant": "GGACGGCAGCAG",
+                        "variantName": null
                     },
                     {
                         "count": 135,
-                        "variant": "GGGCGGCGGCAG"
+                        "variant": "GGGCGGCGGCAG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 117,
+                        "variant": "GGAAGGCGGCAG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 86,
+                        "variant": "GGGCGGCTGCAG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 78,
+                        "variant": "GGATGGCGGCAG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 70,
+                        "variant": "GGGTGGCGGCAG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 58,
+                        "variant": "GGGGGGCTGCAG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 54,
+                        "variant": "GGAAGGCCGCAG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 38,
+                        "variant": "GGATGGCAGCAG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 35,
+                        "variant": "GGGTGGCCGCAG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 26,
+                        "variant": "GGAGGGCAGCAG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 5,
+                        "variant": "GGGTGGCTGCAG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 4,
+                        "variant": "GGGCGGCAGCAG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 4,
+                        "variant": "GGACGGCTGCAG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 4,
+                        "variant": "GGATGGCTGCAG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 3,
+                        "variant": "GGGCGGCCGCAG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 3,
+                        "variant": "GGACGGCGGCAG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 3,
+                        "variant": "GGGTGGCAGCAG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 3,
+                        "variant": "GGAAGGCTGCAG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 2,
+                        "variant": "GGAAGGCAGCAG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 2,
+                        "variant": "GGACGGCCGCAG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 2,
+                        "variant": "GGGAGGCTGCAG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 1,
+                        "variant": "GGGGGGCGGCAG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 1,
+                        "variant": "GGGAGGCGGCAG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 1,
+                        "variant": "GGGGGGCAGCAG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 1,
+                        "variant": "GGATGGCCGCAG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 1,
+                        "variant": "GGGAGGCCGCAG",
+                        "variantName": null
                     }
                 ]
             },
@@ -65,15 +229,153 @@
                 "variants": [
                     {
                         "count": 238,
-                        "variant": "CTGCTGCCTCCC"
+                        "variant": "CTGCTGCCTCCC",
+                        "variantName": null
                     },
                     {
                         "count": 199,
-                        "variant": "CTGCCGCCGCCC"
+                        "variant": "CTGCCGCCGCCC",
+                        "variantName": null
                     },
                     {
                         "count": 160,
-                        "variant": "CTGCTGCCGTCC"
+                        "variant": "CTGCTGCCGTCC",
+                        "variantName": null
+                    },
+                    {
+                        "count": 121,
+                        "variant": "CTGCCGCCTTCC",
+                        "variantName": null
+                    },
+                    {
+                        "count": 101,
+                        "variant": "CTGCCGCCATCC",
+                        "variantName": null
+                    },
+                    {
+                        "count": 89,
+                        "variant": "CTGCAGCCGCCC",
+                        "variantName": null
+                    },
+                    {
+                        "count": 70,
+                        "variant": "CTGCCGCCACCC",
+                        "variantName": null
+                    },
+                    {
+                        "count": 62,
+                        "variant": "CTGCGGCCTTCC",
+                        "variantName": null
+                    },
+                    {
+                        "count": 59,
+                        "variant": "CTGCAGCCCCCC",
+                        "variantName": null
+                    },
+                    {
+                        "count": 41,
+                        "variant": "CTGCTGCCATCC",
+                        "variantName": null
+                    },
+                    {
+                        "count": 29,
+                        "variant": "CTGCGGCCACCC",
+                        "variantName": null
+                    },
+                    {
+                        "count": 26,
+                        "variant": "CTGCTGCCCTCC",
+                        "variantName": null
+                    },
+                    {
+                        "count": 20,
+                        "variant": "CTGCCGCCGTCC",
+                        "variantName": null
+                    },
+                    {
+                        "count": 12,
+                        "variant": "CTGCCGCCCCCC",
+                        "variantName": null
+                    },
+                    {
+                        "count": 7,
+                        "variant": "CTGCAGCCATCC",
+                        "variantName": null
+                    },
+                    {
+                        "count": 7,
+                        "variant": "CTGCCGCCTCCC",
+                        "variantName": null
+                    },
+                    {
+                        "count": 6,
+                        "variant": "CTGCAGCCGTCC",
+                        "variantName": null
+                    },
+                    {
+                        "count": 5,
+                        "variant": "CTGCTGCCACCC",
+                        "variantName": null
+                    },
+                    {
+                        "count": 5,
+                        "variant": "CTGCTGCCGCCC",
+                        "variantName": null
+                    },
+                    {
+                        "count": 4,
+                        "variant": "CTGCTGCCCCCC",
+                        "variantName": null
+                    },
+                    {
+                        "count": 4,
+                        "variant": "CTGCGGCCGTCC",
+                        "variantName": null
+                    },
+                    {
+                        "count": 4,
+                        "variant": "CTGCTGCCTTCC",
+                        "variantName": null
+                    },
+                    {
+                        "count": 4,
+                        "variant": "CTGCAGCCTTCC",
+                        "variantName": null
+                    },
+                    {
+                        "count": 4,
+                        "variant": "CTGCGGCCGCCC",
+                        "variantName": null
+                    },
+                    {
+                        "count": 4,
+                        "variant": "CTGCAGCCACCC",
+                        "variantName": null
+                    },
+                    {
+                        "count": 3,
+                        "variant": "CTGCCGCCCTCC",
+                        "variantName": null
+                    },
+                    {
+                        "count": 2,
+                        "variant": "CTGCGGCCCCCC",
+                        "variantName": null
+                    },
+                    {
+                        "count": 2,
+                        "variant": "CTGCGGCCATCC",
+                        "variantName": null
+                    },
+                    {
+                        "count": 1,
+                        "variant": "CTGCAGCCCTCC",
+                        "variantName": null
+                    },
+                    {
+                        "count": 1,
+                        "variant": "CTGCAGCCTCCC",
+                        "variantName": null
                     }
                 ]
             },
@@ -84,15 +386,38 @@
                 "variants": [
                     {
                         "count": 252,
-                        "variant": "GCTGTCGTCAGC"
+                        "variant": "GCTGTCGTCAGC",
+                        "variantName": "blah"
                     },
                     {
                         "count": 244,
-                        "variant": "GCTGCCGTCAGC"
+                        "variant": "GCTGCCGTCAGC",
+                        "variantName": "foo"
                     },
                     {
                         "count": 199,
-                        "variant": "GTTGCCGTCAGC"
+                        "variant": "GTTGCCGTCAGC",
+                        "variantName": "bah"
+                    },
+                    {
+                        "count": 188,
+                        "variant": "GCCGCCGTCAGC",
+                        "variantName": null
+                    },
+                    {
+                        "count": 146,
+                        "variant": "GCCGTCGTCAGC",
+                        "variantName": null
+                    },
+                    {
+                        "count": 77,
+                        "variant": "GTCGCCGTCAGC",
+                        "variantName": null
+                    },
+                    {
+                        "count": 24,
+                        "variant": "GTTGTCGTCAGC",
+                        "variantName": null
                     }
                 ]
             },
@@ -103,15 +428,43 @@
                 "variants": [
                     {
                         "count": 248,
-                        "variant": "GCTGACGACAGC"
+                        "variant": "GCTGACGACAGC",
+                        "variantName": null
                     },
                     {
                         "count": 237,
-                        "variant": "GCTGACGGCAGC"
+                        "variant": "GCTGACGGCAGC",
+                        "variantName": null
                     },
                     {
                         "count": 194,
-                        "variant": "GCTGACGGCGGC"
+                        "variant": "GCTGACGGCGGC",
+                        "variantName": null
+                    },
+                    {
+                        "count": 186,
+                        "variant": "GCTGACGGCAAC",
+                        "variantName": null
+                    },
+                    {
+                        "count": 150,
+                        "variant": "GCTGACGACGGC",
+                        "variantName": null
+                    },
+                    {
+                        "count": 119,
+                        "variant": "GCTGACGACGAC",
+                        "variantName": null
+                    },
+                    {
+                        "count": 93,
+                        "variant": "GCTGACGGCGAC",
+                        "variantName": null
+                    },
+                    {
+                        "count": 31,
+                        "variant": "GCTGACGACAAC",
+                        "variantName": null
                     }
                 ]
             },
@@ -122,15 +475,123 @@
                 "variants": [
                     {
                         "count": 400,
-                        "variant": "CAGCGGCTGCGG"
+                        "variant": "CAGCGGCTGCGG",
+                        "variantName": null
                     },
                     {
                         "count": 340,
-                        "variant": "CAGCCGCTGCGG"
+                        "variant": "CAGCCGCTGCGG",
+                        "variantName": null
                     },
                     {
                         "count": 289,
-                        "variant": "CAGCAGCCGCGG"
+                        "variant": "CAGCAGCCGCGG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 286,
+                        "variant": "CGGCAGCTGCGG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 251,
+                        "variant": "CCGCAGCTGCGG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 176,
+                        "variant": "CCGCCGCTGCGG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 118,
+                        "variant": "CGGCGGCTGCGG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 99,
+                        "variant": "CAGCAGCTGCGG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 83,
+                        "variant": "CAGCTGCTGCGG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 78,
+                        "variant": "CGGCTGCTGCGG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 68,
+                        "variant": "CCGCCGCCGCGG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 42,
+                        "variant": "CGGCAGCCGCGG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 40,
+                        "variant": "CGGCTGCCGCGG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 39,
+                        "variant": "CAGCCGCCGCGG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 36,
+                        "variant": "CCGCTGCTGCGG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 34,
+                        "variant": "CCGCGGCCGCGG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 34,
+                        "variant": "CGGCCGCTGCGG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 28,
+                        "variant": "CGGCGGCCGCGG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 19,
+                        "variant": "CCGCTGCCGCGG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 7,
+                        "variant": "CAGCTGCCGCGG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 5,
+                        "variant": "CAGCGGCCGCGG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 4,
+                        "variant": "CCGCGGCTGCGG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 3,
+                        "variant": "CGGCCGCCGCGG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 3,
+                        "variant": "CCGCAGCCGCGG",
+                        "variantName": null
                     }
                 ]
             },
@@ -141,15 +602,123 @@
                 "variants": [
                     {
                         "count": 379,
-                        "variant": "CCGCAGCCGCTG"
+                        "variant": "CCGCAGCCGCTG",
+                        "variantName": null
                     },
                     {
                         "count": 310,
-                        "variant": "CCGCAGCGGCTG"
+                        "variant": "CCGCAGCGGCTG",
+                        "variantName": null
                     },
                     {
                         "count": 290,
-                        "variant": "CCGCAGCTGCCG"
+                        "variant": "CCGCAGCTGCCG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 277,
+                        "variant": "CCGCGGCTGCTG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 251,
+                        "variant": "CCGCAGCTGCGG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 176,
+                        "variant": "CCGCAGCGGCGG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 123,
+                        "variant": "CCGCAGCCGCCG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 100,
+                        "variant": "CCGCAGCTGCTG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 78,
+                        "variant": "CCGCAGCAGCTG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 74,
+                        "variant": "CCGCAGCAGCCG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 60,
+                        "variant": "CCGCGGCGGCGG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 44,
+                        "variant": "CCGCGGCAGCCG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 42,
+                        "variant": "CCGCAGCGGCCG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 37,
+                        "variant": "CCGCGGCGGCTG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 34,
+                        "variant": "CCGCGGCTGCCG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 34,
+                        "variant": "CCGCGGCCGCGG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 32,
+                        "variant": "CCGCAGCAGCGG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 25,
+                        "variant": "CCGCGGCCGCCG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 17,
+                        "variant": "CCGCGGCAGCGG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 5,
+                        "variant": "CCGCGGCCGCTG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 5,
+                        "variant": "CCGCGGCAGCTG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 4,
+                        "variant": "CCGCGGCTGCGG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 4,
+                        "variant": "CCGCAGCCGCGG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 2,
+                        "variant": "CCGCGGCGGCCG",
+                        "variantName": null
                     }
                 ]
             },
@@ -160,15 +729,103 @@
                 "variants": [
                     {
                         "count": 245,
-                        "variant": "TAGATACCCTGG"
+                        "variant": "TAGATACCCTGG",
+                        "variantName": null
                     },
                     {
                         "count": 67,
-                        "variant": "TAGAAACCCAGG"
+                        "variant": "TAGAAACCCAGG",
+                        "variantName": null
                     },
                     {
                         "count": 36,
-                        "variant": "TAGAAACCCACG"
+                        "variant": "TAGAAACCCACG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 34,
+                        "variant": "TAGATACCCACG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 29,
+                        "variant": "TAGATACCCAAG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 28,
+                        "variant": "TAGAAACCCCGG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 17,
+                        "variant": "TAGATACCCCGG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 5,
+                        "variant": "TAGATACCCGGG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 5,
+                        "variant": "TAGATACCCCTG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 3,
+                        "variant": "TAGAAACCCTGG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 3,
+                        "variant": "TAGATACCCCAG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 2,
+                        "variant": "TAGAAACCCGCG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 2,
+                        "variant": "TAGATACCCATG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 2,
+                        "variant": "TAGAAACCCCAG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 1,
+                        "variant": "TAGATACCCTAG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 1,
+                        "variant": "TAGATACCCGTG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 1,
+                        "variant": "TAGAAACCCCCG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 1,
+                        "variant": "TAGAAACCCGGG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 1,
+                        "variant": "TAGATACCCCCG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 1,
+                        "variant": "TAGATACCCGAG",
+                        "variantName": null
                     }
                 ]
             },
@@ -179,15 +836,118 @@
                 "variants": [
                     {
                         "count": 239,
-                        "variant": "CCAGGGTATCTA"
+                        "variant": "CCAGGGTATCTA",
+                        "variantName": null
                     },
                     {
                         "count": 80,
-                        "variant": "CCTGGGTTTCTA"
+                        "variant": "CCTGGGTTTCTA",
+                        "variantName": null
                     },
                     {
                         "count": 30,
-                        "variant": "CTTGGGTATCTA"
+                        "variant": "CTTGGGTATCTA",
+                        "variantName": null
+                    },
+                    {
+                        "count": 29,
+                        "variant": "CGTGGGTATCTA",
+                        "variantName": null
+                    },
+                    {
+                        "count": 27,
+                        "variant": "CCGGGGTTTCTA",
+                        "variantName": null
+                    },
+                    {
+                        "count": 25,
+                        "variant": "CGTGGGTTTCTA",
+                        "variantName": null
+                    },
+                    {
+                        "count": 13,
+                        "variant": "CCGGGGTATCTA",
+                        "variantName": null
+                    },
+                    {
+                        "count": 5,
+                        "variant": "CCCGGGTATCTA",
+                        "variantName": null
+                    },
+                    {
+                        "count": 3,
+                        "variant": "CCTGGGTATCTA",
+                        "variantName": null
+                    },
+                    {
+                        "count": 2,
+                        "variant": "CAGGGGTATCTA",
+                        "variantName": null
+                    },
+                    {
+                        "count": 2,
+                        "variant": "CAAGGGTTTCTA",
+                        "variantName": null
+                    },
+                    {
+                        "count": 2,
+                        "variant": "CGCGGGTTTCTA",
+                        "variantName": null
+                    },
+                    {
+                        "count": 1,
+                        "variant": "CAGGGGTTTCTA",
+                        "variantName": null
+                    },
+                    {
+                        "count": 1,
+                        "variant": "CAAGGGTATCTA",
+                        "variantName": null
+                    },
+                    {
+                        "count": 1,
+                        "variant": "CTGGGGTATCTA",
+                        "variantName": null
+                    },
+                    {
+                        "count": 1,
+                        "variant": "CTGGGGTTTCTA",
+                        "variantName": null
+                    },
+                    {
+                        "count": 1,
+                        "variant": "CGCGGGTATCTA",
+                        "variantName": null
+                    },
+                    {
+                        "count": 1,
+                        "variant": "CCCGGGTTTCTA",
+                        "variantName": null
+                    },
+                    {
+                        "count": 1,
+                        "variant": "CTCGGGTTTCTA",
+                        "variantName": null
+                    },
+                    {
+                        "count": 1,
+                        "variant": "CATGGGTATCTA",
+                        "variantName": null
+                    },
+                    {
+                        "count": 1,
+                        "variant": "CGGGGGTTTCTA",
+                        "variantName": null
+                    },
+                    {
+                        "count": 1,
+                        "variant": "CTAGGGTATCTA",
+                        "variantName": null
+                    },
+                    {
+                        "count": 1,
+                        "variant": "CGAGGGTTTCTA",
+                        "variantName": null
                     }
                 ]
             },
@@ -198,7 +958,8 @@
                 "variants": [
                     {
                         "count": 243,
-                        "variant": "CGAGCGCAACCC"
+                        "variant": "CGAGCGCAACCC",
+                        "variantName": null
                     }
                 ]
             },
@@ -209,7 +970,8 @@
                 "variants": [
                     {
                         "count": 246,
-                        "variant": "GGGTTGCGCTCG"
+                        "variant": "GGGTTGCGCTCG",
+                        "variantName": null
                     }
                 ]
             },
@@ -220,15 +982,23 @@
                 "variants": [
                     {
                         "count": 269,
-                        "variant": "AGGTGGGGATGA"
+                        "variant": "AGGTGGGGATGA",
+                        "variantName": null
                     },
                     {
                         "count": 66,
-                        "variant": "AGGCGGGGATGA"
+                        "variant": "AGGCGGGGATGA",
+                        "variantName": null
                     },
                     {
                         "count": 2,
-                        "variant": "AGGCGGGGACGA"
+                        "variant": "AGGCGGGGACGA",
+                        "variantName": null
+                    },
+                    {
+                        "count": 1,
+                        "variant": "AGGTGGGGACGA",
+                        "variantName": null
                     }
                 ]
             },
@@ -239,15 +1009,18 @@
                 "variants": [
                     {
                         "count": 291,
-                        "variant": "TCATCCCCACCT"
+                        "variant": "TCATCCCCACCT",
+                        "variantName": null
                     },
                     {
                         "count": 69,
-                        "variant": "TCATCCCCGCCT"
+                        "variant": "TCATCCCCGCCT",
+                        "variantName": null
                     },
                     {
                         "count": 1,
-                        "variant": "TCGTCCCCACCT"
+                        "variant": "TCGTCCCCACCT",
+                        "variantName": null
                     }
                 ]
             },
@@ -258,15 +1031,83 @@
                 "variants": [
                     {
                         "count": 249,
-                        "variant": "GTGGCGGACGGG"
+                        "variant": "GTGGCGGACGGG",
+                        "variantName": null
                     },
                     {
                         "count": 118,
-                        "variant": "CTGGCGAACGGG"
+                        "variant": "CTGGCGAACGGG",
+                        "variantName": null
                     },
                     {
                         "count": 73,
-                        "variant": "GCGGCGTACGGG"
+                        "variant": "GCGGCGTACGGG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 69,
+                        "variant": "GCGGCGAACGGG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 67,
+                        "variant": "GCGGCGCACGGG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 54,
+                        "variant": "CTGGCGTACGGG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 46,
+                        "variant": "CTGGCGCACGGG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 44,
+                        "variant": "CCGGCGAACGGG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 40,
+                        "variant": "CCGGCGTACGGG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 36,
+                        "variant": "GTGGCGAACGGG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 35,
+                        "variant": "CTGGCGGACGGG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 4,
+                        "variant": "GTGGCGTACGGG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 3,
+                        "variant": "CCGGCGGACGGG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 3,
+                        "variant": "CCGGCGCACGGG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 2,
+                        "variant": "GTGGCGCACGGG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 1,
+                        "variant": "GCGGCGGACGGG",
+                        "variantName": null
                     }
                 ]
             },
@@ -277,15 +1118,78 @@
                 "variants": [
                     {
                         "count": 293,
-                        "variant": "CCCGTCCGCCAC"
+                        "variant": "CCCGTCCGCCAC",
+                        "variantName": null
                     },
                     {
                         "count": 110,
-                        "variant": "CCCGTTCGCCAG"
+                        "variant": "CCCGTTCGCCAG",
+                        "variantName": null
                     },
                     {
                         "count": 79,
-                        "variant": "CCCGTGCGCCGC"
+                        "variant": "CCCGTGCGCCGC",
+                        "variantName": null
+                    },
+                    {
+                        "count": 76,
+                        "variant": "CCCGTACGCCGC",
+                        "variantName": null
+                    },
+                    {
+                        "count": 72,
+                        "variant": "CCCGTTCGCCGC",
+                        "variantName": null
+                    },
+                    {
+                        "count": 63,
+                        "variant": "CCCGTACGCCAG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 58,
+                        "variant": "CCCGTTCGCCGG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 42,
+                        "variant": "CCCGTACGCCGG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 39,
+                        "variant": "CCCGTGCGCCAG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 38,
+                        "variant": "CCCGTCCGCCAG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 36,
+                        "variant": "CCCGTTCGCCAC",
+                        "variantName": null
+                    },
+                    {
+                        "count": 3,
+                        "variant": "CCCGTCCGCCGG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 2,
+                        "variant": "CCCGTCCGCCGC",
+                        "variantName": null
+                    },
+                    {
+                        "count": 2,
+                        "variant": "CCCGTGCGCCGG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 1,
+                        "variant": "CCCGTGCGCCAC",
+                        "variantName": null
                     }
                 ]
             },
@@ -296,11 +1200,13 @@
                 "variants": [
                     {
                         "count": 218,
-                        "variant": "GAAGAACCTTAC"
+                        "variant": "GAAGAACCTTAC",
+                        "variantName": null
                     },
                     {
                         "count": 1,
-                        "variant": "GAGGAACCTTAC"
+                        "variant": "GAGGAACCTTAC",
+                        "variantName": null
                     }
                 ]
             },
@@ -311,7 +1217,8 @@
                 "variants": [
                     {
                         "count": 213,
-                        "variant": "GTAAGGTTCTTC"
+                        "variant": "GTAAGGTTCTTC",
+                        "variantName": null
                     }
                 ]
             },
@@ -322,7 +1229,8 @@
                 "variants": [
                     {
                         "count": 216,
-                        "variant": "GTGGTTTAATTC"
+                        "variant": "GTGGTTTAATTC",
+                        "variantName": null
                     }
                 ]
             },
@@ -333,7 +1241,8 @@
                 "variants": [
                     {
                         "count": 213,
-                        "variant": "GAATTAAACCAC"
+                        "variant": "GAATTAAACCAC",
+                        "variantName": null
                     }
                 ]
             },
@@ -344,15 +1253,38 @@
                 "variants": [
                     {
                         "count": 244,
-                        "variant": "GTACACACCGCC"
+                        "variant": "GTACACACCGCC",
+                        "variantName": null
                     },
                     {
                         "count": 59,
-                        "variant": "GCACTCACCGCC"
+                        "variant": "GCACTCACCGCC",
+                        "variantName": null
                     },
                     {
                         "count": 32,
-                        "variant": "GTACTCTCCGCC"
+                        "variant": "GTACTCTCCGCC",
+                        "variantName": null
+                    },
+                    {
+                        "count": 29,
+                        "variant": "GCACTCTCCGCC",
+                        "variantName": null
+                    },
+                    {
+                        "count": 4,
+                        "variant": "GTACTCACCGCC",
+                        "variantName": null
+                    },
+                    {
+                        "count": 3,
+                        "variant": "GTACACTCCGCC",
+                        "variantName": null
+                    },
+                    {
+                        "count": 1,
+                        "variant": "GCACACTCCGCC",
+                        "variantName": null
                     }
                 ]
             },
@@ -363,15 +1295,43 @@
                 "variants": [
                     {
                         "count": 215,
-                        "variant": "GGCGGTGTGTAC"
+                        "variant": "GGCGGTGTGTAC",
+                        "variantName": null
                     },
                     {
                         "count": 64,
-                        "variant": "GGCGGTGAGTGC"
+                        "variant": "GGCGGTGAGTGC",
+                        "variantName": null
                     },
                     {
                         "count": 30,
-                        "variant": "GGCGGAGAGTAC"
+                        "variant": "GGCGGAGAGTAC",
+                        "variantName": null
+                    },
+                    {
+                        "count": 27,
+                        "variant": "GGCGGAGAGTGC",
+                        "variantName": null
+                    },
+                    {
+                        "count": 6,
+                        "variant": "GGCGGTGAGTAC",
+                        "variantName": null
+                    },
+                    {
+                        "count": 3,
+                        "variant": "GGCGGAGTGTAC",
+                        "variantName": null
+                    },
+                    {
+                        "count": 1,
+                        "variant": "GGCGGAGTGTGC",
+                        "variantName": null
+                    },
+                    {
+                        "count": 1,
+                        "variant": "GGCGGTGTGTGC",
+                        "variantName": null
                     }
                 ]
             },
@@ -382,15 +1342,23 @@
                 "variants": [
                     {
                         "count": 234,
-                        "variant": "GCTACACACGTG"
+                        "variant": "GCTACACACGTG",
+                        "variantName": null
                     },
                     {
                         "count": 4,
-                        "variant": "GCGACACACGTG"
+                        "variant": "GCGACACACGTG",
+                        "variantName": null
                     },
                     {
                         "count": 2,
-                        "variant": "GCGACACACGCG"
+                        "variant": "GCGACACACGCG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 1,
+                        "variant": "GCTACACACGCG",
+                        "variantName": null
                     }
                 ]
             },
@@ -401,15 +1369,23 @@
                 "variants": [
                     {
                         "count": 224,
-                        "variant": "CACGTGTGTAGC"
+                        "variant": "CACGTGTGTAGC",
+                        "variantName": null
                     },
                     {
                         "count": 4,
-                        "variant": "CGCGTGTGTAGC"
+                        "variant": "CGCGTGTGTAGC",
+                        "variantName": null
                     },
                     {
                         "count": 4,
-                        "variant": "CACGTGTGTCGC"
+                        "variant": "CACGTGTGTCGC",
+                        "variantName": null
+                    },
+                    {
+                        "count": 1,
+                        "variant": "CGCGTGTGTCGC",
+                        "variantName": null
                     }
                 ]
             },
@@ -420,15 +1396,23 @@
                 "variants": [
                     {
                         "count": 364,
-                        "variant": "GCGGTGAAATGC"
+                        "variant": "GCGGTGAAATGC",
+                        "variantName": null
                     },
                     {
                         "count": 41,
-                        "variant": "GCGGTGAAATTC"
+                        "variant": "GCGGTGAAATTC",
+                        "variantName": null
                     },
                     {
                         "count": 36,
-                        "variant": "GAGGTGAAATTC"
+                        "variant": "GAGGTGAAATTC",
+                        "variantName": null
+                    },
+                    {
+                        "count": 5,
+                        "variant": "GAGGTGAAATGC",
+                        "variantName": null
                     }
                 ]
             },
@@ -439,15 +1423,23 @@
                 "variants": [
                     {
                         "count": 359,
-                        "variant": "GCATTTCACCGC"
+                        "variant": "GCATTTCACCGC",
+                        "variantName": null
                     },
                     {
                         "count": 41,
-                        "variant": "GAATTTCACCGC"
+                        "variant": "GAATTTCACCGC",
+                        "variantName": null
                     },
                     {
                         "count": 38,
-                        "variant": "GAATTTCACCTC"
+                        "variant": "GAATTTCACCTC",
+                        "variantName": null
+                    },
+                    {
+                        "count": 5,
+                        "variant": "GCATTTCACCTC",
+                        "variantName": null
                     }
                 ]
             },
@@ -458,15 +1450,18 @@
                 "variants": [
                     {
                         "count": 236,
-                        "variant": "ATCATGGCTCAG"
+                        "variant": "ATCATGGCTCAG",
+                        "variantName": null
                     },
                     {
                         "count": 40,
-                        "variant": "ATTCTGGCTCAG"
+                        "variant": "ATTCTGGCTCAG",
+                        "variantName": null
                     },
                     {
                         "count": 1,
-                        "variant": "ATCCTGGCTCAG"
+                        "variant": "ATCCTGGCTCAG",
+                        "variantName": null
                     }
                 ]
             },
@@ -477,15 +1472,18 @@
                 "variants": [
                     {
                         "count": 249,
-                        "variant": "CTGAGCCATGAT"
+                        "variant": "CTGAGCCATGAT",
+                        "variantName": null
                     },
                     {
                         "count": 40,
-                        "variant": "CTGAGCCAGAAT"
+                        "variant": "CTGAGCCAGAAT",
+                        "variantName": null
                     },
                     {
                         "count": 2,
-                        "variant": "CTGAGCCATAAT"
+                        "variant": "CTGAGCCATAAT",
+                        "variantName": null
                     }
                 ]
             },
@@ -496,11 +1494,13 @@
                 "variants": [
                     {
                         "count": 236,
-                        "variant": "AGTCGTAACAAG"
+                        "variant": "AGTCGTAACAAG",
+                        "variantName": null
                     },
                     {
                         "count": 22,
-                        "variant": "AGTCATAACAAG"
+                        "variant": "AGTCATAACAAG",
+                        "variantName": null
                     }
                 ]
             },
@@ -511,11 +1511,13 @@
                 "variants": [
                     {
                         "count": 235,
-                        "variant": "CTTGTTACGACT"
+                        "variant": "CTTGTTACGACT",
+                        "variantName": null
                     },
                     {
                         "count": 22,
-                        "variant": "CTTGTTATGACT"
+                        "variant": "CTTGTTATGACT",
+                        "variantName": null
                     }
                 ]
             }
