@@ -17,6 +17,10 @@
                     {
                         "variantName": "variant3",
                         "variantString": "GAATTGGCGGGG"
+                    },
+                    {
+                        "variantName": "poo-bar",
+                        "variantString": "AAATAGGCGGGG"
                     }
                 ]
             },
