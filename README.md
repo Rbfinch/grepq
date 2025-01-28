@@ -24,11 +24,11 @@ _Quickly filter FASTQ files_
 - very fast and scales to large FASTQ files
 - IUPAC ambiguity code support
 - support for gzip and zstd compression
-- JSON support for pattern file input and `tune` command output, allowing named regex sets and named regex patterns
+- JSON support for pattern file input and `tune` command output, allowing named regex sets, named regex patterns, and named and unnamed variants
 - use **predicates** to filter on the header field (= record ID line) using a regex, minimum sequence length, and minimum average quality score (supports Phred+33 and Phred+64)
 - does not match false positives
 - output matched sequences to one of four formats
-- tune your pattern file and **enumerate variants** with the `tune` command
+- tune your pattern file and **enumerate named and unnamed variants** with the `tune` command
 - supports inverted matching with the `inverted` command
 - plays nicely with your unix workflows
 - comprehensive help, examples and testing script
@@ -91,13 +91,13 @@ Predicates are specified in a JSON pattern file. For an example, see `16S-iupac-
 >[!NOTE]
 Other than when the `tune` command is run (see below), a FASTQ record is deemed to match (and hence provided in the output) when _any_ of the regex patterns in the pattern file match the sequence field of the FASTQ record.
 
-**6. Tune your pattern file and enumerate variants with the `tune` command**
+**6. Tune your pattern file and enumerate named and unnamed variants with the `tune` command**
 
 Use the `tune` command (`grepq tune -h` for instructions) in a simple shell script to update the number and order of regex patterns in your pattern file according to their matched frequency, further targeting and speeding up the filtering process.
 
 Specifying the `-c` option to the `tune` command will output the matched substrings and their frequencies, ranked from highest to lowest.
 
-When the patterns file is given in JSON format, then specifying the `-c`, `--names`, `--json-matches` and `--variants` options to the `tune` command will output the matched pattern variants and their corresponding counts in JSON format to a file called `matches.json`, allowing named regex sets and named regex patterns. See `examples/16S-iupac.json` for an example of a JSON pattern file and `examples/matches.json` for an example of the output of the `tune` command in JSON format.
+When the patterns file is given in JSON format, then specifying the `-c`, `--names`, `--json-matches` and `--variants` options to the `tune` command will output the matched pattern variants and their corresponding counts in JSON format to a file called `matches.json`, allowing named regex sets, named regex patterns, and named and unnamed variants. See `examples/16S-iupac.json` for an example of a JSON pattern file and `examples/matches.json` for an example of the output of the `tune` command in JSON format.
 
 ```bash
 # For each matched pattern in a search of the first 20000 records of a gzip-compressed FASTQ file, print the pattern and the number of matches to a JSON file called matches.json, and include the top three most frequent variants of each pattern, and their respective counts
@@ -118,37 +118,22 @@ Abridged output (see `examples/matches.json` for the full output):
                 "variants": [
                     {
                         "count": 219,
-                        "variant": "GAATTGACGGGG"
+                        "variant": "GAATTGACGGGG",
+                        "variantName": "06a-v1"
                     },
                     {
                         "count": 43,
-                        "variant": "AAATTGACGGGG"
+                        "variant": "AAATTGACGGGG",
+                        "variantName": "06a-v2"
                     },
                     {
                         "count": 21,
-                        "variant": "GAATTGGCGGGG"
+                        "variant": "GAATTGGCGGGG",
+                        "variantName": "06a-v3"
                     }
                 ]
             },
-            {
-                "regexCount": 298,
-                "regexName": "Primer contig 06aR",
-                "regexString": "CCCCG[CT]C[AT]ATT[CT]",
-                "variants": [
-                    {
-                        "count": 221,
-                        "variant": "CCCCGTCAATTC"
-                    },
-                    {
-                        "count": 43,
-                        "variant": "CCCCGTCAATTT"
-                    },
-                    {
-                        "count": 25,
-                        "variant": "CCCCGCCAATTC"
-                    }
-                ]
-            }
+            // matches for other regular expressions...
     ],
     "regexSetName": "conserved 16S rRNA regions"
   }
@@ -172,14 +157,14 @@ Use the `inverted` command to output sequences that do not match any of the rege
 
 **8. Plays nicely with your unix workflows**
 
-For example, see `tune.sh` in the `examples` directory. This simple script will filter a FASTQ file using `grepq`, tune the pattern file on a user-specified number of FASTQ records, and then filter the FASTQ file again using the tuned pattern file for a user-specified number of the most frequent regex pattern matches.
+For example, see `tune.sh` in the `examples` directory. This simple script will filter a FASTQ file using `grepq`, tune the pattern file on a user-specified number of FASTQ records, and then filter the FASTQ file again using the tuned pattern file for a user-specified number of the most frequent regex pattern matches. Use a tool like `jq` to conveniently parse the JSON output of the `tune` command.
 
 ## Usage
 
 Get instructions and examples using `grepq -h`, and `grepq tune -h` and `grepq inverted -h` for more information on the `tune` and `inverted` commands, respectively.
 
 >[!NOTE]
-`grepq` can output to several formats, including those that are gzip or zstd compressed. `grepq`, however, will only accept a FASTQ file or a compressed (gzip or zstd) FASTQ file as the sequence data file. If you get an error message, check that the input data file is a FASTQ file or a gzip or zstd compressed FASTQ file, and that you have specified the correct file format (--read-gzip or --read-zstd for FASTQ files compressed by gzip and zstd, respectively), and file path. Pattern files must contain one regex pattern per line or be provided in JSON format, and patterns are case-sensitive. You can supply an empty pattern file to count the total number of records in the FASTQ file. The regex patterns for matching FASTQ sequences should only include the DNA sequence characters (A, C, G, T), or IUPAC ambiguity codes (N, R, Y, etc.). See `16S-no-iupac.txt`, `16S-iupac.json` and `16S-iupac-and-predicates.json` in the `examples` directory for examples of valid pattern files. Regex patterns to match the header field (= record ID line) must comply with the Rust regex library syntax (<https://docs.rs/regex/latest/regex/#syntax>). If you get an error message, be sure to escape any special characters in the regex pattern.
+`grepq` can output to several formats, including those that are gzip or zstd compressed. `grepq`, however, will only accept a FASTQ file or a compressed (gzip or zstd) FASTQ file as the sequence data file. If you get an error message, check that the input data file is a FASTQ file or a gzip or zstd compressed FASTQ file, and that you have specified the correct file format (--read-gzip or --read-zstd for FASTQ files compressed by gzip and zstd, respectively), and file path. Pattern files must contain one regex pattern per line or be provided in JSON format, and patterns are case-sensitive. You can supply an empty pattern file to count the total number of records in the FASTQ file. The regex patterns for matching FASTQ sequences should only include the DNA sequence characters (A, C, G, T), or IUPAC ambiguity codes (N, R, Y, etc.). See `16S-no-iupac.txt`, `16S-iupac.json`, `16S-no-iupac.json`, and `16S-iupac-and-predicates.json` in the `examples` directory for examples of valid pattern files. Regex patterns to match the header field (= record ID line) must comply with the Rust regex library syntax (<https://docs.rs/regex/latest/regex/#syntax>). If you get an error message, be sure to escape any special characters in the regex pattern.
 
 ## Requirements
 
@@ -225,7 +210,7 @@ grepq -R ./examples/16S-no-iupac.txt ./examples/small.fastq inverted > outfile.t
 1642712
 ```
 
-For the curious-minded, note that the regex patterns in `16S-no-iupac.txt`, `16S-iupac.json`, and `16S-iupac-and-predicates.json` are from Table 3 of Martinez-Porchas, Marcel, et al. "How conserved are the conserved 16S-rRNA regions?." PeerJ 5 (2017): e3036.
+For the curious-minded, note that the regex patterns in `16S-no-iupac.txt`, `16S-iupac.json`, `16S-no-iupac.json`, and `16S-iupac-and-predicates.json` are from Table 3 of Martinez-Porchas, Marcel, et al. "How conserved are the conserved 16S-rRNA regions?." PeerJ 5 (2017): e3036.
 
 For more examples, see the `examples` directory and the [cookbook](https://github.com/Rbfinch/grepq/blob/main/cookbook.md), available also as a shell script in the `examples` directory.
 

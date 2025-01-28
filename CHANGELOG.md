@@ -3,6 +3,12 @@ TBD
 
 Unreleased changes. Release notes have not yet been written.
 
+1.4.4
+=====
+
+* Support for named variants
+* Corresponding changes documentation
+
 1.4.3
 =====
 

@@ -101,13 +101,14 @@ according to their matched frequency, further targeting and speeding up the
 filtering process. When the patterns file is given in JSON format, then specifying
 the `-c`, `--names`, `--json-matches` and `--variants` options to the `tune` 
 command will output the matched pattern variants and their corresponding counts
-in JSON format to a file called `matches.json`, allowing named regex sets and 
-named regex patterns. See examples/16S-iupac.json for an example of a JSON pattern
-file and examples/matches.json for an example of the output of the tune command
-in JSON format (both files are located in the examples directory of the `grepq`
-GitHub repository: https://github.com/Rbfinch/grepq) (see also the Examples and
-Notes sections). To list all variants of a pattern, use the `--all` option. Note
-that the `--variants` argument is not given when `--all` is specified.
+in JSON format to a file called `matches.json`, allowing named regex sets, named
+regex patterns, and named and unnamed variants. See 16S-no-iupac.txt, 
+16S-iupac.json, 16S-no-iupac.json and 16S-no-iupac.json for examples of JSON 
+pattern files, and matches.json for an example of the output of the tune command
+in JSON format (example files are located in the examples directory of the 
+`grepq` GitHub repository: https://github.com/Rbfinch/grepq) (see also the 
+Examples and Notes sections). To list all variants of a pattern, use the `--all`
+option. Note that the `--variants` argument is not given when `--all` is specified.
 
 3. Use the `inverted` command to identify records that do not match
 any of the regex patterns in your pattern file.
@@ -164,7 +165,8 @@ pattern file.
         "\n\nCitation:".bold().underline(),
         "\n\nIf you use grepq in your research, please cite as follows:",
         "\n\nCrosbie, N.D. (2024). grepq: A Rust application that quickly filters
-FASTQ files by matching sequences to a set of regex patterns. 10.5281/zenodo.14031703"
+FASTQ files by matching sequences to a set of regular expressions. bioRxiv, doi:
+<https://doi.org/10.1101/2025.01.09.632104>"
     )
 });
 
