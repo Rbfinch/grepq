@@ -34,6 +34,24 @@ static SCHEMA: &str = r#"
                             },
                             "regexString": {
                                 "type": "string"
+                            },
+                            "variants": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "variantName": {
+                                            "type": "string"
+                                        },
+                                        "variantString": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "variantName",
+                                        "variantString"
+                                    ]
+                                }
                             }
                         },
                         "required": [
