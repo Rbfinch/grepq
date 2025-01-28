@@ -34,7 +34,21 @@
             },
             {
                 "regexName": "Primer contig 07a",
-                "regexString": "G[CT][CT]G[CT]CGTCAGC"
+                "regexString": "G[CT][CT]G[CT]CGTCAGC",
+                "variants": [
+                    {
+                        "variantName": "blah",
+                        "variantString": "GCTGTCGTCAGC"
+                    },
+                    {
+                        "variantName": "foo",
+                        "variantString": "GCTGCCGTCAGC"
+                    },
+                    {
+                        "variantName": "bah",
+                        "variantString": "GTTGCCGTCAGC"
+                    }
+                ]
             },
             {
                 "regexName": "Primer contig 07aR",

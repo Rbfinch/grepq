@@ -13,7 +13,7 @@ pub fn run_tune(cli: &Cli, num_records: usize, include_count: bool) -> io::Resul
     let patterns_path = &cli.patterns;
 
     // Parse the patterns file
-    let (regex_set, header_regex, minimum_sequence_length, minimum_quality, quality_encoding) =
+    let (regex_set, header_regex, minimum_sequence_length, minimum_quality, quality_encoding, _) =
         parse_patterns_file(patterns_path).map_err(|e| io::Error::new(io::ErrorKind::Other, e))?;
 
     let header_regex = header_regex.map(|re| Regex::new(&re).unwrap());
@@ -133,9 +133,22 @@ pub fn run_tune(cli: &Cli, num_records: usize, include_count: bool) -> io::Resul
 
             most_frequent_matches.truncate(top_n);
 
+            let variants_array = regex["variants"]
+                .as_array()
+                .unwrap_or_else(|| Box::leak(Box::new(Vec::new())));
+            let variants = variants_array;
             let most_frequent_matches_json: Vec<_> = most_frequent_matches
                 .into_iter()
-                .map(|(seq, count)| json!({"variant": seq, "count": count}))
+                .map(|(seq, count)| {
+                    let variant_name = variants.iter().find_map(|variant| {
+                        if variant["variantString"].as_str() == Some(seq) {
+                            variant["variantName"].as_str().map(|s| s.to_string())
+                        } else {
+                            None
+                        }
+                    });
+                    json!({"variant": seq, "count": count, "variantName": variant_name})
+                })
                 .collect();
 
             regex_matches.push(json!({
