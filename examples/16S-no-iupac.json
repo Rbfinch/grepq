@@ -7,19 +7,19 @@
                 "regexString": "[AG]AAT[AT]G[AG]CGGGG",
                 "variants": [
                     {
-                        "variantName": "variant1",
+                        "variantName": "06a-v1",
                         "variantString": "GAATTGACGGGG"
                     },
                     {
-                        "variantName": "variant2",
+                        "variantName": "06a-v2",
                         "variantString": "AAATTGACGGGG"
                     },
                     {
-                        "variantName": "variant3",
+                        "variantName": "06a-v3",
                         "variantString": "GAATTGGCGGGG"
                     },
                     {
-                        "variantName": "poo-bar",
+                        "variantName": "06a-v4",
                         "variantString": "AAATAGGCGGGG"
                     }
                 ]
@@ -41,15 +41,15 @@
                 "regexString": "G[CT][CT]G[CT]CGTCAGC",
                 "variants": [
                     {
-                        "variantName": "blah",
+                        "variantName": "07a-v1",
                         "variantString": "GCTGTCGTCAGC"
                     },
                     {
-                        "variantName": "foo",
+                        "variantName": "07a-v2",
                         "variantString": "GCTGCCGTCAGC"
                     },
                     {
-                        "variantName": "bah",
+                        "variantName": "07a-v3",
                         "variantString": "GTTGCCGTCAGC"
                     }
                 ]

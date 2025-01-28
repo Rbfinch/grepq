@@ -92,7 +92,7 @@ type ParseResult = Result<
         Option<u64>,
         Option<f64>,
         Option<String>,
-        Vec<(String, String)>, // Add this line
+        Vec<(String, String)>,
     ),
     String,
 >;
@@ -198,7 +198,7 @@ pub fn parse_patterns_file(patterns_path: &str) -> ParseResult {
             minimum_sequence_length,
             minimum_quality,
             quality_encoding,
-            variants, // Add this line
+            variants,
         ))
     } else {
         let file = File::open(patterns_path)
@@ -212,7 +212,7 @@ pub fn parse_patterns_file(patterns_path: &str) -> ParseResult {
             .collect();
         let regex_set = RegexSet::new(&regex_strings)
             .map_err(|e| format!("Failed to compile regex patterns: {}", e))?;
-        Ok((regex_set, None, None, None, None, Vec::new())) // Add an empty Vec for variants
+        Ok((regex_set, None, None, None, None, Vec::new())) // empty Vec for variants
     }
 }
 
@@ -241,7 +241,7 @@ pub fn create_reader(cli: &Cli) -> Reader<Box<dyn BufRead + Send>> {
     Reader::with_capacity(reader, 8 * 1024 * 1024)
 }
 
-// Add this new struct and implementation
+// zstd writer
 struct ZstdWriter<W: Write> {
     encoder: Option<ZstdEncoder<'static, W>>,
 }

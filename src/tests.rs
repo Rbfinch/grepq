@@ -74,12 +74,3 @@ mod test_module {
         assert_eq!(result.0.patterns().len(), 30);
     }
 }
-
-// comment added to test pull request
-#[test]
-fn test_unused_function() {
-    fn unused_function() -> i32 {
-        42
-    }
-    assert_eq!(unused_function(), 42);
-}

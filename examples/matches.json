@@ -9,17 +9,17 @@
                     {
                         "count": 219,
                         "variant": "GAATTGACGGGG",
-                        "variantName": "variant1"
+                        "variantName": "06a-v1"
                     },
                     {
                         "count": 43,
                         "variant": "AAATTGACGGGG",
-                        "variantName": "variant2"
+                        "variantName": "06a-v2"
                     },
                     {
                         "count": 21,
                         "variant": "GAATTGGCGGGG",
-                        "variantName": "variant3"
+                        "variantName": "06a-v3"
                     },
                     {
                         "count": 3,
@@ -29,7 +29,7 @@
                     {
                         "count": 1,
                         "variant": "AAATAGGCGGGG",
-                        "variantName": "poo-bar"
+                        "variantName": "06a-v4"
                     }
                 ]
             },
@@ -60,12 +60,12 @@
                     },
                     {
                         "count": 2,
-                        "variant": "CCCCGTCTATTT",
+                        "variant": "CCCCGCCTATTT",
                         "variantName": null
                     },
                     {
                         "count": 2,
-                        "variant": "CCCCGCCTATTT",
+                        "variant": "CCCCGTCTATTT",
                         "variantName": null
                     },
                     {
@@ -147,11 +147,6 @@
                     },
                     {
                         "count": 4,
-                        "variant": "GGGCGGCAGCAG",
-                        "variantName": null
-                    },
-                    {
-                        "count": 4,
                         "variant": "GGACGGCTGCAG",
                         "variantName": null
                     },
@@ -161,8 +156,8 @@
                         "variantName": null
                     },
                     {
-                        "count": 3,
-                        "variant": "GGGCGGCCGCAG",
+                        "count": 4,
+                        "variant": "GGGCGGCAGCAG",
                         "variantName": null
                     },
                     {
@@ -177,12 +172,12 @@
                     },
                     {
                         "count": 3,
-                        "variant": "GGAAGGCTGCAG",
+                        "variant": "GGGCGGCCGCAG",
                         "variantName": null
                     },
                     {
-                        "count": 2,
-                        "variant": "GGAAGGCAGCAG",
+                        "count": 3,
+                        "variant": "GGAAGGCTGCAG",
                         "variantName": null
                     },
                     {
@@ -196,18 +191,13 @@
                         "variantName": null
                     },
                     {
+                        "count": 2,
+                        "variant": "GGAAGGCAGCAG",
+                        "variantName": null
+                    },
+                    {
                         "count": 1,
                         "variant": "GGGGGGCGGCAG",
-                        "variantName": null
-                    },
-                    {
-                        "count": 1,
-                        "variant": "GGGAGGCGGCAG",
-                        "variantName": null
-                    },
-                    {
-                        "count": 1,
-                        "variant": "GGGGGGCAGCAG",
                         "variantName": null
                     },
                     {
@@ -217,7 +207,17 @@
                     },
                     {
                         "count": 1,
+                        "variant": "GGGGGGCAGCAG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 1,
                         "variant": "GGGAGGCCGCAG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 1,
+                        "variant": "GGGAGGCGGCAG",
                         "variantName": null
                     }
                 ]
@@ -314,17 +314,17 @@
                     },
                     {
                         "count": 5,
-                        "variant": "CTGCTGCCACCC",
-                        "variantName": null
-                    },
-                    {
-                        "count": 5,
                         "variant": "CTGCTGCCGCCC",
                         "variantName": null
                     },
                     {
+                        "count": 5,
+                        "variant": "CTGCTGCCACCC",
+                        "variantName": null
+                    },
+                    {
                         "count": 4,
-                        "variant": "CTGCTGCCCCCC",
+                        "variant": "CTGCGGCCGCCC",
                         "variantName": null
                     },
                     {
@@ -339,12 +339,12 @@
                     },
                     {
                         "count": 4,
-                        "variant": "CTGCAGCCTTCC",
+                        "variant": "CTGCTGCCCCCC",
                         "variantName": null
                     },
                     {
                         "count": 4,
-                        "variant": "CTGCGGCCGCCC",
+                        "variant": "CTGCAGCCTTCC",
                         "variantName": null
                     },
                     {
@@ -369,12 +369,12 @@
                     },
                     {
                         "count": 1,
-                        "variant": "CTGCAGCCCTCC",
+                        "variant": "CTGCAGCCTCCC",
                         "variantName": null
                     },
                     {
                         "count": 1,
-                        "variant": "CTGCAGCCTCCC",
+                        "variant": "CTGCAGCCCTCC",
                         "variantName": null
                     }
                 ]
@@ -387,17 +387,17 @@
                     {
                         "count": 252,
                         "variant": "GCTGTCGTCAGC",
-                        "variantName": "blah"
+                        "variantName": "07a-v1"
                     },
                     {
                         "count": 244,
                         "variant": "GCTGCCGTCAGC",
-                        "variantName": "foo"
+                        "variantName": "07a-v2"
                     },
                     {
                         "count": 199,
                         "variant": "GTTGCCGTCAGC",
-                        "variantName": "bah"
+                        "variantName": "07a-v3"
                     },
                     {
                         "count": 188,
@@ -550,12 +550,12 @@
                     },
                     {
                         "count": 34,
-                        "variant": "CCGCGGCCGCGG",
+                        "variant": "CGGCCGCTGCGG",
                         "variantName": null
                     },
                     {
                         "count": 34,
-                        "variant": "CGGCCGCTGCGG",
+                        "variant": "CCGCGGCCGCGG",
                         "variantName": null
                     },
                     {
@@ -697,12 +697,12 @@
                     },
                     {
                         "count": 5,
-                        "variant": "CCGCGGCCGCTG",
+                        "variant": "CCGCGGCAGCTG",
                         "variantName": null
                     },
                     {
                         "count": 5,
-                        "variant": "CCGCGGCAGCTG",
+                        "variant": "CCGCGGCCGCTG",
                         "variantName": null
                     },
                     {
@@ -774,12 +774,12 @@
                     },
                     {
                         "count": 3,
-                        "variant": "TAGAAACCCTGG",
+                        "variant": "TAGATACCCCAG",
                         "variantName": null
                     },
                     {
                         "count": 3,
-                        "variant": "TAGATACCCCAG",
+                        "variant": "TAGAAACCCTGG",
                         "variantName": null
                     },
                     {
@@ -789,17 +789,12 @@
                     },
                     {
                         "count": 2,
-                        "variant": "TAGATACCCATG",
-                        "variantName": null
-                    },
-                    {
-                        "count": 2,
                         "variant": "TAGAAACCCCAG",
                         "variantName": null
                     },
                     {
-                        "count": 1,
-                        "variant": "TAGATACCCTAG",
+                        "count": 2,
+                        "variant": "TAGATACCCATG",
                         "variantName": null
                     },
                     {
@@ -809,22 +804,27 @@
                     },
                     {
                         "count": 1,
-                        "variant": "TAGAAACCCCCG",
-                        "variantName": null
-                    },
-                    {
-                        "count": 1,
-                        "variant": "TAGAAACCCGGG",
-                        "variantName": null
-                    },
-                    {
-                        "count": 1,
                         "variant": "TAGATACCCCCG",
                         "variantName": null
                     },
                     {
                         "count": 1,
+                        "variant": "TAGATACCCTAG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 1,
+                        "variant": "TAGAAACCCCCG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 1,
                         "variant": "TAGATACCCGAG",
+                        "variantName": null
+                    },
+                    {
+                        "count": 1,
+                        "variant": "TAGAAACCCGGG",
                         "variantName": null
                     }
                 ]
@@ -896,12 +896,7 @@
                     },
                     {
                         "count": 1,
-                        "variant": "CAGGGGTTTCTA",
-                        "variantName": null
-                    },
-                    {
-                        "count": 1,
-                        "variant": "CAAGGGTATCTA",
+                        "variant": "CGCGGGTATCTA",
                         "variantName": null
                     },
                     {
@@ -916,17 +911,32 @@
                     },
                     {
                         "count": 1,
-                        "variant": "CGCGGGTATCTA",
-                        "variantName": null
-                    },
-                    {
-                        "count": 1,
                         "variant": "CCCGGGTTTCTA",
                         "variantName": null
                     },
                     {
                         "count": 1,
+                        "variant": "CTAGGGTATCTA",
+                        "variantName": null
+                    },
+                    {
+                        "count": 1,
+                        "variant": "CAGGGGTTTCTA",
+                        "variantName": null
+                    },
+                    {
+                        "count": 1,
+                        "variant": "CGAGGGTTTCTA",
+                        "variantName": null
+                    },
+                    {
+                        "count": 1,
                         "variant": "CTCGGGTTTCTA",
+                        "variantName": null
+                    },
+                    {
+                        "count": 1,
+                        "variant": "CAAGGGTATCTA",
                         "variantName": null
                     },
                     {
@@ -937,16 +947,6 @@
                     {
                         "count": 1,
                         "variant": "CGGGGGTTTCTA",
-                        "variantName": null
-                    },
-                    {
-                        "count": 1,
-                        "variant": "CTAGGGTATCTA",
-                        "variantName": null
-                    },
-                    {
-                        "count": 1,
-                        "variant": "CGAGGGTTTCTA",
                         "variantName": null
                     }
                 ]
@@ -1091,12 +1091,12 @@
                     },
                     {
                         "count": 3,
-                        "variant": "CCGGCGGACGGG",
+                        "variant": "CCGGCGCACGGG",
                         "variantName": null
                     },
                     {
                         "count": 3,
-                        "variant": "CCGGCGCACGGG",
+                        "variant": "CCGGCGGACGGG",
                         "variantName": null
                     },
                     {
