@@ -4,7 +4,21 @@
         "regex": [
             {
                 "regexName": "Primer contig 06a",
-                "regexString": "[AG]AAT[AT]G[AG]CGGGG"
+                "regexString": "[AG]AAT[AT]G[AG]CGGGG",
+                "variants": [
+                    {
+                        "variantName": "variant1",
+                        "variantString": "GAATTGACGGGG"
+                    },
+                    {
+                        "variantName": "variant2",
+                        "variantString": "AAATTGACGGGG"
+                    },
+                    {
+                        "variantName": "variant3",
+                        "variantString": "GAATTGGCGGGG"
+                    }
+                ]
             },
             {
                 "regexName": "Primer contig 06aR",
