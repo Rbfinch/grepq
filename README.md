@@ -19,10 +19,10 @@ _Quickly filter FASTQ files_
 - [Update changes](#update-changes)
 - [License](#license)
 
+## Feature set
+
 >[!NOTE]
 This README contains documentation for the latest version of `grepq`. If you are working through this documentation and the examples, please ensure that you are using the latest version. You can check the version by running `grepq -V`. For installation instructions, see the [Installation](#installation) section.
-
-## Feature set
 
 - very fast and scales to large FASTQ files
 - IUPAC ambiguity code support
