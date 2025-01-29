@@ -153,7 +153,26 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h2 id="features-and-performance-in-detail"><a class="header" href="#features-and-performance-in-detail">Features and performance in detail</a></h2>
+                        <h2 id="feature-set"><a class="header" href="#feature-set">Feature set</a></h2>
+<blockquote>
+<p><strong>Note:</strong>
+This README contains documentation for the latest version of <code>grepq</code>. If you are working through this documentation and the examples, please ensure that you are using the latest version. You can check the version by running <code>grepq -V</code>. For installation instructions, see the <a href="Feature-set.html#installation">Installation</a> section.</p>
+</blockquote>
+<ul>
+<li>very fast and scales to large FASTQ files</li>
+<li>IUPAC ambiguity code support</li>
+<li>support for gzip and zstd compression</li>
+<li>JSON support for pattern file input and <code>tune</code> command output, allowing named regex sets, named regex patterns, and named and unnamed variants</li>
+<li>use <strong>predicates</strong> to filter on the header field (= record ID line) using a regex, minimum sequence length, and minimum average quality score (supports Phred+33 and Phred+64)</li>
+<li>does not match false positives</li>
+<li>output matched sequences to one of four formats</li>
+<li>tune your pattern file and <strong>enumerate named and unnamed variants</strong> with the <code>tune</code> command</li>
+<li>supports inverted matching with the <code>inverted</code> command</li>
+<li>plays nicely with your unix workflows</li>
+<li>comprehensive help, examples and testing script</li>
+<li>read the preprint at <strong>bioRxiv</strong>: <a href="https://doi.org/10.1101/2025.01.09.632104">https://doi.org/10.1101/2025.01.09.632104</a></li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div><h2 id="features-and-performance-in-detail"><a class="header" href="#features-and-performance-in-detail">Features and performance in detail</a></h2>
 <p><strong>1. Very fast and scales to large FASTQ files</strong></p>
 <div class="table-wrapper"><table><thead><tr><th>tool</th><th>mean wall time (s)</th><th>S.D. wall time (s)</th><th>speedup (× grep)</th><th>speedup (× ripgrep)</th><th>speedup (× awk)</th></tr></thead><tbody>
 <tr><td><em>grepq</em></td><td>0.19</td><td>0.01</td><td>1796.76</td><td>18.62</td><td>863.52</td></tr>

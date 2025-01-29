@@ -1,5 +1,6 @@
 # Summary
 
+* [Feature set](Feature-set.md)
 * [Features and performance in detail](Features-and-performance-in-detail.md)
 * [Usage](Usage.md)
 * [Requirements](Requirements.md)
