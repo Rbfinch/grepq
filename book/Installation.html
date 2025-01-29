@@ -3,8 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Page not found - grepq - quickly filter FASTQ files</title>
-        <base href="/">
+        <title>Installation - grepq - quickly filter FASTQ files</title>
 
 
         <!-- Custom HTML head -->
@@ -153,14 +152,36 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="document-not-found-404"><a class="header" href="#document-not-found-404">Document not found (404)</a></h1>
-<p>This URL is invalid, sorry. Please use the navigation bar or search to continue.</p>
+                        <h2 id="installation"><a class="header" href="#installation">Installation</a></h2>
+<ul>
+<li>
+<p>From <em>crates.io</em> (easiest method, but will not install the <code>examples</code> directory)</p>
+<ul>
+<li><code>cargo install grepq</code></li>
+</ul>
+</li>
+<li>
+<p>From <em>source</em> (will install the <code>examples</code> directory)</p>
+<ul>
+<li>Clone the repository and <code>cd</code> into the <code>grepq</code> directory</li>
+<li>Run <code>cargo build --release</code></li>
+<li>Relative to the cloned parent directory, the executable will be located in <code>./target/release</code></li>
+<li>Make sure the executable is in your <code>PATH</code> or use the full path to the executable</li>
+</ul>
+</li>
+</ul>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="Requirements.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
 
+                            <a rel="next prefetch" href="Examples-and-tests.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
 
                         <div style="clear: both"></div>
                     </nav>
@@ -168,7 +189,13 @@
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="Requirements.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
 
+                    <a rel="next prefetch" href="Examples-and-tests.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
             </nav>
 
         </div>

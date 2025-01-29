@@ -3,8 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>grepq - quickly filter FASTQ files</title>
-        <meta name="robots" content="noindex">
+        <title>Features and performance in detail - grepq - quickly filter FASTQ files</title>
 
 
         <!-- Custom HTML head -->
@@ -153,22 +152,7 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h2 id="feature-set"><a class="header" href="#feature-set">Feature set</a></h2>
-<ul>
-<li>very fast and scales to large FASTQ files</li>
-<li>IUPAC ambiguity code support</li>
-<li>support for gzip and zstd compression</li>
-<li>JSON support for pattern file input and <code>tune</code> command output, allowing named regex sets, named regex patterns, and named and unnamed variants</li>
-<li>use <strong>predicates</strong> to filter on the header field (= record ID line) using a regex, minimum sequence length, and minimum average quality score (supports Phred+33 and Phred+64)</li>
-<li>does not match false positives</li>
-<li>output matched sequences to one of four formats</li>
-<li>tune your pattern file and <strong>enumerate named and unnamed variants</strong> with the <code>tune</code> command</li>
-<li>supports inverted matching with the <code>inverted</code> command</li>
-<li>plays nicely with your unix workflows</li>
-<li>comprehensive help, examples and testing script</li>
-<li>read the preprint at <strong>bioRxiv</strong>: <a href="https://doi.org/10.1101/2025.01.09.632104">https://doi.org/10.1101/2025.01.09.632104</a></li>
-</ul>
-<div style="break-before: page; page-break-before: always;"></div><h2 id="features-and-performance-in-detail"><a class="header" href="#features-and-performance-in-detail">Features and performance in detail</a></h2>
+                        <h2 id="features-and-performance-in-detail"><a class="header" href="#features-and-performance-in-detail">Features and performance in detail</a></h2>
 <p><strong>1. Very fast and scales to large FASTQ files</strong></p>
 <div class="table-wrapper"><table><thead><tr><th>tool</th><th>mean wall time (s)</th><th>S.D. wall time (s)</th><th>speedup (× grep)</th><th>speedup (× ripgrep)</th><th>speedup (× awk)</th></tr></thead><tbody>
 <tr><td><em>grepq</em></td><td>0.19</td><td>0.01</td><td>1796.76</td><td>18.62</td><td>863.52</td></tr>
@@ -267,107 +251,18 @@ When the count option (-c) is given with the <code>tune</code> command, <code>gr
 <p>Use the <code>inverted</code> command to output sequences that do not match any of the regex patterns in your pattern file.</p>
 <p><strong>8. Plays nicely with your unix workflows</strong></p>
 <p>For example, see <code>tune.sh</code> in the <code>examples</code> directory. This simple script will filter a FASTQ file using <code>grepq</code>, tune the pattern file on a user-specified number of FASTQ records, and then filter the FASTQ file again using the tuned pattern file for a user-specified number of the most frequent regex pattern matches. Use a tool like <code>jq</code> to conveniently parse the JSON output of the <code>tune</code> command.</p>
-<div style="break-before: page; page-break-before: always;"></div><h2 id="usage"><a class="header" href="#usage">Usage</a></h2>
-<p>Get instructions and examples using <code>grepq -h</code>, and <code>grepq tune -h</code> and <code>grepq inverted -h</code> for more information on the <code>tune</code> and <code>inverted</code> commands, respectively.</p>
-<blockquote>
-<p><strong>Note:</strong>
-<code>grepq</code> can output to several formats, including those that are gzip or zstd compressed. <code>grepq</code>, however, will only accept a FASTQ file or a compressed (gzip or zstd) FASTQ file as the sequence data file. If you get an error message, check that the input data file is a FASTQ file or a gzip or zstd compressed FASTQ file, and that you have specified the correct file format (--read-gzip or --read-zstd for FASTQ files compressed by gzip and zstd, respectively), and file path. Pattern files must contain one regex pattern per line or be provided in JSON format, and patterns are case-sensitive. You can supply an empty pattern file to count the total number of records in the FASTQ file. The regex patterns for matching FASTQ sequences should only include the DNA sequence characters (A, C, G, T), or IUPAC ambiguity codes (N, R, Y, etc.). See <code>16S-no-iupac.txt</code>, <code>16S-iupac.json</code>, <code>16S-no-iupac.json</code>, and <code>16S-iupac-and-predicates.json</code> in the <code>examples</code> directory for examples of valid pattern files. Regex patterns to match the header field (= record ID line) must comply with the Rust regex library syntax (<a href="https://docs.rs/regex/latest/regex/#syntax">https://docs.rs/regex/latest/regex/#syntax</a>). If you get an error message, be sure to escape any special characters in the regex pattern.</p>
-</blockquote>
-<div style="break-before: page; page-break-before: always;"></div><h2 id="requirements"><a class="header" href="#requirements">Requirements</a></h2>
-<ul>
-<li><code>grepq</code> has been tested on Linux and macOS. It might work on Windows WSL, but it has not been tested.</li>
-<li>Ensure that Rust is installed on your system (<a href="https://www.rust-lang.org/tools/install">https://www.rust-lang.org/tools/install</a>)</li>
-<li>If the build fails, make sure you have the latest version of the Rust compiler by running <code>rustup update</code></li>
-<li>To run the <code>test.sh</code> and <code>cookbook.sh</code> scripts in the <code>examples</code> directory, you will need <code>yq</code> (v4.44.6 or later), <code>gunzip</code> and version 4 or later of <code>bash</code>.</li>
-</ul>
-<div style="break-before: page; page-break-before: always;"></div><h2 id="installation"><a class="header" href="#installation">Installation</a></h2>
-<ul>
-<li>
-<p>From <em>crates.io</em> (easiest method, but will not install the <code>examples</code> directory)</p>
-<ul>
-<li><code>cargo install grepq</code></li>
-</ul>
-</li>
-<li>
-<p>From <em>source</em> (will install the <code>examples</code> directory)</p>
-<ul>
-<li>Clone the repository and <code>cd</code> into the <code>grepq</code> directory</li>
-<li>Run <code>cargo build --release</code></li>
-<li>Relative to the cloned parent directory, the executable will be located in <code>./target/release</code></li>
-<li>Make sure the executable is in your <code>PATH</code> or use the full path to the executable</li>
-</ul>
-</li>
-</ul>
-<div style="break-before: page; page-break-before: always;"></div><h2 id="examples-and-tests"><a class="header" href="#examples-and-tests">Examples and tests</a></h2>
-<p>Get instructions and examples using <code>grepq -h</code>, <code>grepq tune -h</code> and <code>grepq inverted -h</code> for more information on the <code>tune</code> and <code>inverted</code> commands, respectively. See the <code>examples</code> directory for examples of pattern files and FASTQ files.</p>
-<p><em>File sizes of outfiles to verify <code>grepq</code> is working correctly, using the regex file <code>16S-no-iupac.txt</code> and the small fastq file <code>small.fastq</code>, both located in the <code>examples</code> directory:</em></p>
-<pre><code class="language-bash">grepq ./examples/16S-no-iupac.txt ./examples/small.fastq &gt; outfile.txt 
-15953
-
-grepq  ./examples/16S-no-iupac.txt ./examples/small.fastq inverted &gt; outfile.txt
-736547
-
-grepq -I ./examples/16S-no-iupac.txt ./examples/small.fastq &gt; outfile.txt
-19515
-
-grepq -I ./examples/16S-no-iupac.txt ./examples/small.fastq inverted &gt; outfile.txt 
-901271
-
-grepq -R ./examples/16S-no-iupac.txt ./examples/small.fastq &gt; outfile.txt
-35574
-
-grepq -R ./examples/16S-no-iupac.txt ./examples/small.fastq inverted &gt; outfile.txt 
-1642712
-</code></pre>
-<p>For the curious-minded, note that the regex patterns in <code>16S-no-iupac.txt</code>, <code>16S-iupac.json</code>, <code>16S-no-iupac.json</code>, and <code>16S-iupac-and-predicates.json</code> are from Table 3 of Martinez-Porchas, Marcel, et al. "How conserved are the conserved 16S-rRNA regions?." PeerJ 5 (2017): e3036.</p>
-<p>For more examples, see the <code>examples</code> directory and the <a href="https://github.com/Rbfinch/grepq/blob/main/cookbook.md">cookbook</a>, available also as a shell script in the <code>examples</code> directory.</p>
-<p><strong>Test script</strong></p>
-<p>You may also run the test script (<code>test.sh</code>) in the <code>examples</code> directory to more fully test <code>grepq</code>. From the <code>examples directory</code>, run the following command:</p>
-<pre><code class="language-bash">./test.sh commands-1.yaml; ./test.sh commands-2.yaml; ./test.sh commands-3.yaml; ./test.sh commands-4.yaml
-</code></pre>
-<p>If all tests pass, there will be no orange (warning) text in the output, and no test will
-report a failure. A summary of the number of passing and failing tests will be displayed at the end of the output. All tests should pass.</p>
-<p><em>Example of failing test output:</em></p>
-<span style="color: rgb(255, 165, 0);">
-test-7 failed <br>
-expected: 54 counts <br>
-got: 53 counts <br>
-command was: ../target/release/grepq -c 16S-no-iupac.txt small.fastq <br>
-</span>
-<br>
-<p>Further, you can run the <code>cookbook.sh</code> script in the <code>examples</code> directory to test the cookbook examples, and you can use <code>predate</code> (<a href="https://crates.io/crates/predate">https://crates.io/crates/predate</a>) if you prefer a Rust application to a shell script.</p>
-<p><strong>SARS-CoV-2 example</strong></p>
-<p>Count of the top five most frequently matched patterns found in SRX26602697.fastq using the pattern file SARS-CoV-2.txt (this pattern file contains 64 sequences of length 60 from Table II of this <a href="https://doi.org/10.1101/2021.04.14.439840">preprint</a>):</p>
-<pre><code class="language-bash">time grepq SARS-CoV-2.txt SRX26602697.fastq tune -n 10000 -c | head -5
-GTATGGAAAAGTTATGTGCATGTTGTAGACGGTTGTAATTCATCAACTTGTATGATGTGT: 1595
-CGGAACGTTCTGAAAAGAGCTATGAATTGCAGACACCTTTTGAAATTAAATTGGCAAAGA: 693
-TCCTTACTGCGCTTCGATTGTGTGCGTACTGCTGCAATATTGTTAACGTGAGTCTTGTAA: 356
-GCGCTTCGATTGTGTGCGTACTGCTGCAATATTGTTAACGTGAGTCTTGTAAAACCTTCT: 332
-CCGTAGCTGGTGTCTCTATCTGTAGTACTATGACCAATAGACAGTTTCATCAAAAATTAT: 209
-
-________________________________________________________
-Executed in  218.80 millis    fish           external
-   usr time  188.97 millis    0.09 millis  188.88 millis
-   sys time   31.47 millis    4.98 millis   26.49 millis
-
-</code></pre>
-<p>Obtain <code>SRX26602697.fastq</code> from the SRA using <code>fastq-dump --accession SRX26602697</code>.</p>
-<div style="break-before: page; page-break-before: always;"></div><h2 id="further-testing"><a class="header" href="#further-testing">Further testing</a></h2>
-<p><code>grepq</code> can be tested using tools that generate synthetic FASTQ files, such as <code>spikeq</code> (<a href="https://crates.io/crates/spikeq">https://crates.io/crates/spikeq</a>)</p>
-<p>You can verify that <code>grepq</code> has found the regex patterns by using tools such as <code>grep</code> and <code>ripgrep</code>, using their ability to color-match the regex patterns (this feature is not available in <code>grepq</code> as that would make the code more complicated; code maintainability is an objective of this project). Recall, however, that <code>grep</code> and <code>ripgrep</code> will match the regex patterns to the entire FASTQ record, which includes the record ID, sequence, separator, and quality fields, occasionally leading to false positives.</p>
-<div style="break-before: page; page-break-before: always;"></div><h2 id="citation-and-preprint"><a class="header" href="#citation-and-preprint">Citation and preprint</a></h2>
-<p>If you use <code>grepq</code> in your research, please cite as follows:</p>
-<p>Crosbie, N.D. (2025). grepq: A Rust application that quickly filters FASTQ files by matching sequences to a set of regular expressions. <strong>bioRxiv</strong>, doi: <a href="https://doi.org/10.1101/2025.01.09.632104">https://doi.org/10.1101/2025.01.09.632104</a></p>
-<div style="break-before: page; page-break-before: always;"></div><h2 id="update-changes"><a class="header" href="#update-changes">Update changes</a></h2>
-<p>see <a href="https://github.com/Rbfinch/grepq/blob/main/CHANGELOG.md">CHANGELOG</a></p>
-<div style="break-before: page; page-break-before: always;"></div><h2 id="license"><a class="header" href="#license">License</a></h2>
-<p>MIT</p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="Feature-set.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
 
+                            <a rel="next prefetch" href="Usage.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
 
                         <div style="clear: both"></div>
                     </nav>
@@ -375,7 +270,13 @@ Executed in  218.80 millis    fish           external
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="Feature-set.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
 
+                    <a rel="next prefetch" href="Usage.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
             </nav>
 
         </div>
@@ -414,11 +315,6 @@ Executed in  218.80 millis    fish           external
 
         <!-- Custom JS scripts -->
 
-        <script>
-        window.addEventListener('load', function() {
-            window.setTimeout(window.print, 100);
-        });
-        </script>
 
     </div>
     </body>

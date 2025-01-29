@@ -1,4 +1,4 @@
-# Feature set
+## Feature set
 
 - very fast and scales to large FASTQ files
 - IUPAC ambiguity code support
@@ -12,3 +12,4 @@
 - plays nicely with your unix workflows
 - comprehensive help, examples and testing script
 - read the preprint at **bioRxiv**: <https://doi.org/10.1101/2025.01.09.632104>
+

@@ -3,8 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Page not found - grepq - quickly filter FASTQ files</title>
-        <base href="/">
+        <title>Examples and tests - grepq - quickly filter FASTQ files</title>
 
 
         <!-- Custom HTML head -->
@@ -153,14 +152,72 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="document-not-found-404"><a class="header" href="#document-not-found-404">Document not found (404)</a></h1>
-<p>This URL is invalid, sorry. Please use the navigation bar or search to continue.</p>
+                        <h2 id="examples-and-tests"><a class="header" href="#examples-and-tests">Examples and tests</a></h2>
+<p>Get instructions and examples using <code>grepq -h</code>, <code>grepq tune -h</code> and <code>grepq inverted -h</code> for more information on the <code>tune</code> and <code>inverted</code> commands, respectively. See the <code>examples</code> directory for examples of pattern files and FASTQ files.</p>
+<p><em>File sizes of outfiles to verify <code>grepq</code> is working correctly, using the regex file <code>16S-no-iupac.txt</code> and the small fastq file <code>small.fastq</code>, both located in the <code>examples</code> directory:</em></p>
+<pre><code class="language-bash">grepq ./examples/16S-no-iupac.txt ./examples/small.fastq &gt; outfile.txt 
+15953
+
+grepq  ./examples/16S-no-iupac.txt ./examples/small.fastq inverted &gt; outfile.txt
+736547
+
+grepq -I ./examples/16S-no-iupac.txt ./examples/small.fastq &gt; outfile.txt
+19515
+
+grepq -I ./examples/16S-no-iupac.txt ./examples/small.fastq inverted &gt; outfile.txt 
+901271
+
+grepq -R ./examples/16S-no-iupac.txt ./examples/small.fastq &gt; outfile.txt
+35574
+
+grepq -R ./examples/16S-no-iupac.txt ./examples/small.fastq inverted &gt; outfile.txt 
+1642712
+</code></pre>
+<p>For the curious-minded, note that the regex patterns in <code>16S-no-iupac.txt</code>, <code>16S-iupac.json</code>, <code>16S-no-iupac.json</code>, and <code>16S-iupac-and-predicates.json</code> are from Table 3 of Martinez-Porchas, Marcel, et al. "How conserved are the conserved 16S-rRNA regions?." PeerJ 5 (2017): e3036.</p>
+<p>For more examples, see the <code>examples</code> directory and the <a href="https://github.com/Rbfinch/grepq/blob/main/cookbook.md">cookbook</a>, available also as a shell script in the <code>examples</code> directory.</p>
+<p><strong>Test script</strong></p>
+<p>You may also run the test script (<code>test.sh</code>) in the <code>examples</code> directory to more fully test <code>grepq</code>. From the <code>examples directory</code>, run the following command:</p>
+<pre><code class="language-bash">./test.sh commands-1.yaml; ./test.sh commands-2.yaml; ./test.sh commands-3.yaml; ./test.sh commands-4.yaml
+</code></pre>
+<p>If all tests pass, there will be no orange (warning) text in the output, and no test will
+report a failure. A summary of the number of passing and failing tests will be displayed at the end of the output. All tests should pass.</p>
+<p><em>Example of failing test output:</em></p>
+<span style="color: rgb(255, 165, 0);">
+test-7 failed <br>
+expected: 54 counts <br>
+got: 53 counts <br>
+command was: ../target/release/grepq -c 16S-no-iupac.txt small.fastq <br>
+</span>
+<br>
+<p>Further, you can run the <code>cookbook.sh</code> script in the <code>examples</code> directory to test the cookbook examples, and you can use <code>predate</code> (<a href="https://crates.io/crates/predate">https://crates.io/crates/predate</a>) if you prefer a Rust application to a shell script.</p>
+<p><strong>SARS-CoV-2 example</strong></p>
+<p>Count of the top five most frequently matched patterns found in SRX26602697.fastq using the pattern file SARS-CoV-2.txt (this pattern file contains 64 sequences of length 60 from Table II of this <a href="https://doi.org/10.1101/2021.04.14.439840">preprint</a>):</p>
+<pre><code class="language-bash">time grepq SARS-CoV-2.txt SRX26602697.fastq tune -n 10000 -c | head -5
+GTATGGAAAAGTTATGTGCATGTTGTAGACGGTTGTAATTCATCAACTTGTATGATGTGT: 1595
+CGGAACGTTCTGAAAAGAGCTATGAATTGCAGACACCTTTTGAAATTAAATTGGCAAAGA: 693
+TCCTTACTGCGCTTCGATTGTGTGCGTACTGCTGCAATATTGTTAACGTGAGTCTTGTAA: 356
+GCGCTTCGATTGTGTGCGTACTGCTGCAATATTGTTAACGTGAGTCTTGTAAAACCTTCT: 332
+CCGTAGCTGGTGTCTCTATCTGTAGTACTATGACCAATAGACAGTTTCATCAAAAATTAT: 209
+
+________________________________________________________
+Executed in  218.80 millis    fish           external
+   usr time  188.97 millis    0.09 millis  188.88 millis
+   sys time   31.47 millis    4.98 millis   26.49 millis
+
+</code></pre>
+<p>Obtain <code>SRX26602697.fastq</code> from the SRA using <code>fastq-dump --accession SRX26602697</code>.</p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="Installation.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
 
+                            <a rel="next prefetch" href="Further-testing.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
 
                         <div style="clear: both"></div>
                     </nav>
@@ -168,7 +225,13 @@
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="Installation.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
 
+                    <a rel="next prefetch" href="Further-testing.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
             </nav>
 
         </div>
