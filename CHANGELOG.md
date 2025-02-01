@@ -3,6 +3,12 @@ TBD
 
 Unreleased changes. Release notes have not yet been written.
 
+1.4.5
+=====
+
+* updates to several dependencies
+* documentation updates
+
 1.4.4
 =====
 
