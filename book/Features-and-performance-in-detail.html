@@ -243,6 +243,18 @@ grepq --read-gzip 16S-no-iupac.json SRX26365298.fastq.gz tune -n 20000 -c --name
 
 grepq --read-gzip 16S-no-iupac.json SRX26365298.fastq.gz tune -n 20000 -c --names --json-matches --all
 </code></pre>
+<p>You could then use a tool like <code>jq</code> to parse the JSON output of the <code>tune</code> command, for example the following command will sort the output by the number of matches for each regex pattern, and then for each pattern, sort the variants by the number of matches:</p>
+<pre><code class="language-bash">jq -r '
+    .regexSet.regex |
+    sort_by(-.regexCount)[] |
+    "\(.regexName): \(.regexCount)\n" +
+    (
+      .variants |
+      sort_by(-.count)[] |
+      "  \(.variantName // "unnamed"): \(.variant): \(.count)"
+    )
+  ' matches.json
+</code></pre>
 <blockquote>
 <p><strong>Note:</strong>
 When the count option (-c) is given with the <code>tune</code> command, <code>grepq</code> will count the number of FASTQ records containing a sequence that is matched, for each matching regex in the pattern file. If, however, there are multiple occurrences of a given regex <em>within a FASTQ record sequence field</em>, <code>grepq</code> will count this as one match. When the count option (-c) is not given with the <code>tune</code> command, <code>grepq</code> provides the total number of matching FASTQ records for the set of regex patterns in the pattern file.</p>
@@ -250,7 +262,7 @@ When the count option (-c) is given with the <code>tune</code> command, <code>gr
 <p><strong>7. Supports inverted matching with the <code>inverted</code> command</strong></p>
 <p>Use the <code>inverted</code> command to output sequences that do not match any of the regex patterns in your pattern file.</p>
 <p><strong>8. Plays nicely with your unix workflows</strong></p>
-<p>For example, see <code>tune.sh</code> in the <code>examples</code> directory. This simple script will filter a FASTQ file using <code>grepq</code>, tune the pattern file on a user-specified number of FASTQ records, and then filter the FASTQ file again using the tuned pattern file for a user-specified number of the most frequent regex pattern matches. Use a tool like <code>jq</code> to conveniently parse the JSON output of the <code>tune</code> command.</p>
+<p>For example, see <code>tune.sh</code> in the <code>examples</code> directory. This simple script will filter a FASTQ file using <code>grepq</code>, tune the pattern file on a user-specified number of FASTQ records, and then filter the FASTQ file again using the tuned pattern file for a user-specified number of the most frequent regex pattern matches.</p>
 
                     </main>
 

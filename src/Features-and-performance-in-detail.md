@@ -112,6 +112,21 @@ To output all variants of each pattern, use the `--all` argument, for example:
 grepq --read-gzip 16S-no-iupac.json SRX26365298.fastq.gz tune -n 20000 -c --names --json-matches --all
 ```
 
+You could then use a tool like `jq` to parse the JSON output of the `tune` command, for example the following command will sort the output by the number of matches for each regex pattern, and then for each pattern, sort the variants by the number of matches:
+
+```bash
+jq -r '
+    .regexSet.regex |
+    sort_by(-.regexCount)[] |
+    "\(.regexName): \(.regexCount)\n" +
+    (
+      .variants |
+      sort_by(-.count)[] |
+      "  \(.variantName // "unnamed"): \(.variant): \(.count)"
+    )
+  ' matches.json
+```
+
 > **Note:**
 When the count option (-c) is given with the `tune` command, `grepq` will count the number of FASTQ records containing a sequence that is matched, for each matching regex in the pattern file. If, however, there are multiple occurrences of a given regex _within a FASTQ record sequence field_, `grepq` will count this as one match. When the count option (-c) is not given with the `tune` command, `grepq` provides the total number of matching FASTQ records for the set of regex patterns in the pattern file.
 
@@ -121,5 +136,5 @@ Use the `inverted` command to output sequences that do not match any of the rege
 
 **8. Plays nicely with your unix workflows**
 
-For example, see `tune.sh` in the `examples` directory. This simple script will filter a FASTQ file using `grepq`, tune the pattern file on a user-specified number of FASTQ records, and then filter the FASTQ file again using the tuned pattern file for a user-specified number of the most frequent regex pattern matches. Use a tool like `jq` to conveniently parse the JSON output of the `tune` command.
+For example, see `tune.sh` in the `examples` directory. This simple script will filter a FASTQ file using `grepq`, tune the pattern file on a user-specified number of FASTQ records, and then filter the FASTQ file again using the tuned pattern file for a user-specified number of the most frequent regex pattern matches.
 
