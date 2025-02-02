@@ -3,6 +3,13 @@ TBD
 
 Unreleased changes. Release notes have not yet been written.
 
+1.4.7
+=====
+
+* added support to bucket matched regex to files
+* fixed bug in `tune` subcommand that caused inlfated count output
+* documentation updates
+
 1.4.6
 =====
 

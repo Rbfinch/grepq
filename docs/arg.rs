@@ -257,7 +257,7 @@ pub enum Commands {
 #[derive(Parser)]
 pub struct Tune {
     #[arg(help = "Number of matched records", short = 'n')]
-    pub num_records: usize,
+    pub num_matches: usize,
 
     #[arg(short = 'c', help = "Include count of records for matching patterns")]
     pub include_count: bool,

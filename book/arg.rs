@@ -4,7 +4,7 @@ use std::sync::LazyLock;
 
 static AFTER_HELP: LazyLock<String> = LazyLock::new(|| {
     format!(
-        "{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}",
+        "{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}{}",
         "Overview:".bold().underline(),
         "\n\n`grepq` searches the sequence line of FASTQ records for regular
 expressions that are contained in a text or JSON file, or it searches for the
@@ -42,28 +42,28 @@ filtering process.",
             .bold(),
         "\n\nCount the number of matching FASTQ records".italic(),
         "\n    grepq -c regex.txt file.fastq".bold(),
-        "\n\nFor each matched pattern in a search of the first 100000 records, print the
-pattern and the number of matches"
+        "\n\nFor each matched pattern in a search of no more than 100000 matches, print the
+    pattern and the number of matches"
             .italic(),
         "\n    grepq regex.txt file.fastq tune -n 100000 -c".bold(),
-        "\n\nFor each matched pattern in a search of the first 100000 records of a
-gzip-compressed FASTQ file, print the pattern and the number of matches"
+        "\n\nFor each matched pattern in a search of no more than 100000 matches of a
+    gzip-compressed FASTQ file, print the pattern and the number of matches"
             .italic(),
         "\n    grepq --read-gzip regex.txt file.fastq.gz tune -n 100000 -c".bold(),
-        "\n\nFor each matched pattern in a search of the first 100000 records of a
+        "\n\nFor each matched pattern in a search of no more than 100000 matches of a
 gzip-compressed FASTQ file, print the pattern and the number of matches to a 
 JSON file called matches.json"
             .italic(),
         "\n    grepq --read-gzip regex.json file.fastq.gz tune -n 100000 -c --names --json-matches"
             .bold(),
-        "\n\nFor each matched pattern in a search of the first 100000 records of a
+        "\n\nFor each matched pattern in a search of no more than 100000 matches of a
 gzip-compressed FASTQ file, print the pattern and the number of matches to a 
 JSON file called matches.json, and include the top three most frequent variants of
 each pattern, and their respective counts"
             .italic(),
         "\n    grepq --read-gzip regex.json file.fastq.gz tune -n 100000 -c --names --json-matches --variants 3"
             .bold(),
-        "\n\nFor each matched pattern in a search of the first 100000 records of a
+        "\n\nFor each matched pattern in a search of no more than 100000 matches of a
 gzip-compressed FASTQ file, print the pattern and the number of matches to a JSON
 file called matches.json, and include all variants of each pattern, and their
 respective counts. Note that the `--variants` argument is not given when `--all`
@@ -85,6 +85,9 @@ is specified."
         "\n\nCount the total number of records in the FASTQ file using an empty pattern file"
             .italic(),
         "\n    grepq -c empty.txt file.fastq inverted".bold(),
+        "\n\nFor a gzip-compressed FASTQ file, bucket matched sequences into separate files
+named after each regexName, with the output in FASTQ format".italic(),
+        "\n    grepq -R --bucket --read-gzip regex.json file.fastq.gz".bold(),
         "\n\nTips:".bold().underline(),
         "\n\n1. Predicates can be used to filter on the header field (= record ID line)
 using a regex, minimum sequence length, and minimum average quality score
@@ -155,7 +158,8 @@ file match the sequence field of the FASTQ record.
 the number of FASTQ records containing a sequence that is matched, for each
 matching regex in the pattern file. If, however, there are multiple occurrences
 of a given regex within a FASTQ record sequence field, `grepq` will count this as
-one match.
+one match. To ensure all records are processed, supply a large number to the -n 
+flag given with the `tune` command.
 
 9. When the count option (-c) is not given with the `tune` command, `grepq` prints
 the total number of matching FASTQ records for the set of regex patterns in the
@@ -236,6 +240,12 @@ pub struct Cli {
     #[arg(short = 'b', long = "best", help = "Use best compression")]
     pub best_compression: bool,
 
+    #[arg(
+        long = "bucket",
+        help = "Write matched sequences to separate files named after each regexName"
+    )]
+    pub bucket: bool,
+
     #[arg(help = "Path to the patterns file in plain text or JSON format")]
     pub patterns: String,
 
@@ -256,8 +266,8 @@ pub enum Commands {
 
 #[derive(Parser)]
 pub struct Tune {
-    #[arg(help = "Number of matched records", short = 'n')]
-    pub num_records: usize,
+    #[arg(help = "Total number of matches", short = 'n')]
+    pub num_matches: usize,
 
     #[arg(short = 'c', help = "Include count of records for matching patterns")]
     pub include_count: bool,

@@ -69,24 +69,24 @@ echo -e "${BLUE}\nCount the number of matching FASTQ records${NC}"
 echo -e "${BLUE}\nCommand: grepq -c 16S-no-iupac.txt small.fastq \n${NC}"
 grepq -c 16S-no-iupac.txt small.fastq
 
-echo -e "${BLUE}\nFor each matched pattern in a search of the first 2000 records, print the pattern and the number of matches${NC}"
+echo -e "${BLUE}\nFor each matched pattern in a search of no more than 2000 matches, print the pattern and the number of matches${NC}"
 echo -e "${BLUE}\nCommand: grepq 16S-no-iupac.txt small.fastq tune -n 2000 -c \n${NC}"
 grepq 16S-no-iupac.txt small.fastq tune -n 2000 -c
 
-echo -e "${BLUE}\nFor each matched pattern in a search of the first 2000 records of a gzip-compressed FASTQ file, print the pattern and the number of matches${NC}"
+echo -e "${BLUE}\nFor each matched pattern in a search of no more than 2000 matches of a gzip-compressed FASTQ file, print the pattern and the number of matches${NC}"
 echo -e "${BLUE}\nCommand: grepq --read-gzip 16S-no-iupac.txt small-copy.fastq.gz tune -n 2000 -c \n${NC}"
 grepq --read-gzip 16S-no-iupac.txt small-copy.fastq.gz tune -n 2000 -c
 
-echo -e "${BLUE}\nFor each matched pattern in a search of the first 2000 records of a gzip-compressed FASTQ file, print the pattern and the number of matches to a JSON file called matches.json${NC}"
+echo -e "${BLUE}\nFor each matched pattern in a search of no more than 2000 matches of a gzip-compressed FASTQ file, print the pattern and the number of matches to a JSON file called matches.json${NC}"
 echo -e "${BLUE}\nCommand: grepq --read-gzip 16S-no-iupac.json small-copy.fastq.gz tune -n 2000 -c --names --json-matches \n${NC}"
 grepq --read-gzip 16S-no-iupac.json small-copy.fastq.gz tune -n 2000 -c --names --json-matches
 
-echo -e "${BLUE}\nFor each matched pattern in a search of the first 2000 records of a gzip-compressed FASTQ file, print the pattern and the number of matches to a JSON file called matches.json, and include the top three most frequent
+echo -e "${BLUE}\nFor each matched pattern in a search of no more than 2000 matches of a gzip-compressed FASTQ file, print the pattern and the number of matches to a JSON file called matches.json, and include the top three most frequent
 variants of each pattern, and their respective counts${NC}"
 echo -e "${BLUE}\nCommand: grepq --read-gzip 16S-no-iupac.json small-copy.fastq.gz tune -n 2000 -c --names --json-matches --variants 3 \n${NC}"
 grepq --read-gzip 16S-no-iupac.json small-copy.fastq.gz tune -n 2000 -c --names --json-matches --variants 3
 
-echo -e "${BLUE}\nFor each matched pattern in a search of the first 2000 records of a gzip-compressed FASTQ file, print the pattern and the number of matches to a JSON file called matches.json, and include all variants of each pattern, and their respective counts. Note that the `--variants` argument is not given when `--all`
+echo -e "${BLUE}\nFor each matched pattern in a search of no more than 2000 matches of a gzip-compressed FASTQ file, print the pattern and the number of matches to a JSON file called matches.json, and include all variants of each pattern, and their respective counts. Note that the `--variants` argument is not given when `--all`
 is specified.${NC}"
 echo -e "${BLUE}\nCommand: grepq --read-gzip 16S-no-iupac.json small-copy.fastq.gz tune -n 2000 -c --names --json-matches --all \n${NC}"
 grepq --read-gzip 16S-no-iupac.json small-copy.fastq.gz tune -n 2000 -c --names --json-matches --all
@@ -113,3 +113,8 @@ grepq -c 16S-no-iupac.txt small.fastq inverted
 echo -e "${BLUE}\nCount the total number of records in the FASTQ file using an empty pattern file${NC}"
 echo -e "${BLUE}\nCommand: grepq -c empty.txt file.fastq inverted \n${NC}"
 grepq -c empty.txt small.fastq inverted
+
+echo -e "${BLUE}\nFor a gzip-compressed FASTQ file, bucket matched sequences into separate files
+named after each regexName, with the output in FASTQ format${NC}"
+echo -e "${BLUE}\nCommand: grepq -R --bucket --read-gzip 16S-iupac.json SRX26365298.fastq.gz \n${NC}"
+grepq -R --bucket --read-gzip 16S-iupac.json SRX26365298.fastq.gz

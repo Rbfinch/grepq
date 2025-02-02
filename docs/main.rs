@@ -23,7 +23,7 @@ fn main() {
     // Match the command and execute the corresponding function
     match &cli.command {
         Some(Commands::Tune(tune)) => {
-            tune::run_tune(&cli, tune.num_records, tune.include_count).unwrap();
+            tune::run_tune(&cli, tune.num_matches, tune.include_count).unwrap();
             return;
         }
         Some(Commands::Inverted) => {

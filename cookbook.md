@@ -86,21 +86,21 @@ compression*
 
 <br>
 
-*For each matched pattern in a search of the first 100000 records,
+*For each matched pattern in a search of no more than 100000 matches,
 print the pattern and the number of matches*
 
 **grepq regex.txt file.fastq tune -n 100000 -c**
 
 <br>
 
-*For each matched pattern in a search of the first 100000 records of
+*For each matched pattern in a search of no more than 100000 matches of
 a gzip-compressed FASTQ file, print the pattern and the number of matches*
 
 **grepq --read-gzip regex.txt file.fastq.gz tune -n 100000 -c**
 
 <br>
 
-*For each matched pattern in a search of the first 100000 records of
+*For each matched pattern in a search of no more than 100000 matches of
 a gzip-compressed FASTQ file, print the pattern and the number of matches to a
 JSON file called matches.json*
 
@@ -108,7 +108,7 @@ JSON file called matches.json*
 
 <br>
 
-*For each matched pattern in a search of the first 100000 records of a
+*For each matched pattern in a search of no more than 100000 matches of a
 gzip-compressed FASTQ file, print the pattern and the number of matches
 to a JSON file called matches.json, and include the top three most frequent
 variants of each pattern, and their respective counts*
@@ -117,7 +117,7 @@ variants of each pattern, and their respective counts*
 
 <br>
 
-*For each matched pattern in a search of the first 100000 records of a
+*For each matched pattern in a search of no more than 100000 matches of a
 gzip-compressed FASTQ file, print the pattern and the number of matches to a JSON
 file called matches.json, and include all variants of each pattern, and their
 respective counts. Note that the `--variants` argument is not given when `--all`
@@ -158,3 +158,10 @@ found*
 pattern file*
 
 **grepq -c empty.txt file.fastq inverted**
+
+<br>
+
+*For a gzip-compressed FASTQ file, bucket matched sequences into separate files
+named after each regexName, with the output in FASTQ format*
+
+**grepq -R --bucket --read-gzip regex.json file.fastq.gz**

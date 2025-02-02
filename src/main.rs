@@ -17,13 +17,17 @@ use clap::Parser;
 use initialise::{create_reader, create_writer, parse_patterns_file};
 use std::io::{self};
 
+// use log::LevelFilter;
+// use simplelog::{Config, SimpleLogger};
+
 fn main() {
+    // SimpleLogger::init(LevelFilter::Info, Config::default()).unwrap();
     let cli = Cli::parse();
 
     // Match the command and execute the corresponding function
     match &cli.command {
         Some(Commands::Tune(tune)) => {
-            tune::run_tune(&cli, tune.num_records, tune.include_count).unwrap();
+            tune::run_tune(&cli, tune.num_matches, tune.include_count).unwrap();
             return;
         }
         Some(Commands::Inverted) => {

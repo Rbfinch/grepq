@@ -92,7 +92,8 @@ type ParseResult = Result<
         Option<u64>,
         Option<f64>,
         Option<String>,
-        Vec<(String, String)>,
+        Vec<String>,           // regex_names
+        Vec<(String, String)>, // variants
     ),
     String,
 >;
@@ -192,13 +193,26 @@ pub fn parse_patterns_file(patterns_path: &str) -> ParseResult {
             })
             .collect::<Result<Vec<_>, _>>()?;
 
+        let regex_names = json["regexSet"]["regex"]
+            .as_array()
+            .ok_or("Invalid JSON structure")?
+            .iter()
+            .map(|r| {
+                r.get("regexName")
+                    .and_then(|s| s.as_str())
+                    .unwrap_or_else(|| r.get("regexString").and_then(|s| s.as_str()).unwrap())
+                    .to_string()
+            })
+            .collect::<Vec<_>>();
+
         Ok((
             regex_set,
             header_regex,
             minimum_sequence_length,
             minimum_quality,
             quality_encoding,
-            variants,
+            regex_names, // Return regex_names
+            variants,    // Return variants
         ))
     } else {
         let file = File::open(patterns_path)
@@ -212,7 +226,8 @@ pub fn parse_patterns_file(patterns_path: &str) -> ParseResult {
             .collect();
         let regex_set = RegexSet::new(&regex_strings)
             .map_err(|e| format!("Failed to compile regex patterns: {}", e))?;
-        Ok((regex_set, None, None, None, None, Vec::new())) // empty Vec for variants
+        let regex_names = regex_strings.clone(); // Use regex_strings as regex_names for plain text files
+        Ok((regex_set, None, None, None, None, regex_names, Vec::new())) // Return regex_names and empty Vec for variants
     }
 }
 

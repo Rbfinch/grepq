@@ -1,6 +1,7 @@
 use crate::arg::Cli;
 use crate::initialise::{create_reader, parse_patterns_file};
 use crate::quality;
+//use log::info;
 use regex::bytes::Regex;
 use seq_io::fastq::Record;
 use serde_json::json;
@@ -9,7 +10,7 @@ use std::fs::File;
 use std::io::{self};
 
 // Main function to run the tune command
-pub fn run_tune(cli: &Cli, num_records: usize, include_count: bool) -> io::Result<()> {
+pub fn run_tune(cli: &Cli, num_matches: usize, include_count: bool) -> io::Result<()> {
     let patterns_path = &cli.patterns;
 
     // Parse the patterns file
@@ -24,16 +25,20 @@ pub fn run_tune(cli: &Cli, num_records: usize, include_count: bool) -> io::Resul
     let mut total_matches = 0;
 
     // Iterate through each record in the reader
+    let mut records_processed = 0;
     while let Some(result) = reader.next() {
-        let record = result.map_err(|e| {
-            io::Error::new(
-                io::ErrorKind::Other,
-                format!(
-                    "grepq only supports the fastq format. Check your input file.: {}",
-                    e
-                ),
-            )
-        })?;
+        let record = match result {
+            Ok(record) => record,
+            Err(e) => {
+                return Err(io::Error::new(
+                    io::ErrorKind::Other,
+                    format!(
+                        "grepq only supports the fastq format. Check your input file.: {}",
+                        e
+                    ),
+                ));
+            }
+        };
 
         // Check sequence length, header, and quality
         let seq_len_check =
@@ -66,12 +71,15 @@ pub fn run_tune(cli: &Cli, num_records: usize, include_count: bool) -> io::Resul
                     .entry(String::from_utf8_lossy(matched_substring).to_string())
                     .or_insert(0) += 1;
                 total_matches += 1;
-                if total_matches >= num_records {
+                //  info!("Total matches: {}", total_matches);
+                if total_matches >= num_matches {
                     break;
                 }
             }
         }
-        if total_matches >= num_records {
+        records_processed += 1;
+        //  info!("Records processed: {}", records_processed);
+        if total_matches >= num_matches || records_processed >= num_matches {
             break;
         }
     }

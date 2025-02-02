@@ -9,7 +9,7 @@ use std::fs::File;
 use std::io::{self};
 
 // Main function to run the tune command
-pub fn run_tune(cli: &Cli, num_records: usize, include_count: bool) -> io::Result<()> {
+pub fn run_tune(cli: &Cli, num_matches: usize, include_count: bool) -> io::Result<()> {
     let patterns_path = &cli.patterns;
 
     // Parse the patterns file
@@ -66,12 +66,12 @@ pub fn run_tune(cli: &Cli, num_records: usize, include_count: bool) -> io::Resul
                     .entry(String::from_utf8_lossy(matched_substring).to_string())
                     .or_insert(0) += 1;
                 total_matches += 1;
-                if total_matches >= num_records {
+                if total_matches >= num_matches {
                     break;
                 }
             }
         }
-        if total_matches >= num_records {
+        if total_matches >= num_matches {
             break;
         }
     }

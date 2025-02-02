@@ -202,7 +202,7 @@ Other than when the <code>tune</code> command is run (see below), a FASTQ record
 <p>Use the <code>tune</code> command (<code>grepq tune -h</code> for instructions) in a simple shell script to update the number and order of regex patterns in your pattern file according to their matched frequency, further targeting and speeding up the filtering process.</p>
 <p>Specifying the <code>-c</code> option to the <code>tune</code> command will output the matched substrings and their frequencies, ranked from highest to lowest.</p>
 <p>When the patterns file is given in JSON format, then specifying the <code>-c</code>, <code>--names</code>, <code>--json-matches</code> and <code>--variants</code> options to the <code>tune</code> command will output the matched pattern variants and their corresponding counts in JSON format to a file called <code>matches.json</code>, allowing named regex sets, named regex patterns, and named and unnamed variants. See <code>examples/16S-iupac.json</code> for an example of a JSON pattern file and <code>examples/matches.json</code> for an example of the output of the <code>tune</code> command in JSON format.</p>
-<pre><code class="language-bash"># For each matched pattern in a search of the first 20000 records of a gzip-compressed FASTQ file, print the pattern and the number of matches to a JSON file called matches.json, and include the top three most frequent variants of each pattern, and their respective counts
+<pre><code class="language-bash"># For each matched pattern in a search of no more than 20000 matches of a gzip-compressed FASTQ file, print the pattern and the number of matches to a JSON file called matches.json, and include the top three most frequent variants of each pattern, and their respective counts
 
 grepq --read-gzip 16S-no-iupac.json SRX26365298.fastq.gz tune -n 20000 -c --names --json-matches --variants 3
 </code></pre>
@@ -211,24 +211,19 @@ grepq --read-gzip 16S-no-iupac.json SRX26365298.fastq.gz tune -n 20000 -c --name
     "regexSet": {
         "regex": [
             {
-                "regexCount": 287,
+                "regexCount": 2,
                 "regexName": "Primer contig 06a",
                 "regexString": "[AG]AAT[AT]G[AG]CGGGG",
                 "variants": [
                     {
-                        "count": 219,
-                        "variant": "GAATTGACGGGG",
-                        "variantName": "06a-v1"
-                    },
-                    {
-                        "count": 43,
-                        "variant": "AAATTGACGGGG",
-                        "variantName": "06a-v2"
-                    },
-                    {
-                        "count": 21,
+                        "count": 1,
                         "variant": "GAATTGGCGGGG",
                         "variantName": "06a-v3"
+                    },
+                    {
+                        "count": 1,
+                        "variant": "GAATTGACGGGG",
+                        "variantName": "06a-v1"
                     }
                 ]
             },
@@ -239,7 +234,7 @@ grepq --read-gzip 16S-no-iupac.json SRX26365298.fastq.gz tune -n 20000 -c --name
 }
 </code></pre>
 <p>To output all variants of each pattern, use the <code>--all</code> argument, for example:</p>
-<pre><code class="language-bash"># For each matched pattern in a search of the first 20000 records of a gzip-compressed FASTQ file, print the pattern and the number of matches to a JSON file called matches.json, and include all variants of each pattern, and their respective counts. Note that the --variants argument is not given when --all is specified.
+<pre><code class="language-bash"># For each matched pattern in a search of no more than 20000 matches of a gzip-compressed FASTQ file, print the pattern and the number of matches to a JSON file called matches.json, and include all variants of each pattern, and their respective counts. Note that the --variants argument is not given when --all is specified.
 
 grepq --read-gzip 16S-no-iupac.json SRX26365298.fastq.gz tune -n 20000 -c --names --json-matches --all
 </code></pre>
@@ -257,12 +252,12 @@ grepq --read-gzip 16S-no-iupac.json SRX26365298.fastq.gz tune -n 20000 -c --name
 </code></pre>
 <blockquote>
 <p><strong>Note:</strong>
-When the count option (-c) is given with the <code>tune</code> command, <code>grepq</code> will count the number of FASTQ records containing a sequence that is matched, for each matching regex in the pattern file. If, however, there are multiple occurrences of a given regex <em>within a FASTQ record sequence field</em>, <code>grepq</code> will count this as one match. When the count option (-c) is not given with the <code>tune</code> command, <code>grepq</code> provides the total number of matching FASTQ records for the set of regex patterns in the pattern file.</p>
+When the count option (-c) is given with the <code>tune</code> command, <code>grepq</code> will count the number of FASTQ records containing a sequence that is matched, for each matching regex in the pattern file. If, however, there are multiple occurrences of a given regex <em>within a FASTQ record sequence field</em>, <code>grepq</code> will count this as one match. To ensure all records are processed, supply a large number to the -n flag given with the <code>tune</code> command. When the count option (-c) is not given with the <code>tune</code> command, <code>grepq</code> provides the total number of matching FASTQ records for the set of regex patterns in the pattern file.</p>
 </blockquote>
 <p><strong>7. Supports inverted matching with the <code>inverted</code> command</strong></p>
 <p>Use the <code>inverted</code> command to output sequences that do not match any of the regex patterns in your pattern file.</p>
 <p><strong>8. Plays nicely with your unix workflows</strong></p>
-<p>For example, see <code>tune.sh</code> in the <code>examples</code> directory. This simple script will filter a FASTQ file using <code>grepq</code>, tune the pattern file on a user-specified number of FASTQ records, and then filter the FASTQ file again using the tuned pattern file for a user-specified number of the most frequent regex pattern matches.</p>
+<p>For example, see <code>tune.sh</code> in the <code>examples</code> directory. This simple script will filter a FASTQ file using <code>grepq</code>, tune the pattern file on a user-specified number of total matches, and then filter the FASTQ file again using the tuned pattern file for a user-specified number of the most frequent regex pattern matches.</p>
 
                     </main>
 

@@ -11,6 +11,7 @@ This README contains documentation for the latest version of `grepq`. If you are
 - does not match false positives
 - output matched sequences to one of four formats
 - tune your pattern file and **enumerate named and unnamed variants** with the `tune` command
+- **bucket matching sequences** to separate files named after each regexName with the `--bucket` flag, in any of the four output formats
 - supports inverted matching with the `inverted` command
 - plays nicely with your unix workflows
 - comprehensive help, examples and testing script
