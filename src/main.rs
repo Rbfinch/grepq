@@ -154,7 +154,6 @@ fn main() {
                                     &mut seq_buffer,
                                     &mut qual_buffer,
                                 );
-                                break;
                             }
                         }
                     } else if with_id {
