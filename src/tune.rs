@@ -13,7 +13,7 @@ pub fn run_tune(cli: &Cli, num_records: usize, include_count: bool) -> io::Resul
     let patterns_path = &cli.patterns;
 
     // Parse the patterns file
-    let (regex_set, header_regex, minimum_sequence_length, minimum_quality, quality_encoding, _) =
+    let (regex_set, header_regex, minimum_sequence_length, minimum_quality, quality_encoding, _, _) =
         parse_patterns_file(patterns_path).map_err(|e| io::Error::new(io::ErrorKind::Other, e))?;
 
     let header_regex = header_regex.map(|re| Regex::new(&re).unwrap());

@@ -34,10 +34,22 @@ fn main() {
     }
 
     // Parse the patterns file
-    let (regex_set, header_regex, minimum_sequence_length, minimum_quality, quality_encoding, _) =
-        parse_patterns_file(&cli.patterns)
-            .map_err(|e| io::Error::new(io::ErrorKind::Other, e))
-            .unwrap();
+    let (
+        regex_set,
+        header_regex,
+        minimum_sequence_length,
+        minimum_quality,
+        quality_encoding,
+        regex_names,
+        _,
+    ) = parse_patterns_file(&cli.patterns)
+        .map_err(|e| io::Error::new(io::ErrorKind::Other, e))
+        .unwrap();
+    assert_eq!(
+        regex_set.patterns().len(),
+        regex_names.len(),
+        "The number of regex patterns and regex names must match."
+    );
     let header_regex = header_regex.map(|re| Regex::new(&re).unwrap());
     let reader = create_reader(&cli);
     let mut writer = create_writer(&cli);
@@ -46,6 +58,7 @@ fn main() {
     let with_full_record = cli.with_full_record;
     let with_fasta = cli.with_fasta;
     let count = cli.count;
+    let bucket = cli.bucket;
 
     let check_seq_len = minimum_sequence_length.is_some();
     let check_qual = minimum_quality.is_some();
@@ -90,6 +103,20 @@ fn main() {
         .unwrap();
         writeln!(writer, "{}", match_count).unwrap();
     } else {
+        let mut bucket_writers = if bucket {
+            Some(
+                regex_names
+                    .iter()
+                    .map(|name| {
+                        let file = std::fs::File::create(format!("{:?}.fastq", name)).unwrap();
+                        (name.clone(), std::io::BufWriter::new(file))
+                    })
+                    .collect::<std::collections::HashMap<_, _>>(),
+            )
+        } else {
+            None
+        };
+
         parallel_fastq(
             reader,
             num_cpus::get() as u32,
@@ -115,7 +142,22 @@ fn main() {
             |record, found| {
                 // runs in main thread
                 if *found {
-                    if with_id {
+                    if let Some(ref mut bucket_writers) = bucket_writers {
+                        for (i, pattern) in regex_set.patterns().iter().enumerate() {
+                            let regex = Regex::new(pattern).unwrap();
+                            if regex.is_match(record.seq()) {
+                                let writer = bucket_writers.get_mut(&regex_names[i]).unwrap();
+                                write_full_record(
+                                    writer,
+                                    &record,
+                                    &mut head_buffer,
+                                    &mut seq_buffer,
+                                    &mut qual_buffer,
+                                );
+                                break;
+                            }
+                        }
+                    } else if with_id {
                         // With ID mode
                         write_record_with_id(
                             &mut writer,

@@ -236,6 +236,12 @@ pub struct Cli {
     #[arg(short = 'b', long = "best", help = "Use best compression")]
     pub best_compression: bool,
 
+    #[arg(
+        long = "bucket",
+        help = "Write matched FASTQ records to files named after the regexName"
+    )]
+    pub bucket: bool,
+
     #[arg(help = "Path to the patterns file in plain text or JSON format")]
     pub patterns: String,
 
