@@ -108,7 +108,20 @@ fn main() {
                 regex_names
                     .iter()
                     .map(|name| {
-                        let file = std::fs::File::create(format!("{:?}.fastq", name)).unwrap();
+                        let formatted_name = name.replace(' ', "-").replace('\'', "");
+                        let suffix = if with_fasta {
+                            "fasta"
+                        } else if with_full_record {
+                            "fastq"
+                        } else {
+                            ""
+                        };
+                        let file_name = if suffix.is_empty() {
+                            formatted_name
+                        } else {
+                            format!("{}.{}", formatted_name, suffix)
+                        };
+                        let file = std::fs::File::create(file_name).unwrap();
                         (name.clone(), std::io::BufWriter::new(file))
                     })
                     .collect::<std::collections::HashMap<_, _>>(),
@@ -147,13 +160,36 @@ fn main() {
                             let regex = Regex::new(pattern).unwrap();
                             if regex.is_match(record.seq()) {
                                 let writer = bucket_writers.get_mut(&regex_names[i]).unwrap();
-                                write_full_record(
-                                    writer,
-                                    &record,
-                                    &mut head_buffer,
-                                    &mut seq_buffer,
-                                    &mut qual_buffer,
-                                );
+                                if with_id {
+                                    // With ID mode
+                                    write_record_with_id(
+                                        writer,
+                                        &record,
+                                        &mut head_buffer,
+                                        &mut seq_buffer,
+                                    );
+                                } else if with_full_record {
+                                    // With full record mode
+                                    write_full_record(
+                                        writer,
+                                        &record,
+                                        &mut head_buffer,
+                                        &mut seq_buffer,
+                                        &mut qual_buffer,
+                                    );
+                                } else if with_fasta {
+                                    // With FASTA format
+                                    write_record_with_fasta(
+                                        writer,
+                                        &record,
+                                        &mut head_buffer,
+                                        &mut seq_buffer,
+                                    );
+                                } else {
+                                    // Default mode
+                                    writer.write_all(record.seq()).unwrap();
+                                    writer.write_all(b"\n").unwrap();
+                                }
                             }
                         }
                     } else if with_id {
