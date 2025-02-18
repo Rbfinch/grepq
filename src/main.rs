@@ -11,6 +11,7 @@ mod arg;
 use arg::{Cli, Commands};
 mod initialise;
 mod inverted;
+mod output;
 mod quality;
 mod tune;
 use clap::Parser;
@@ -166,7 +167,7 @@ fn main() {
                                 let writer = bucket_writers.get_mut(&regex_names[i]).unwrap();
                                 if with_id {
                                     // With ID mode
-                                    write_record_with_id(
+                                    output::write_record_with_id(
                                         writer,
                                         &record,
                                         &mut head_buffer,
@@ -174,7 +175,7 @@ fn main() {
                                     );
                                 } else if with_full_record {
                                     // With full record mode
-                                    write_full_record(
+                                    output::write_full_record(
                                         writer,
                                         &record,
                                         &mut head_buffer,
@@ -183,7 +184,7 @@ fn main() {
                                     );
                                 } else if with_fasta {
                                     // With FASTA format
-                                    write_record_with_fasta(
+                                    output::write_record_with_fasta(
                                         writer,
                                         &record,
                                         &mut head_buffer,
@@ -198,7 +199,7 @@ fn main() {
                         }
                     } else if with_id {
                         // With ID mode
-                        write_record_with_id(
+                        output::write_record_with_id(
                             &mut writer,
                             &record,
                             &mut head_buffer,
@@ -206,7 +207,7 @@ fn main() {
                         );
                     } else if with_full_record {
                         // With full record mode
-                        write_full_record(
+                        output::write_full_record(
                             &mut writer,
                             &record,
                             &mut head_buffer,
@@ -215,7 +216,7 @@ fn main() {
                         );
                     } else if with_fasta {
                         // With FASTA format
-                        write_record_with_fasta(
+                        output::write_record_with_fasta(
                             &mut writer,
                             &record,
                             &mut head_buffer,
@@ -238,68 +239,4 @@ fn main() {
 #[inline(always)]
 fn average_quality(qual: &[u8], encoding: &str) -> f32 {
     quality::average_quality(qual, encoding)
-}
-
-// Write record with ID
-#[inline(always)]
-fn write_record_with_id<W: Write>(
-    writer: &mut W,
-    record: &seq_io::fastq::RefRecord,
-    head_buffer: &mut Vec<u8>,
-    seq_buffer: &mut Vec<u8>,
-) {
-    head_buffer.clear();
-    seq_buffer.clear();
-    head_buffer.extend_from_slice(record.head());
-    seq_buffer.extend_from_slice(record.seq());
-    writer.write_all(b"@").unwrap();
-    writer.write_all(head_buffer).unwrap();
-    writer.write_all(b"\n").unwrap();
-    writer.write_all(seq_buffer).unwrap();
-    writer.write_all(b"\n").unwrap();
-}
-
-// Write full record
-#[inline(always)]
-fn write_full_record<W: Write>(
-    writer: &mut W,
-    record: &seq_io::fastq::RefRecord,
-    head_buffer: &mut Vec<u8>,
-    seq_buffer: &mut Vec<u8>,
-    qual_buffer: &mut Vec<u8>,
-) {
-    head_buffer.clear();
-    seq_buffer.clear();
-    qual_buffer.clear();
-    head_buffer.extend_from_slice(record.head());
-    seq_buffer.extend_from_slice(record.seq());
-    qual_buffer.extend_from_slice(record.qual());
-    writer.write_all(b"@").unwrap();
-    writer.write_all(head_buffer).unwrap();
-    writer.write_all(b"\n").unwrap();
-    writer.write_all(seq_buffer).unwrap();
-    writer.write_all(b"\n").unwrap();
-    writer.write_all(b"+").unwrap();
-    writer.write_all(b"\n").unwrap();
-    writer.write_all(qual_buffer).unwrap();
-    writer.write_all(b"\n").unwrap();
-}
-
-// Write record in FASTA format
-#[inline(always)]
-fn write_record_with_fasta<W: Write>(
-    writer: &mut W,
-    record: &seq_io::fastq::RefRecord,
-    head_buffer: &mut Vec<u8>,
-    seq_buffer: &mut Vec<u8>,
-) {
-    head_buffer.clear();
-    seq_buffer.clear();
-    head_buffer.extend_from_slice(record.head());
-    seq_buffer.extend_from_slice(record.seq());
-    writer.write_all(b">").unwrap();
-    writer.write_all(head_buffer).unwrap();
-    writer.write_all(b"\n").unwrap();
-    writer.write_all(seq_buffer).unwrap();
-    writer.write_all(b"\n").unwrap();
 }

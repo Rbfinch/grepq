@@ -1,5 +1,6 @@
 use crate::arg::Cli;
 use crate::initialise::{create_reader, create_writer, parse_patterns_file};
+use crate::output::{write_full_record, write_record_with_fasta, write_record_with_id};
 use regex::bytes::Regex;
 use seq_io::fastq::Record;
 use seq_io::parallel::parallel_fastq;
@@ -125,68 +126,4 @@ pub fn run_inverted(cli: &Cli) {
         )
         .unwrap();
     }
-}
-
-// Write record with ID
-#[inline(always)]
-fn write_record_with_id<W: Write>(
-    writer: &mut W,
-    record: &seq_io::fastq::RefRecord,
-    head_buffer: &mut Vec<u8>,
-    seq_buffer: &mut Vec<u8>,
-) {
-    head_buffer.clear();
-    seq_buffer.clear();
-    head_buffer.extend_from_slice(record.head());
-    seq_buffer.extend_from_slice(record.seq());
-    writer.write_all(b"@").unwrap();
-    writer.write_all(head_buffer).unwrap();
-    writer.write_all(b"\n").unwrap();
-    writer.write_all(seq_buffer).unwrap();
-    writer.write_all(b"\n").unwrap();
-}
-
-// Write full record
-#[inline(always)]
-fn write_full_record<W: Write>(
-    writer: &mut W,
-    record: &seq_io::fastq::RefRecord,
-    head_buffer: &mut Vec<u8>,
-    seq_buffer: &mut Vec<u8>,
-    qual_buffer: &mut Vec<u8>,
-) {
-    head_buffer.clear();
-    seq_buffer.clear();
-    qual_buffer.clear();
-    head_buffer.extend_from_slice(record.head());
-    seq_buffer.extend_from_slice(record.seq());
-    qual_buffer.extend_from_slice(record.qual());
-    writer.write_all(b"@").unwrap();
-    writer.write_all(head_buffer).unwrap();
-    writer.write_all(b"\n").unwrap();
-    writer.write_all(seq_buffer).unwrap();
-    writer.write_all(b"\n").unwrap();
-    writer.write_all(b"+").unwrap();
-    writer.write_all(b"\n").unwrap();
-    writer.write_all(qual_buffer).unwrap();
-    writer.write_all(b"\n").unwrap();
-}
-
-// Write record with FASTA
-#[inline(always)]
-fn write_record_with_fasta<W: Write>(
-    writer: &mut W,
-    record: &seq_io::fastq::RefRecord,
-    head_buffer: &mut Vec<u8>,
-    seq_buffer: &mut Vec<u8>,
-) {
-    head_buffer.clear();
-    seq_buffer.clear();
-    head_buffer.extend_from_slice(record.head());
-    seq_buffer.extend_from_slice(record.seq());
-    writer.write_all(b">").unwrap();
-    writer.write_all(head_buffer).unwrap();
-    writer.write_all(b"\n").unwrap();
-    writer.write_all(seq_buffer).unwrap();
-    writer.write_all(b"\n").unwrap();
 }
