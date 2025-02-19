@@ -7,7 +7,7 @@ Unreleased changes. Release notes have not yet been written.
 =====
 
 * added support to bucket matched regex to files
-* fixed bug in `tune` subcommand that caused inlfated count output
+* fixed bug in `tune` subcommand that caused inflated count output
 * documentation updates
 
 1.4.6
