@@ -1,0 +1,51 @@
+applications:
+  control: "grepq"
+  test: "../target/release/grepq"
+
+tests:
+  test-1: "$APP 16S-no-iupac.txt small.fastq"
+  test-2: "$APP 16S-no-iupac.txt small.fastq inverted"
+  test-3: "$APP -I 16S-no-iupac.txt small.fastq"
+  test-4: "$APP -I 16S-no-iupac.txt small.fastq inverted"
+  test-5: "$APP -R 16S-no-iupac.txt small.fastq"
+  test-6: "$APP -R 16S-no-iupac.txt small.fastq inverted"
+  test-7: "$APP -c 16S-no-iupac.txt small.fastq"
+  test-8: "$APP -c 16S-no-iupac.txt small.fastq inverted"
+  test-9: "$APP 16S-no-iupac.txt small.fastq tune -n 2000 -c"
+  test-10: "$APP --read-gzip 16S-no-iupac.json small-copy.fastq.gz tune -n 2000 -c --names --json-matches"
+
+expected_sizes:
+  test-1: 15953
+  test-2: 736547
+  test-3: 19515
+  test-4: 901271
+  test-5: 35574
+  test-6: 1642712
+  test-7: 53
+  test-8: 2447
+  test-9: 310
+  test-10: 3704
+
+comparisons:
+  test-1: "size"
+  test-2: "size"
+  test-3: "size"
+  test-4: "size"
+  test-5: "size"
+  test-6: "size"
+  test-7: "count"
+  test-8: "count"
+  test-9: "size"
+  test-10: "size"
+
+output_files:
+  test-1: "/tmp/test-1.txt"
+  test-2: "/tmp/test-2.txt"
+  test-3: "/tmp/test-3.txt"
+  test-4: "/tmp/test-4.txt"
+  test-5: "/tmp/test-5.txt"
+  test-6: "/tmp/test-6.txt"
+  test-7: "/tmp/test-7.txt"
+  test-8: "/tmp/test-8.txt"
+  test-9: "/tmp/test-9.txt"
+  test-10: "matches.json"
