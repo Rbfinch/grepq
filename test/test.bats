@@ -23,6 +23,7 @@ setup() {
 
 teardown() {
     rm -f /tmp/test-*.txt matches.json
+    rm -f "${EXAMPLES_DIR}"/Primer-contig*.fastq
 }
 
 verify_size() {
@@ -39,6 +40,56 @@ verify_count() {
     local actual_count
     actual_count=$(cat "$output_file" | tr -d '\n\r')  # Remove newlines and carriage returns
     [ "$actual_count" -eq "$expected_count" ]
+}
+
+verify_bucket_files() {
+    declare -A expected_sizes=(
+        ["Primer-contig-08a.fastq"]=328287
+        ["Primer-contig-03R.fastq"]=1260779
+        ["Primer-contig-01.fastq"]=273245
+        ["Primer-contig-06a.fastq"]=281192
+        ["Primer-contig-05bR.fastq"]=457804
+        ["Primer-contig-01R.fastq"]=288594
+        ["Primer-contig-06c.fastq"]=216915
+        ["Primer-contig-03.fastq"]=1111898
+        ["Primer-contig-09R.fastq"]=337832
+        ["Primer-contig-04.fastq"]=2396586
+        ["Primer-contig-07bR.fastq"]=241451
+        ["Primer-contig-08b.fastq"]=233844
+        ["Primer-contig-08aR.fastq"]=352585
+        ["Primer-contig-06b.fastq"]=212779
+        ["Primer-contig-02.fastq"]=822125
+        ["Primer-contig-10aR.fastq"]=250998
+        ["Primer-contig-06bR.fastq"]=209474
+        ["Primer-contig-02R.fastq"]=898727
+        ["Primer-contig-05aR.fastq"]=431769
+        ["Primer-contig-05a.fastq"]=434836
+        ["Primer-contig-07a.fastq"]=1100490
+        ["Primer-contig-05b.fastq"]=474172
+        ["Primer-contig-06aR.fastq"]=293099
+        ["Primer-contig-04R.fastq"]=2313454
+        ["Primer-contig-07aR.fastq"]=1224340
+        ["Primer-contig-09.fastq"]=364610
+        ["Primer-contig-06cR.fastq"]=210365
+        ["Primer-contig-10.fastq"]=252598
+        ["Primer-contig-08bR.fastq"]=225200
+        ["Primer-contig-07b.fastq"]=238068
+    )
+    
+    for file in "${!expected_sizes[@]}"; do
+        local full_path="${EXAMPLES_DIR}/${file}"
+        if [ ! -f "$full_path" ]; then
+            echo "Missing expected file: $full_path"
+            return 1
+        fi
+        local actual_size
+        actual_size=$(${STAT_CMD} "$full_path")
+        if [ "$actual_size" -ne "${expected_sizes[$file]}" ]; then
+            echo "Size mismatch for $file: expected ${expected_sizes[$file]}, got $actual_size"
+            return 1
+        fi
+    done
+    return 0
 }
 
 @test "test-1: Basic sequence match" {
@@ -239,4 +290,9 @@ verify_count() {
 @test "test-40: Tune command with JSON output and IUPAC and predicates" {
     "${APP}" --read-gzip "${EXAMPLES_DIR}/16S-iupac-and-predicates.json" "${EXAMPLES_DIR}/small-copy.fastq.gz" tune -n 2000 -c --names --json-matches
     verify_size "matches.json" 3437
+}
+
+@test "test-41: Bucket flag with gzipped input" {
+    "${APP}" -R --bucket --read-gzip "${EXAMPLES_DIR}/16S-iupac.json" "${EXAMPLES_DIR}/SRX26365298.fastq.gz"
+    verify_bucket_files
 }
