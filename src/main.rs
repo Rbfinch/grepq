@@ -13,6 +13,7 @@ mod initialise;
 mod inverted;
 mod output;
 mod quality;
+mod summarise;
 mod tune;
 use clap::Parser;
 use initialise::{create_reader, create_writer, parse_patterns_file};
@@ -29,6 +30,10 @@ fn main() {
     match &cli.command {
         Some(Commands::Tune(tune)) => {
             tune::run_tune(&cli, tune.num_matches, tune.include_count).unwrap();
+            return;
+        }
+        Some(Commands::Summarise(summarise)) => {
+            summarise::run_summarise(&cli, summarise.include_count).unwrap();
             return;
         }
         Some(Commands::Inverted) => {

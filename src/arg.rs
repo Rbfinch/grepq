@@ -262,6 +262,35 @@ pub enum Commands {
     Tune(Tune),
     #[command(about = "Print records where none of the regex patterns are found")]
     Inverted,
+    #[command(about = "Summarise records matching regex patterns and variants in the FASTQ file")]
+    Summarise(Summarise),
+}
+
+#[derive(Parser)]
+pub struct Summarise {
+    #[arg(short = 'c', help = "Include count of records for matching patterns")]
+    pub include_count: bool,
+
+    #[arg(
+        long = "names",
+        help = "Include regexSetName and regexName in the output"
+    )]
+    pub include_names: bool,
+
+    #[arg(
+        long = "json-matches",
+        help = "Write the output to a JSON file called matches.json"
+    )]
+    pub json_matches: bool,
+
+    #[arg(
+        long = "variants",
+        help = "Number of top most frequent variants to include in the output"
+    )]
+    pub variants: Option<usize>,
+
+    #[arg(long = "all", help = "Include all variants in the output")]
+    pub all_variants: bool,
 }
 
 #[derive(Parser)]
