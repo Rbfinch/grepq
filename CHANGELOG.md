@@ -8,7 +8,7 @@ Unreleased changes. Release notes have not yet been written.
 
 * added `summarise`command
 * corresponding updates to documentation
-* updated tests to bash bats (TAP-compliant) testing harness
+* add bash bats (TAP-compliant) testing harness
 
 1.4.7
 =====
