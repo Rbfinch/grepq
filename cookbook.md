@@ -108,12 +108,26 @@ JSON file called matches.json*
 
 <br>
 
+*As above, but uses the summarise command to ensure that all FASTQ records are
+processed*
+
+**grepq --read-gzip regex.json file.fastq.gz summarise -c --names --json-matches**
+
+<br>
+
 *For each matched pattern in a search of no more than 100000 matches of a
 gzip-compressed FASTQ file, print the pattern and the number of matches
 to a JSON file called matches.json, and include the top three most frequent
 variants of each pattern, and their respective counts*
 
 **grepq --read-gzip regex.json file.fastq.gz tune -n 100000 -c --names --json-matches --variants 3**
+
+<br>
+
+*As above, but uses the summarise command to ensure that all FASTQ records are
+processed*
+
+**grepq --read-gzip regex.json file.fastq.gz summarise -c --names --json-matches --variants 3**
 
 <br>
 
@@ -124,6 +138,13 @@ respective counts. Note that the `--variants` argument is not given when `--all`
 is specified."*
 
 **grepq --read-gzip regex.json file.fastq.gz tune -n 100000 -c --names --json-matches --all**
+
+<br>
+
+*As above, but uses the summarise command to ensure that all FASTQ records are
+processed*
+
+**grepq --read-gzip regex.json file.fastq.gz summarise -c --names --json-matches --all**
 
 <br>
 

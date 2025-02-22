@@ -3,6 +3,13 @@ TBD
 
 Unreleased changes. Release notes have not yet been written.
 
+1.4.8
+=====
+
+* added `summarise`command
+* corresponding updates to documentation
+* updated tests to bash bats (TAP-compliant) testing harness
+
 1.4.7
 =====
 

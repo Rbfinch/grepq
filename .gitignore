@@ -3,9 +3,10 @@
 .vscode
 .cargo
 
-# Ignore build directories
+# Ignore build and directories
 build/
 bin/
+test/
 
 # Ignore object files
 *.o
@@ -113,3 +114,4 @@ paper/perf*
 paper/plot*
 paper/paper-bioRxiv.md
 split_readme.sh
+test/test.bats
