@@ -296,3 +296,33 @@ verify_bucket_files() {
     "${APP}" -R --bucket --read-gzip "${EXAMPLES_DIR}/16S-iupac.json" "${EXAMPLES_DIR}/SRX26365298.fastq.gz"
     verify_bucket_files
 }
+
+@test "test-42: Tune command with JSON output - large dataset" {
+    "${APP}" --read-gzip "${EXAMPLES_DIR}/16S-no-iupac.json" "${EXAMPLES_DIR}/SRX26365298.fastq.gz" tune -n 10000000 -c --names --json-matches
+    verify_size "matches.json" 4827
+}
+
+@test "test-43: Summarise command with JSON output - large dataset" {
+    "${APP}" --read-gzip "${EXAMPLES_DIR}/16S-no-iupac.json" "${EXAMPLES_DIR}/SRX26365298.fastq.gz" summarise -c --names --json-matches
+    verify_size "matches.json" 4827
+}
+
+@test "test-44: Tune command with JSON output and 3 variants - large dataset" {
+    "${APP}" --read-gzip "${EXAMPLES_DIR}/16S-no-iupac.json" "${EXAMPLES_DIR}/SRX26365298.fastq.gz" tune -n 10000000 -c --names --json-matches --variants 3
+    verify_size "matches.json" 7527
+}
+
+@test "test-45: Summarise command with JSON output and 3 variants - large dataset" {
+    "${APP}" --read-gzip "${EXAMPLES_DIR}/16S-no-iupac.json" "${EXAMPLES_DIR}/SRX26365298.fastq.gz" summarise -c --names --json-matches --variants 3
+    verify_size "matches.json" 7527
+}
+
+@test "test-46: Tune command with JSON output and all variants - large dataset" {
+    "${APP}" --read-gzip "${EXAMPLES_DIR}/16S-no-iupac.json" "${EXAMPLES_DIR}/SRX26365298.fastq.gz" tune -n 10000000 -c --names --json-matches --all
+    verify_size "matches.json" 17995
+}
+
+@test "test-47: Summarise command with JSON output and all variants - large dataset" {
+    "${APP}" --read-gzip "${EXAMPLES_DIR}/16S-no-iupac.json" "${EXAMPLES_DIR}/SRX26365298.fastq.gz" summarise -c --names --json-matches --all
+    verify_size "matches.json" 17995
+}
