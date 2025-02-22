@@ -53,15 +53,15 @@ Predicates are specified in a JSON pattern file. For an example, see `16S-iupac-
 - FASTQ format (`-R` option)
 
 > **Note:**
-Other than when the `tune` command is run (see below), a FASTQ record is deemed to match (and hence provided in the output) when _any_ of the regex patterns in the pattern file match the sequence field of the FASTQ record.
+Other than when the `tune` or `summarise` command is run (see below), a FASTQ record is deemed to match (and hence provided in the output) when _any_ of the regex patterns in the pattern file match the sequence field of the FASTQ record.
 
 **6. Tune your pattern file and enumerate named and unnamed variants with the `tune` command**
 
-Use the `tune` command (`grepq tune -h` for instructions) in a simple shell script to update the number and order of regex patterns in your pattern file according to their matched frequency, further targeting and speeding up the filtering process.
+Use the `tune` or `summarise` command (`grepq tune -h` and `grepq summarise -h` for instructions) in a simple shell script to update the number and order of regex patterns in your pattern file according to their matched frequency, further targeting and speeding up the filtering process.
 
-Specifying the `-c` option to the `tune` command will output the matched substrings and their frequencies, ranked from highest to lowest.
+Specifying the `-c` option to the `tune`or `summarise` command will output the matched substrings and their frequencies, ranked from highest to lowest.
 
-When the patterns file is given in JSON format, then specifying the `-c`, `--names`, `--json-matches` and `--variants` options to the `tune` command will output the matched pattern variants and their corresponding counts in JSON format to a file called `matches.json`, allowing named regex sets, named regex patterns, and named and unnamed variants. See `examples/16S-iupac.json` for an example of a JSON pattern file and `examples/matches.json` for an example of the output of the `tune` command in JSON format.
+When the patterns file is given in JSON format, then specifying the `-c`, `--names`, `--json-matches` and `--variants` options to the `tune` or `summarise` command will output the matched pattern variants and their corresponding counts in JSON format to a file called `matches.json`, allowing named regex sets, named regex patterns, and named and unnamed variants. See `examples/16S-iupac.json` for an example of a JSON pattern file and `examples/matches.json` for an example of the output of the `tune` or `summarise` command in JSON format.
 
 ```bash
 # For each matched pattern in a search of no more than 20000 matches of a gzip-compressed FASTQ file, print the pattern and the number of matches to a JSON file called matches.json, and include the top three most frequent variants of each pattern, and their respective counts
@@ -107,7 +107,7 @@ To output all variants of each pattern, use the `--all` argument, for example:
 grepq --read-gzip 16S-no-iupac.json SRX26365298.fastq.gz tune -n 20000 -c --names --json-matches --all
 ```
 
-You could then use a tool like `jq` to parse the JSON output of the `tune` command, for example the following command will sort the output by the number of matches for each regex pattern, and then for each pattern, sort the variants by the number of matches:
+You could then use a tool like `jq` to parse the JSON output of the `tune` or `summarise` command, for example the following command will sort the output by the number of matches for each regex pattern, and then for each pattern, sort the variants by the number of matches:
 
 ```bash
 jq -r '
@@ -123,7 +123,7 @@ jq -r '
 ```
 
 > **Note:**
-When the count option (-c) is given with the `tune` command, `grepq` will count the number of FASTQ records containing a sequence that is matched, for each matching regex in the pattern file. If, however, there are multiple occurrences of a given regex _within a FASTQ record sequence field_, `grepq` will count this as one match. To ensure all records are processed, supply a large number to the -n flag given with the `tune` command. When the count option (-c) is not given with the `tune` command, `grepq` provides the total number of matching FASTQ records for the set of regex patterns in the pattern file.
+When the count option (-c) is given with the `tune` or `summarise` command, `grepq` will count the number of FASTQ records containing a sequence that is matched, for each matching regex in the pattern file. If, however, there are multiple occurrences of a given regex _within a FASTQ record sequence field_, `grepq` will count this as one match. To ensure all records are processed, use the `summarise` command instead of the `tune` command. When the count option (-c) is not given as part of the `tune` or `summarise` command, `grepq` provides the total number of matching FASTQ records for the set of regex patterns in the pattern file.
 
 **7. Supports inverted matching with the `inverted` command**
 

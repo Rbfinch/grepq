@@ -196,12 +196,12 @@ A regex supplied to filter on the header field (= record ID line) is first passe
 </ul>
 <blockquote>
 <p><strong>Note:</strong>
-Other than when the <code>tune</code> command is run (see below), a FASTQ record is deemed to match (and hence provided in the output) when <em>any</em> of the regex patterns in the pattern file match the sequence field of the FASTQ record.</p>
+Other than when the <code>tune</code> or <code>summarise</code> command is run (see below), a FASTQ record is deemed to match (and hence provided in the output) when <em>any</em> of the regex patterns in the pattern file match the sequence field of the FASTQ record.</p>
 </blockquote>
 <p><strong>6. Tune your pattern file and enumerate named and unnamed variants with the <code>tune</code> command</strong></p>
-<p>Use the <code>tune</code> command (<code>grepq tune -h</code> for instructions) in a simple shell script to update the number and order of regex patterns in your pattern file according to their matched frequency, further targeting and speeding up the filtering process.</p>
-<p>Specifying the <code>-c</code> option to the <code>tune</code> command will output the matched substrings and their frequencies, ranked from highest to lowest.</p>
-<p>When the patterns file is given in JSON format, then specifying the <code>-c</code>, <code>--names</code>, <code>--json-matches</code> and <code>--variants</code> options to the <code>tune</code> command will output the matched pattern variants and their corresponding counts in JSON format to a file called <code>matches.json</code>, allowing named regex sets, named regex patterns, and named and unnamed variants. See <code>examples/16S-iupac.json</code> for an example of a JSON pattern file and <code>examples/matches.json</code> for an example of the output of the <code>tune</code> command in JSON format.</p>
+<p>Use the <code>tune</code> or <code>summarise</code> command (<code>grepq tune -h</code> and <code>grepq summarise -h</code> for instructions) in a simple shell script to update the number and order of regex patterns in your pattern file according to their matched frequency, further targeting and speeding up the filtering process.</p>
+<p>Specifying the <code>-c</code> option to the <code>tune</code>or <code>summarise</code> command will output the matched substrings and their frequencies, ranked from highest to lowest.</p>
+<p>When the patterns file is given in JSON format, then specifying the <code>-c</code>, <code>--names</code>, <code>--json-matches</code> and <code>--variants</code> options to the <code>tune</code> or <code>summarise</code> command will output the matched pattern variants and their corresponding counts in JSON format to a file called <code>matches.json</code>, allowing named regex sets, named regex patterns, and named and unnamed variants. See <code>examples/16S-iupac.json</code> for an example of a JSON pattern file and <code>examples/matches.json</code> for an example of the output of the <code>tune</code> or <code>summarise</code> command in JSON format.</p>
 <pre><code class="language-bash"># For each matched pattern in a search of no more than 20000 matches of a gzip-compressed FASTQ file, print the pattern and the number of matches to a JSON file called matches.json, and include the top three most frequent variants of each pattern, and their respective counts
 
 grepq --read-gzip 16S-no-iupac.json SRX26365298.fastq.gz tune -n 20000 -c --names --json-matches --variants 3
@@ -238,7 +238,7 @@ grepq --read-gzip 16S-no-iupac.json SRX26365298.fastq.gz tune -n 20000 -c --name
 
 grepq --read-gzip 16S-no-iupac.json SRX26365298.fastq.gz tune -n 20000 -c --names --json-matches --all
 </code></pre>
-<p>You could then use a tool like <code>jq</code> to parse the JSON output of the <code>tune</code> command, for example the following command will sort the output by the number of matches for each regex pattern, and then for each pattern, sort the variants by the number of matches:</p>
+<p>You could then use a tool like <code>jq</code> to parse the JSON output of the <code>tune</code> or <code>summarise</code> command, for example the following command will sort the output by the number of matches for each regex pattern, and then for each pattern, sort the variants by the number of matches:</p>
 <pre><code class="language-bash">jq -r '
     .regexSet.regex |
     sort_by(-.regexCount)[] |
@@ -252,7 +252,7 @@ grepq --read-gzip 16S-no-iupac.json SRX26365298.fastq.gz tune -n 20000 -c --name
 </code></pre>
 <blockquote>
 <p><strong>Note:</strong>
-When the count option (-c) is given with the <code>tune</code> command, <code>grepq</code> will count the number of FASTQ records containing a sequence that is matched, for each matching regex in the pattern file. If, however, there are multiple occurrences of a given regex <em>within a FASTQ record sequence field</em>, <code>grepq</code> will count this as one match. To ensure all records are processed, supply a large number to the -n flag given with the <code>tune</code> command. When the count option (-c) is not given with the <code>tune</code> command, <code>grepq</code> provides the total number of matching FASTQ records for the set of regex patterns in the pattern file.</p>
+When the count option (-c) is given with the <code>tune</code> or <code>summarise</code> command, <code>grepq</code> will count the number of FASTQ records containing a sequence that is matched, for each matching regex in the pattern file. If, however, there are multiple occurrences of a given regex <em>within a FASTQ record sequence field</em>, <code>grepq</code> will count this as one match. To ensure all records are processed, use the <code>summarise</code> command instead of the <code>tune</code> command. When the count option (-c) is not given as part of the <code>tune</code> or <code>summarise</code> command, <code>grepq</code> provides the total number of matching FASTQ records for the set of regex patterns in the pattern file.</p>
 </blockquote>
 <p><strong>7. Supports inverted matching with the <code>inverted</code> command</strong></p>
 <p>Use the <code>inverted</code> command to output sequences that do not match any of the regex patterns in your pattern file.</p>

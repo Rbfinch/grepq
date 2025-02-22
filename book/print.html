@@ -162,11 +162,11 @@ This README contains documentation for the latest version of <code>grepq</code>.
 <li>very fast and scales to large FASTQ files</li>
 <li>IUPAC ambiguity code support</li>
 <li>support for gzip and zstd compression</li>
-<li>JSON support for pattern file input and <code>tune</code> command output, allowing named regex sets, named regex patterns, and named and unnamed variants</li>
+<li>JSON support for pattern file input and <code>tune</code> and <code>summarise</code> command output, allowing named regex sets, named regex patterns, and named and unnamed variants</li>
 <li>use <strong>predicates</strong> to filter on the header field (= record ID line) using a regex, minimum sequence length, and minimum average quality score (supports Phred+33 and Phred+64)</li>
 <li>does not match false positives</li>
 <li>output matched sequences to one of four formats</li>
-<li>tune your pattern file and <strong>enumerate named and unnamed variants</strong> with the <code>tune</code> command</li>
+<li>tune your pattern file and <strong>enumerate named and unnamed variants</strong> with the <code>tune</code> command (use the <code>summarise</code> command to process all FASTQ records)</li>
 <li><strong>bucket matching sequences</strong> to separate files named after each regexName with the <code>--bucket</code> flag, in any of the four output formats</li>
 <li>supports inverted matching with the <code>inverted</code> command</li>
 <li>plays nicely with your unix workflows</li>
@@ -217,12 +217,12 @@ A regex supplied to filter on the header field (= record ID line) is first passe
 </ul>
 <blockquote>
 <p><strong>Note:</strong>
-Other than when the <code>tune</code> command is run (see below), a FASTQ record is deemed to match (and hence provided in the output) when <em>any</em> of the regex patterns in the pattern file match the sequence field of the FASTQ record.</p>
+Other than when the <code>tune</code> or <code>summarise</code> command is run (see below), a FASTQ record is deemed to match (and hence provided in the output) when <em>any</em> of the regex patterns in the pattern file match the sequence field of the FASTQ record.</p>
 </blockquote>
 <p><strong>6. Tune your pattern file and enumerate named and unnamed variants with the <code>tune</code> command</strong></p>
-<p>Use the <code>tune</code> command (<code>grepq tune -h</code> for instructions) in a simple shell script to update the number and order of regex patterns in your pattern file according to their matched frequency, further targeting and speeding up the filtering process.</p>
-<p>Specifying the <code>-c</code> option to the <code>tune</code> command will output the matched substrings and their frequencies, ranked from highest to lowest.</p>
-<p>When the patterns file is given in JSON format, then specifying the <code>-c</code>, <code>--names</code>, <code>--json-matches</code> and <code>--variants</code> options to the <code>tune</code> command will output the matched pattern variants and their corresponding counts in JSON format to a file called <code>matches.json</code>, allowing named regex sets, named regex patterns, and named and unnamed variants. See <code>examples/16S-iupac.json</code> for an example of a JSON pattern file and <code>examples/matches.json</code> for an example of the output of the <code>tune</code> command in JSON format.</p>
+<p>Use the <code>tune</code> or <code>summarise</code> command (<code>grepq tune -h</code> and <code>grepq summarise -h</code> for instructions) in a simple shell script to update the number and order of regex patterns in your pattern file according to their matched frequency, further targeting and speeding up the filtering process.</p>
+<p>Specifying the <code>-c</code> option to the <code>tune</code>or <code>summarise</code> command will output the matched substrings and their frequencies, ranked from highest to lowest.</p>
+<p>When the patterns file is given in JSON format, then specifying the <code>-c</code>, <code>--names</code>, <code>--json-matches</code> and <code>--variants</code> options to the <code>tune</code> or <code>summarise</code> command will output the matched pattern variants and their corresponding counts in JSON format to a file called <code>matches.json</code>, allowing named regex sets, named regex patterns, and named and unnamed variants. See <code>examples/16S-iupac.json</code> for an example of a JSON pattern file and <code>examples/matches.json</code> for an example of the output of the <code>tune</code> or <code>summarise</code> command in JSON format.</p>
 <pre><code class="language-bash"># For each matched pattern in a search of no more than 20000 matches of a gzip-compressed FASTQ file, print the pattern and the number of matches to a JSON file called matches.json, and include the top three most frequent variants of each pattern, and their respective counts
 
 grepq --read-gzip 16S-no-iupac.json SRX26365298.fastq.gz tune -n 20000 -c --names --json-matches --variants 3
@@ -259,7 +259,7 @@ grepq --read-gzip 16S-no-iupac.json SRX26365298.fastq.gz tune -n 20000 -c --name
 
 grepq --read-gzip 16S-no-iupac.json SRX26365298.fastq.gz tune -n 20000 -c --names --json-matches --all
 </code></pre>
-<p>You could then use a tool like <code>jq</code> to parse the JSON output of the <code>tune</code> command, for example the following command will sort the output by the number of matches for each regex pattern, and then for each pattern, sort the variants by the number of matches:</p>
+<p>You could then use a tool like <code>jq</code> to parse the JSON output of the <code>tune</code> or <code>summarise</code> command, for example the following command will sort the output by the number of matches for each regex pattern, and then for each pattern, sort the variants by the number of matches:</p>
 <pre><code class="language-bash">jq -r '
     .regexSet.regex |
     sort_by(-.regexCount)[] |
@@ -273,18 +273,18 @@ grepq --read-gzip 16S-no-iupac.json SRX26365298.fastq.gz tune -n 20000 -c --name
 </code></pre>
 <blockquote>
 <p><strong>Note:</strong>
-When the count option (-c) is given with the <code>tune</code> command, <code>grepq</code> will count the number of FASTQ records containing a sequence that is matched, for each matching regex in the pattern file. If, however, there are multiple occurrences of a given regex <em>within a FASTQ record sequence field</em>, <code>grepq</code> will count this as one match. To ensure all records are processed, supply a large number to the -n flag given with the <code>tune</code> command. When the count option (-c) is not given with the <code>tune</code> command, <code>grepq</code> provides the total number of matching FASTQ records for the set of regex patterns in the pattern file.</p>
+When the count option (-c) is given with the <code>tune</code> or <code>summarise</code> command, <code>grepq</code> will count the number of FASTQ records containing a sequence that is matched, for each matching regex in the pattern file. If, however, there are multiple occurrences of a given regex <em>within a FASTQ record sequence field</em>, <code>grepq</code> will count this as one match. To ensure all records are processed, use the <code>summarise</code> command instead of the <code>tune</code> command. When the count option (-c) is not given as part of the <code>tune</code> or <code>summarise</code> command, <code>grepq</code> provides the total number of matching FASTQ records for the set of regex patterns in the pattern file.</p>
 </blockquote>
 <p><strong>7. Supports inverted matching with the <code>inverted</code> command</strong></p>
 <p>Use the <code>inverted</code> command to output sequences that do not match any of the regex patterns in your pattern file.</p>
 <p><strong>8. Plays nicely with your unix workflows</strong></p>
 <p>For example, see <code>tune.sh</code> in the <code>examples</code> directory. This simple script will filter a FASTQ file using <code>grepq</code>, tune the pattern file on a user-specified number of total matches, and then filter the FASTQ file again using the tuned pattern file for a user-specified number of the most frequent regex pattern matches.</p>
 <div style="break-before: page; page-break-before: always;"></div><h2 id="usage"><a class="header" href="#usage">Usage</a></h2>
-<p>Get instructions and examples using <code>grepq -h</code>, and <code>grepq tune -h</code> and <code>grepq inverted -h</code> for more information on the <code>tune</code> and <code>inverted</code> commands, respectively.</p>
-<blockquote>
-<p><strong>Note:</strong>
-<code>grepq</code> can output to several formats, including those that are gzip or zstd compressed. <code>grepq</code>, however, will only accept a FASTQ file or a compressed (gzip or zstd) FASTQ file as the sequence data file. If you get an error message, check that the input data file is a FASTQ file or a gzip or zstd compressed FASTQ file, and that you have specified the correct file format (--read-gzip or --read-zstd for FASTQ files compressed by gzip and zstd, respectively), and file path. Pattern files must contain one regex pattern per line or be provided in JSON format, and patterns are case-sensitive. You can supply an empty pattern file to count the total number of records in the FASTQ file. The regex patterns for matching FASTQ sequences should only include the DNA sequence characters (A, C, G, T), or IUPAC ambiguity codes (N, R, Y, etc.). See <code>16S-no-iupac.txt</code>, <code>16S-iupac.json</code>, <code>16S-no-iupac.json</code>, and <code>16S-iupac-and-predicates.json</code> in the <code>examples</code> directory for examples of valid pattern files. Regex patterns to match the header field (= record ID line) must comply with the Rust regex library syntax (<a href="https://docs.rs/regex/latest/regex/#syntax">https://docs.rs/regex/latest/regex/#syntax</a>). If you get an error message, be sure to escape any special characters in the regex pattern.</p>
-</blockquote>
+<p>Get instructions and examples using <code>grepq -h</code>, or <code>grepq tune -h</code>, <code>grepq summarise -h</code> and <code>grepq inverted -h</code> for more information on the <code>tune</code>, <code>summarise</code> and <code>inverted</code> commands, respectively. See the <code>examples</code> directory for examples of pattern files and FASTQ files, and the <code>cookbook.sh</code> and <code>cookbook.md</code> files for more examples.</p>
+<pre><code class="language-bash">
+&gt; **Note:**
+`grepq` can output to several formats, including those that are gzip or zstd compressed. `grepq`, however, will only accept a FASTQ file or a compressed (gzip or zstd) FASTQ file as the sequence data file. If you get an error message, check that the input data file is a FASTQ file or a gzip or zstd compressed FASTQ file, and that you have specified the correct file format (--read-gzip or --read-zstd for FASTQ files compressed by gzip and zstd, respectively), and file path. Pattern files must contain one regex pattern per line or be provided in JSON format, and patterns are case-sensitive. You can supply an empty pattern file to count the total number of records in the FASTQ file. The regex patterns for matching FASTQ sequences should only include the DNA sequence characters (A, C, G, T), or IUPAC ambiguity codes (N, R, Y, etc.). See `16S-no-iupac.txt`, `16S-iupac.json`, `16S-no-iupac.json`, and `16S-iupac-and-predicates.json` in the `examples` directory for examples of valid pattern files. Regex patterns to match the header field (= record ID line) must comply with the Rust regex library syntax (&lt;https://docs.rs/regex/latest/regex/#syntax&gt;). If you get an error message, be sure to escape any special characters in the regex pattern.
+</code></pre>
 <h3 id="preparing-pattern-files"><a class="header" href="#preparing-pattern-files">Preparing pattern files</a></h3>
 <p>Whilst <code>grepq</code> can accept pattern files in plain text format (one regex pattern per line), it is recommended to use JSON format for more complex pattern files since JSON pattern files can contain named regex sets, named regex patterns, and named and unnamed variants. JSON can be a little verbose, so you may want to prepare you pattern file in YAML format (for example, see <code>16S-iupac.yaml</code> in the <code>examples</code> directory) and then convert it to JSON using a tool like <code>yq</code>. For example, to convert a YAML pattern file to JSON, use the following command:</p>
 <pre><code class="language-bash">yq eval '. | tojson' pattern-file.yaml &gt; pattern-file.json
@@ -318,7 +318,7 @@ When the count option (-c) is given with the <code>tune</code> command, <code>gr
 </li>
 </ul>
 <div style="break-before: page; page-break-before: always;"></div><h2 id="examples-and-tests"><a class="header" href="#examples-and-tests">Examples and tests</a></h2>
-<p>Get instructions and examples using <code>grepq -h</code>, <code>grepq tune -h</code> and <code>grepq inverted -h</code> for more information on the <code>tune</code> and <code>inverted</code> commands, respectively. See the <code>examples</code> directory for examples of pattern files and FASTQ files.</p>
+<p>Get instructions and examples using <code>grepq -h</code>, or <code>grepq tune -h</code>, <code>grepq summarise -h</code> and <code>grepq inverted -h</code> for more information on the <code>tune</code>, <code>summarise</code> and <code>inverted</code> commands, respectively. See the <code>examples</code> directory for examples of pattern files and FASTQ files, and the <code>cookbook.sh</code> and <code>cookbook.md</code> files for more examples.</p>
 <p><em>File sizes of outfiles to verify <code>grepq</code> is working correctly, using the regex file <code>16S-no-iupac.txt</code> and the small fastq file <code>small.fastq</code>, both located in the <code>examples</code> directory:</em></p>
 <pre><code class="language-bash">grepq ./examples/16S-no-iupac.txt ./examples/small.fastq &gt; outfile.txt 
 15953

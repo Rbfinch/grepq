@@ -1,6 +1,6 @@
 ## Examples and tests
 
-Get instructions and examples using `grepq -h`, `grepq tune -h` and `grepq inverted -h` for more information on the `tune` and `inverted` commands, respectively. See the `examples` directory for examples of pattern files and FASTQ files.
+Get instructions and examples using `grepq -h`, or `grepq tune -h`, `grepq summarise -h` and `grepq inverted -h` for more information on the `tune`, `summarise` and `inverted` commands, respectively. See the `examples` directory for examples of pattern files and FASTQ files, and the `cookbook.sh` and `cookbook.md` files for more examples.
 
 _File sizes of outfiles to verify `grepq` is working correctly, using the regex file `16S-no-iupac.txt` and the small fastq file `small.fastq`, both located in the `examples` directory:_
 

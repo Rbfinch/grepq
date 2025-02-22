@@ -161,11 +161,11 @@ This README contains documentation for the latest version of <code>grepq</code>.
 <li>very fast and scales to large FASTQ files</li>
 <li>IUPAC ambiguity code support</li>
 <li>support for gzip and zstd compression</li>
-<li>JSON support for pattern file input and <code>tune</code> command output, allowing named regex sets, named regex patterns, and named and unnamed variants</li>
+<li>JSON support for pattern file input and <code>tune</code> and <code>summarise</code> command output, allowing named regex sets, named regex patterns, and named and unnamed variants</li>
 <li>use <strong>predicates</strong> to filter on the header field (= record ID line) using a regex, minimum sequence length, and minimum average quality score (supports Phred+33 and Phred+64)</li>
 <li>does not match false positives</li>
 <li>output matched sequences to one of four formats</li>
-<li>tune your pattern file and <strong>enumerate named and unnamed variants</strong> with the <code>tune</code> command</li>
+<li>tune your pattern file and <strong>enumerate named and unnamed variants</strong> with the <code>tune</code> command (use the <code>summarise</code> command to process all FASTQ records)</li>
 <li><strong>bucket matching sequences</strong> to separate files named after each regexName with the <code>--bucket</code> flag, in any of the four output formats</li>
 <li>supports inverted matching with the <code>inverted</code> command</li>
 <li>plays nicely with your unix workflows</li>
