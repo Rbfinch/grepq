@@ -113,3 +113,4 @@ paper/perf*
 paper/plot*
 paper/paper-bioRxiv.md
 split_readme.sh
+justfile
