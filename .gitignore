@@ -6,7 +6,6 @@
 # Ignore build and directories
 build/
 bin/
-test/
 
 # Ignore object files
 *.o
@@ -102,7 +101,6 @@ target/
 *.fq
 
 # Other project specific ignores and allows
-test.bats
 meta.yaml
 generate.rb
 !examples/small-copy.fastq.gz

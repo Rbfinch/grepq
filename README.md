@@ -268,6 +268,8 @@ command was: ../target/release/grepq -c 16S-no-iupac.txt small.fastq <br>
 
 Further, you can run the `cookbook.sh` script in the `examples` directory to test the cookbook examples, and you can use `predate` (<https://crates.io/crates/predate>) if you prefer a Rust application to a shell script.
 
+Finally, you can run the `test.bats` script in the `test` directory to test the `grepq` executable (`/target/release/grepq`). The `bats` shell script testing framework is required to run the `test.bats` script. You can install `bats` using `brew install bats-core` on macOS, or `sudo apt-get install bats` on Ubuntu.
+
 **SARS-CoV-2 example**
 
 Count of the top five most frequently matched patterns found in SRX26602697.fastq using the pattern file SARS-CoV-2.txt (this pattern file contains 64 sequences of length 60 from Table II of this [preprint](https://doi.org/10.1101/2021.04.14.439840)):
