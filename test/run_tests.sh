@@ -1,16 +1,29 @@
 #!/bin/bash
 
-# Default executable
+# Default executable and flags
 APP="/Users/nicholascrosbie/Documents/repos/grepq/target/release/grepq"
+COMPUTE_TIMINGS=false
+REMAINING_ARGS=()
 
-# Check for --control flag
-if [ "$1" == "--control" ]; then
-    APP="grepq"
+# Process all arguments
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --control)
+            APP="grepq"
+            ;;
+        --timings)
+            COMPUTE_TIMINGS=true
+            ;;
+        *)
+            REMAINING_ARGS+=("$1")
+            ;;
+    esac
     shift
-fi
+done
 
-# Export the APP variable for the Bats tests
+# Export variables for the Bats tests
 export APP
+export COMPUTE_TIMINGS
 
-# Run the Bats tests
-bats /Users/nicholascrosbie/Documents/repos/grepq/test/test.bats "$@"
+# Run the Bats tests with remaining arguments
+bats /Users/nicholascrosbie/Documents/repos/grepq/test/test.bats "${REMAINING_ARGS[@]}"

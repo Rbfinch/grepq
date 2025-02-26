@@ -101,6 +101,8 @@ target/
 *.fq
 
 # Other project specific ignores and allows
+test/lib/
+test/test_timings.log
 meta.yaml
 generate.rb
 !examples/small-copy.fastq.gz

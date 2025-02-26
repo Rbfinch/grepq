@@ -3,8 +3,17 @@
 log_file="/Users/nicholascrosbie/Documents/repos/grepq/test/test_timings.log"
 
 log_time() {
-    local message="$@"
-    date "+%Y-%m-%d %H:%M:%S - $message" >> "$log_file"
+    if [ "$COMPUTE_TIMINGS" = true ]; then
+        local test_number="$1"
+        local duration="$2"
+        local version
+        if [ -n "$APP" ]; then
+            version=$($APP -V)
+        else
+            version=$(target/release/grepq -V)
+        fi
+        date "+%Y-%m-%d %H:%M:%S, $test_number, $duration, seconds, $version" >> "$log_file"
+    fi
 }
 
 setup() {
@@ -98,391 +107,298 @@ verify_bucket_files() {
     return 0
 }
 
-# Check for --control flag before running tests
-if [ "$1" == "--control" ]; then
-    APP="grepq"
-    shift
-fi
-
 measure_time() {
     local command="$1"
     local result
-    result=$(hyperfine --warmup 1 --runs 1 --export-json /tmp/hyperfine.json "$command")
-    jq '.results[0].times[0]' /tmp/hyperfine.json
+    result=$(hyperfine --warmup 1 --runs 5 --export-json /tmp/hyperfine.json "$command")
+    jq '.results[0].mean' /tmp/hyperfine.json
 }
 
 @test "test-1: Basic sequence match" {
-    log_time "Starting test-1"
     duration=$(measure_time "${APP} ${EXAMPLES_DIR}/16S-no-iupac.txt ${EXAMPLES_DIR}/small.fastq > /tmp/test-1.txt")
     verify_size "/tmp/test-1.txt" 15953
-    log_time "test-1 took $duration seconds"
-    log_time "Ending test-1"
+    log_time "test-1" "$duration"
 }
 
 @test "test-2: Inverted sequence match" {
-    log_time "Starting test-2"
     duration=$(measure_time "${APP} ${EXAMPLES_DIR}/16S-no-iupac.txt ${EXAMPLES_DIR}/small.fastq inverted > /tmp/test-2.txt")
     verify_size "/tmp/test-2.txt" 736547
-    log_time "test-2 took $duration seconds"
-    log_time "Ending test-2"
+    log_time "test-2" "$duration"
 }
 
 @test "test-3: Include record ID" {
-    log_time "Starting test-3"
     duration=$(measure_time "${APP} -I ${EXAMPLES_DIR}/16S-no-iupac.txt ${EXAMPLES_DIR}/small.fastq > /tmp/test-3.txt")
     verify_size "/tmp/test-3.txt" 19515
-    log_time "test-3 took $duration seconds"
-    log_time "Ending test-3"
+    log_time "test-3" "$duration"
 }
 
 @test "test-4: Include record ID with inverted match" {
-    log_time "Starting test-4"
     duration=$(measure_time "${APP} -I ${EXAMPLES_DIR}/16S-no-iupac.txt ${EXAMPLES_DIR}/small.fastq inverted > /tmp/test-4.txt")
     verify_size "/tmp/test-4.txt" 901271
-    log_time "test-4 took $duration seconds"
-    log_time "Ending test-4"
+    log_time "test-4" "$duration"
 }
 
 @test "test-5: Full FASTQ record output" {
-    log_time "Starting test-5"
     duration=$(measure_time "${APP} -R ${EXAMPLES_DIR}/16S-no-iupac.txt ${EXAMPLES_DIR}/small.fastq > /tmp/test-5.txt")
     verify_size "/tmp/test-5.txt" 35574
-    log_time "test-5 took $duration seconds"
-    log_time "Ending test-5"
+    log_time "test-5" "$duration"
 }
 
 @test "test-6: Full FASTQ record output with inverted match" {
-    log_time "Starting test-6"
     duration=$(measure_time "${APP} -R ${EXAMPLES_DIR}/16S-no-iupac.txt ${EXAMPLES_DIR}/small.fastq inverted > /tmp/test-6.txt")
     verify_size "/tmp/test-6.txt" 1642712
-    log_time "test-6 took $duration seconds"
-    log_time "Ending test-6"
+    log_time "test-6" "$duration"
 }
 
 @test "test-7: Count matches" {
-    log_time "Starting test-7"
     duration=$(measure_time "${APP} -c ${EXAMPLES_DIR}/16S-no-iupac.txt ${EXAMPLES_DIR}/small.fastq > /tmp/test-7.txt")
     verify_count "/tmp/test-7.txt" 53
-    log_time "test-7 took $duration seconds"
-    log_time "Ending test-7"
+    log_time "test-7" "$duration"
 }
 
 @test "test-8: Count inverted matches" {
-    log_time "Starting test-8"
     duration=$(measure_time "${APP} -c ${EXAMPLES_DIR}/16S-no-iupac.txt ${EXAMPLES_DIR}/small.fastq inverted > /tmp/test-8.txt")
     verify_count "/tmp/test-8.txt" 2447
-    log_time "test-8 took $duration seconds"
-    log_time "Ending test-8"
+    log_time "test-8" "$duration"
 }
 
 @test "test-9: Tune command with count" {
-    log_time "Starting test-9"
     duration=$(measure_time "${APP} ${EXAMPLES_DIR}/16S-no-iupac.txt ${EXAMPLES_DIR}/small.fastq tune -n 2000 -c > /tmp/test-9.txt")
     verify_size "/tmp/test-9.txt" 310
-    log_time "test-9 took $duration seconds"
-    log_time "Ending test-9"
+    log_time "test-9" "$duration"
 }
 
 @test "test-10: Tune command with JSON output" {
-    log_time "Starting test-10"
     duration=$(measure_time "${APP} --read-gzip ${EXAMPLES_DIR}/16S-no-iupac.json ${EXAMPLES_DIR}/small-copy.fastq.gz tune -n 2000 -c --names --json-matches")
     verify_size "matches.json" 3704
-    log_time "test-10 took $duration seconds"
-    log_time "Ending test-10"
+    log_time "test-10" "$duration"
 }
 
 @test "test-11: Basic sequence match with JSON patterns" {
-    log_time "Starting test-11"
     duration=$(measure_time "${APP} ${EXAMPLES_DIR}/16S-no-iupac.json ${EXAMPLES_DIR}/small.fastq > /tmp/test-11.txt")
     verify_size "/tmp/test-11.txt" 15953
-    log_time "test-11 took $duration seconds"
-    log_time "Ending test-11"
+    log_time "test-11" "$duration"
 }
 
 @test "test-12: Inverted sequence match with JSON patterns" {
-    log_time "Starting test-12"
     duration=$(measure_time "${APP} ${EXAMPLES_DIR}/16S-no-iupac.json ${EXAMPLES_DIR}/small.fastq inverted > /tmp/test-12.txt")
     verify_size "/tmp/test-12.txt" 736547
-    log_time "test-12 took $duration seconds"
-    log_time "Ending test-12"
+    log_time "test-12" "$duration"
 }
 
 @test "test-13: Include record ID with JSON patterns" {
-    log_time "Starting test-13"
     duration=$(measure_time "${APP} -I ${EXAMPLES_DIR}/16S-no-iupac.json ${EXAMPLES_DIR}/small.fastq > /tmp/test-13.txt")
     verify_size "/tmp/test-13.txt" 19515
-    log_time "test-13 took $duration seconds"
-    log_time "Ending test-13"
+    log_time "test-13" "$duration"
 }
 
 @test "test-14: Include record ID with inverted match and JSON patterns" {
-    log_time "Starting test-14"
     duration=$(measure_time "${APP} -I ${EXAMPLES_DIR}/16S-no-iupac.json ${EXAMPLES_DIR}/small.fastq inverted > /tmp/test-14.txt")
     verify_size "/tmp/test-14.txt" 901271
-    log_time "test-14 took $duration seconds"
-    log_time "Ending test-14"
+    log_time "test-14" "$duration"
 }
 
 @test "test-15: Full FASTQ record output with JSON patterns" {
-    log_time "Starting test-15"
     duration=$(measure_time "${APP} -R ${EXAMPLES_DIR}/16S-no-iupac.json ${EXAMPLES_DIR}/small.fastq > /tmp/test-15.txt")
     verify_size "/tmp/test-15.txt" 35574
-    log_time "test-15 took $duration seconds"
-    log_time "Ending test-15"
+    log_time "test-15" "$duration"
 }
 
 @test "test-16: Full FASTQ record output with inverted match and JSON patterns" {
-    log_time "Starting test-16"
     duration=$(measure_time "${APP} -R ${EXAMPLES_DIR}/16S-no-iupac.json ${EXAMPLES_DIR}/small.fastq inverted > /tmp/test-16.txt")
     verify_size "/tmp/test-16.txt" 1642712
-    log_time "test-16 took $duration seconds"
-    log_time "Ending test-16"
+    log_time "test-16" "$duration"
 }
 
 @test "test-17: Count matches with JSON patterns" {
-    log_time "Starting test-17"
     duration=$(measure_time "${APP} -c ${EXAMPLES_DIR}/16S-no-iupac.json ${EXAMPLES_DIR}/small.fastq > /tmp/test-17.txt")
     verify_count "/tmp/test-17.txt" 53
-    log_time "test-17 took $duration seconds"
-    log_time "Ending test-17"
+    log_time "test-17" "$duration"
 }
 
 @test "test-18: Count inverted matches with JSON patterns" {
-    log_time "Starting test-18"
     duration=$(measure_time "${APP} -c ${EXAMPLES_DIR}/16S-no-iupac.json ${EXAMPLES_DIR}/small.fastq inverted > /tmp/test-18.txt")
     verify_count "/tmp/test-18.txt" 2447
-    log_time "test-18 took $duration seconds"
-    log_time "Ending test-18"
+    log_time "test-18" "$duration"
 }
 
 @test "test-19: Tune command with count and JSON patterns" {
-    log_time "Starting test-19"
     duration=$(measure_time "${APP} ${EXAMPLES_DIR}/16S-no-iupac.json ${EXAMPLES_DIR}/small.fastq tune -n 2000 -c > /tmp/test-19.txt")
     verify_size "/tmp/test-19.txt" 310
-    log_time "test-19 took $duration seconds"
-    log_time "Ending test-19"
+    log_time "test-19" "$duration"
 }
 
 @test "test-20: Tune command with JSON output and JSON patterns" {
-    log_time "Starting test-20"
     duration=$(measure_time "${APP} --read-gzip ${EXAMPLES_DIR}/16S-no-iupac.json ${EXAMPLES_DIR}/small-copy.fastq.gz tune -n 2000 -c --names --json-matches")
     verify_size "matches.json" 3704
-    log_time "test-20 took $duration seconds"
-    log_time "Ending test-20"
+    log_time "test-20" "$duration"
 }
 
 @test "test-21: Basic sequence match with IUPAC patterns" {
-    log_time "Starting test-21"
     duration=$(measure_time "${APP} ${EXAMPLES_DIR}/16S-iupac.json ${EXAMPLES_DIR}/small.fastq > /tmp/test-21.txt")
     verify_size "/tmp/test-21.txt" 15953
-    log_time "test-21 took $duration seconds"
-    log_time "Ending test-21"
+    log_time "test-21" "$duration"
 }
 
 @test "test-22: Inverted sequence match with IUPAC patterns" {
-    log_time "Starting test-22"
     duration=$(measure_time "${APP} ${EXAMPLES_DIR}/16S-iupac.json ${EXAMPLES_DIR}/small.fastq inverted > /tmp/test-22.txt")
     verify_size "/tmp/test-22.txt" 736547
-    log_time "test-22 took $duration seconds"
-    log_time "Ending test-22"
+    log_time "test-22" "$duration"
 }
 
 @test "test-23: Include record ID with IUPAC patterns" {
-    log_time "Starting test-23"
     duration=$(measure_time "${APP} -I ${EXAMPLES_DIR}/16S-iupac.json ${EXAMPLES_DIR}/small.fastq > /tmp/test-23.txt")
     verify_size "/tmp/test-23.txt" 19515
-    log_time "test-23 took $duration seconds"
-    log_time "Ending test-23"
+    log_time "test-23" "$duration"
 }
 
 @test "test-24: Include record ID with inverted match and IUPAC patterns" {
-    log_time "Starting test-24"
     duration=$(measure_time "${APP} -I ${EXAMPLES_DIR}/16S-iupac.json ${EXAMPLES_DIR}/small.fastq inverted > /tmp/test-24.txt")
     verify_size "/tmp/test-24.txt" 901271
-    log_time "test-24 took $duration seconds"
-    log_time "Ending test-24"
+    log_time "test-24" "$duration"
 }
 
 @test "test-25: Full FASTQ record output with IUPAC patterns" {
-    log_time "Starting test-25"
     duration=$(measure_time "${APP} -R ${EXAMPLES_DIR}/16S-iupac.json ${EXAMPLES_DIR}/small.fastq > /tmp/test-25.txt")
     verify_size "/tmp/test-25.txt" 35574
-    log_time "test-25 took $duration seconds"
-    log_time "Ending test-25"
+    log_time "test-25" "$duration"
 }
 
 @test "test-26: Full FASTQ record output with inverted match and IUPAC patterns" {
-    log_time "Starting test-26"
     duration=$(measure_time "${APP} -R ${EXAMPLES_DIR}/16S-iupac.json ${EXAMPLES_DIR}/small.fastq inverted > /tmp/test-26.txt")
     verify_size "/tmp/test-26.txt" 1642712
-    log_time "test-26 took $duration seconds"
-    log_time "Ending test-26"
+    log_time "test-26" "$duration"
 }
 
 @test "test-27: Count matches with IUPAC patterns" {
-    log_time "Starting test-27"
     duration=$(measure_time "${APP} -c ${EXAMPLES_DIR}/16S-iupac.json ${EXAMPLES_DIR}/small.fastq > /tmp/test-27.txt")
     verify_count "/tmp/test-27.txt" 53
-    log_time "test-27 took $duration seconds"
-    log_time "Ending test-27"
+    log_time "test-27" "$duration"
 }
 
 @test "test-28: Count inverted matches with IUPAC patterns" {
-    log_time "Starting test-28"
     duration=$(measure_time "${APP} -c ${EXAMPLES_DIR}/16S-iupac.json ${EXAMPLES_DIR}/small.fastq inverted > /tmp/test-28.txt")
     verify_count "/tmp/test-28.txt" 2447
-    log_time "test-28 took $duration seconds"
-    log_time "Ending test-28"
+    log_time "test-28" "$duration"
 }
 
 @test "test-29: Tune command with count and IUPAC patterns" {
-    log_time "Starting test-29"
     duration=$(measure_time "${APP} ${EXAMPLES_DIR}/16S-iupac.json ${EXAMPLES_DIR}/small.fastq tune -n 2000 -c > /tmp/test-29.txt")
     verify_size "/tmp/test-29.txt" 193
-    log_time "test-29 took $duration seconds"
-    log_time "Ending test-29"
+    log_time "test-29" "$duration"
 }
 
 @test "test-30: Tune command with JSON output and IUPAC patterns" {
-    log_time "Starting test-30"
     duration=$(measure_time "${APP} --read-gzip ${EXAMPLES_DIR}/16S-iupac.json ${EXAMPLES_DIR}/small-copy.fastq.gz tune -n 2000 -c --names --json-matches")
     verify_size "matches.json" 3493
-    log_time "test-30 took $duration seconds"
-    log_time "Ending test-30"
+    log_time "test-30" "$duration"
 }
 
 @test "test-31: Basic sequence match with IUPAC and predicates" {
-    log_time "Starting test-31"
     duration=$(measure_time "${APP} ${EXAMPLES_DIR}/16S-iupac-and-predicates.json ${EXAMPLES_DIR}/small.fastq > /tmp/test-31.txt")
     verify_size "/tmp/test-31.txt" 8127
-    log_time "test-31 took $duration seconds"
-    log_time "Ending test-31"
+    log_time "test-31" "$duration"
 }
 
 @test "test-32: Inverted sequence match with IUPAC and predicates" {
-    log_time "Starting test-32"
     duration=$(measure_time "${APP} ${EXAMPLES_DIR}/16S-iupac-and-predicates.json ${EXAMPLES_DIR}/small.fastq inverted > /tmp/test-32.txt")
     verify_size "/tmp/test-32.txt" 445480
-    log_time "test-32 took $duration seconds"
-    log_time "Ending test-32"
+    log_time "test-32" "$duration"
 }
 
 @test "test-33: Include record ID with IUPAC and predicates" {
-    log_time "Starting test-33"
     duration=$(measure_time "${APP} -I ${EXAMPLES_DIR}/16S-iupac-and-predicates.json ${EXAMPLES_DIR}/small.fastq > /tmp/test-33.txt")
     verify_size "/tmp/test-33.txt" 9944
-    log_time "test-33 took $duration seconds"
-    log_time "Ending test-33"
+    log_time "test-33" "$duration"
 }
 
 @test "test-34: Include record ID with inverted match and IUPAC and predicates" {
-    log_time "Starting test-34"
     duration=$(measure_time "${APP} -I ${EXAMPLES_DIR}/16S-iupac-and-predicates.json ${EXAMPLES_DIR}/small.fastq inverted > /tmp/test-34.txt")
     verify_size "/tmp/test-34.txt" 545164
-    log_time "test-34 took $duration seconds"
-    log_time "Ending test-34"
+    log_time "test-34" "$duration"
 }
 
 @test "test-35: Full FASTQ record output with IUPAC and predicates" {
-    log_time "Starting test-35"
     duration=$(measure_time "${APP} -R ${EXAMPLES_DIR}/16S-iupac-and-predicates.json ${EXAMPLES_DIR}/small.fastq > /tmp/test-35.txt")
     verify_size "/tmp/test-35.txt" 18125
-    log_time "test-35 took $duration seconds"
-    log_time "Ending test-35"
+    log_time "test-35" "$duration"
 }
 
 @test "test-36: Full FASTQ record output with inverted match and IUPAC and predicates" {
-    log_time "Starting test-36"
     duration=$(measure_time "${APP} -R ${EXAMPLES_DIR}/16S-iupac-and-predicates.json ${EXAMPLES_DIR}/small.fastq inverted > /tmp/test-36.txt")
     verify_size "/tmp/test-36.txt" 993604
-    log_time "test-36 took $duration seconds"
-    log_time "Ending test-36"
+    log_time "test-36" "$duration"
 }
 
 @test "test-37: Count matches with IUPAC and predicates" {
-    log_time "Starting test-37"
     duration=$(measure_time "${APP} -c ${EXAMPLES_DIR}/16S-iupac-and-predicates.json ${EXAMPLES_DIR}/small.fastq > /tmp/test-37.txt")
     verify_count "/tmp/test-37.txt" 27
-    log_time "test-37 took $duration seconds"
-    log_time "Ending test-37"
+    log_time "test-37" "$duration"
 }
 
 @test "test-38: Count inverted matches with IUPAC and predicates" {
-    log_time "Starting test-38"
     duration=$(measure_time "${APP} -c ${EXAMPLES_DIR}/16S-iupac-and-predicates.json ${EXAMPLES_DIR}/small.fastq inverted > /tmp/test-38.txt")
     verify_count "/tmp/test-38.txt" 1480
-    log_time "test-38 took $duration seconds"
-    log_time "Ending test-38"
+    log_time "test-38" "$duration"
 }
 
 @test "test-39: Tune command with count and IUPAC and predicates" {
-    log_time "Starting test-39"
     duration=$(measure_time "${APP} ${EXAMPLES_DIR}/16S-iupac-and-predicates.json ${EXAMPLES_DIR}/small.fastq tune -n 2000 -c > /tmp/test-39.txt")
     verify_size "/tmp/test-39.txt" 176
-    log_time "test-39 took $duration seconds"
-    log_time "Ending test-39"
+    log_time "test-39" "$duration"
 }
 
 @test "test-40: Tune command with JSON output and IUPAC and predicates" {
-    log_time "Starting test-40"
     duration=$(measure_time "${APP} --read-gzip ${EXAMPLES_DIR}/16S-iupac-and-predicates.json ${EXAMPLES_DIR}/small-copy.fastq.gz tune -n 2000 -c --names --json-matches")
     verify_size "matches.json" 3437
-    log_time "test-40 took $duration seconds"
-    log_time "Ending test-40"
+    log_time "test-40" "$duration"
 }
 
 @test "test-41: Bucket flag with gzipped input" {
-    log_time "Starting test-41"
-    duration=$(measure_time "${APP} -R --bucket --read-gzip ${EXAMPLES_DIR}/16S-iupac.json ${EXAMPLES_DIR}/SRX26365298.fastq.gz")
+    cmd="${APP} -R --bucket --read-gzip ${EXAMPLES_DIR}/16S-iupac.json ${EXAMPLES_DIR}/SRX26365298.fastq.gz"
+    duration=$(measure_time "$cmd")
     verify_bucket_files
-    log_time "test-41 took $duration seconds"
-    log_time "Ending test-41"
+    log_time "test-41" "$duration"
 }
 
 @test "test-42: Tune command with JSON output - large dataset" {
-    log_time "Starting test-42"
-    duration=$(measure_time "${APP} --read-gzip ${EXAMPLES_DIR}/16S-no-iupac.json ${EXAMPLES_DIR}/SRX26365298.fastq.gz tune -n 10000000 -c --names --json-matches")
+    cmd="${APP} --read-gzip ${EXAMPLES_DIR}/16S-no-iupac.json ${EXAMPLES_DIR}/SRX26365298.fastq.gz tune -n 10000000 -c --names --json-matches"
+    duration=$(measure_time "$cmd")
     verify_size "matches.json" 4827
-    log_time "test-42 took $duration seconds"
-    log_time "Ending test-42"
+    log_time "test-42" "$duration"
 }
 
 @test "test-43: Summarise command with JSON output - large dataset" {
-    log_time "Starting test-43"
-    duration=$(measure_time "${APP} --read-gzip ${EXAMPLES_DIR}/16S-no-iupac.json ${EXAMPLES_DIR}/SRX26365298.fastq.gz summarise -c --names --json-matches")
+    cmd="${APP} --read-gzip ${EXAMPLES_DIR}/16S-no-iupac.json ${EXAMPLES_DIR}/SRX26365298.fastq.gz summarise -c --names --json-matches"
+    duration=$(measure_time "$cmd")
     verify_size "matches.json" 4827
-    log_time "test-43 took $duration seconds"
-    log_time "Ending test-43"
+    log_time "test-43" "$duration"
 }
 
 @test "test-44: Tune command with JSON output and 3 variants - large dataset" {
-    log_time "Starting test-44"
-    duration=$(measure_time "${APP} --read-gzip ${EXAMPLES_DIR}/16S-no-iupac.json ${EXAMPLES_DIR}/SRX26365298.fastq.gz tune -n 10000000 -c --names --json-matches --variants 3")
+    cmd="${APP} --read-gzip ${EXAMPLES_DIR}/16S-no-iupac.json ${EXAMPLES_DIR}/SRX26365298.fastq.gz tune -n 10000000 -c --names --json-matches --variants 3"
+    duration=$(measure_time "$cmd")
     verify_size "matches.json" 7527
-    log_time "test-44 took $duration seconds"
-    log_time "Ending test-44"
+    log_time "test-44" "$duration"
 }
 
 @test "test-45: Summarise command with JSON output and 3 variants - large dataset" {
-    log_time "Starting test-45"
-    duration=$(measure_time "${APP} --read-gzip ${EXAMPLES_DIR}/16S-no-iupac.json ${EXAMPLES_DIR}/SRX26365298.fastq.gz summarise -c --names --json-matches --variants 3")
+    cmd="${APP} --read-gzip ${EXAMPLES_DIR}/16S-no-iupac.json ${EXAMPLES_DIR}/SRX26365298.fastq.gz summarise -c --names --json-matches --variants 3"
+    duration=$(measure_time "$cmd")
     verify_size "matches.json" 7527
-    log_time "test-45 took $duration seconds"
-    log_time "Ending test-45"
+    log_time "test-45" "$duration"
 }
 
 @test "test-46: Tune command with JSON output and all variants - large dataset" {
-    log_time "Starting test-46"
-    duration=$(measure_time "${APP} --read-gzip ${EXAMPLES_DIR}/16S-no-iupac.json ${EXAMPLES_DIR}/SRX26365298.fastq.gz tune -n 10000000 -c --names --json-matches --all")
+    cmd="${APP} --read-gzip ${EXAMPLES_DIR}/16S-no-iupac.json ${EXAMPLES_DIR}/SRX26365298.fastq.gz tune -n 10000000 -c --names --json-matches --all"
+    duration=$(measure_time "$cmd")
     verify_size "matches.json" 17995
-    log_time "test-46 took $duration seconds"
-    log_time "Ending test-46"
+    log_time "test-46" "$duration"
 }
 
 @test "test-47: Summarise command with JSON output and all variants - large dataset" {
-    log_time "Starting test-47"
-    duration=$(measure_time "${APP} --read-gzip ${EXAMPLES_DIR}/16S-no-iupac.json ${EXAMPLES_DIR}/SRX26365298.fastq.gz summarise -c --names --json-matches --all")
+    cmd="${APP} --read-gzip ${EXAMPLES_DIR}/16S-no-iupac.json ${EXAMPLES_DIR}/SRX26365298.fastq.gz summarise -c --names --json-matches --all"
+    duration=$(measure_time "$cmd")
     verify_size "matches.json" 17995
-    log_time "test-47 took $duration seconds"
-    log_time "Ending test-47"
+    log_time "test-47" "$duration"
 }
