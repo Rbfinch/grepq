@@ -41,10 +41,11 @@ fn create_sqlite_db() -> SqlResult<Connection> {
         [],
     )?;
 
-    // Create regex table
+    // Create regex table with queried_file column
     conn.execute(
         "CREATE TABLE regex (
-            query TEXT
+            query TEXT,
+            queried_file TEXT
         )",
         [],
     )?;
@@ -52,23 +53,23 @@ fn create_sqlite_db() -> SqlResult<Connection> {
     Ok(conn)
 }
 
-fn write_regex_to_db(conn: &Connection, patterns_file: &str) -> SqlResult<()> {
+fn write_regex_to_db(conn: &Connection, patterns_file: &str, queried_file: &str) -> SqlResult<()> {
     let file_content = read_to_string(patterns_file)
         .map_err(|e| rusqlite::Error::InvalidParameterName(e.to_string()))?;
 
     if patterns_file.ends_with(".json") {
         // For JSON files, write the entire content as a single row
         conn.execute(
-            "INSERT INTO regex (query) VALUES (?1)",
-            [&file_content],
+            "INSERT INTO regex (query, queried_file) VALUES (?1, ?2)",
+            [&file_content, queried_file],
         )?;
     } else {
         // For txt files, write one regex per row
         for line in file_content.lines() {
             if !line.trim().is_empty() {
                 conn.execute(
-                    "INSERT INTO regex (query) VALUES (?1)",
-                    [line.trim()],
+                    "INSERT INTO regex (query, queried_file) VALUES (?1, ?2)",
+                    [line.trim(), queried_file],
                 )?;
             }
         }
@@ -82,7 +83,7 @@ fn main() {
 
     let db_conn = if cli.write_sql {
         let conn = create_sqlite_db().unwrap();
-        write_regex_to_db(&conn, &cli.patterns).unwrap();
+        write_regex_to_db(&conn, &cli.patterns, &cli.file).unwrap();
         Some(conn)
     } else {
         None
