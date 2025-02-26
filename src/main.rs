@@ -64,12 +64,20 @@ fn write_regex_to_db(conn: &Connection, patterns_file: &str, queried_file: &str)
             [&file_content, queried_file],
         )?;
     } else {
-        // For txt files, write one regex per row
+        // For txt files, write one regex per row, but queried_file only in first row
+        let mut first = true;
         for line in file_content.lines() {
             if !line.trim().is_empty() {
+                let file_param = if first {
+                    first = false;
+                    queried_file
+                } else {
+                    "" // Empty string for all subsequent rows
+                };
+                
                 conn.execute(
                     "INSERT INTO regex (query, queried_file) VALUES (?1, ?2)",
-                    [line.trim(), queried_file],
+                    [line.trim(), file_param],
                 )?;
             }
         }
