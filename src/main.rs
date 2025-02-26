@@ -19,79 +19,22 @@ use clap::Parser;
 use initialise::{create_reader, create_writer, parse_patterns_file};
 use std::io::{self};
 
-use chrono::Local;
-use rusqlite::{Connection, Result as SqlResult};
-use std::fs::read_to_string;
+// Remove these imports as they're no longer needed in main.rs
+// use chrono::Local;
+// use rusqlite::{Connection, Result as SqlResult};
+// use std::fs::read_to_string;
 
 // use log::LevelFilter;
 // use simplelog::{Config, SimpleLogger};
 
-fn create_sqlite_db() -> SqlResult<Connection> {
-    let timestamp = Local::now().format("%Y%m%d_%H%M%S");
-    let db_name = format!("fastq_{}.db", timestamp);
-    let conn = Connection::open(&db_name)?;
-    
-    // Create fastq_data table
-    conn.execute(
-        "CREATE TABLE fastq_data (
-            header TEXT,
-            sequence TEXT,
-            quality TEXT
-        )",
-        [],
-    )?;
-
-    // Create regex table with queried_file column
-    conn.execute(
-        "CREATE TABLE regex (
-            query TEXT,
-            queried_file TEXT
-        )",
-        [],
-    )?;
-    
-    Ok(conn)
-}
-
-fn write_regex_to_db(conn: &Connection, patterns_file: &str, queried_file: &str) -> SqlResult<()> {
-    let file_content = read_to_string(patterns_file)
-        .map_err(|e| rusqlite::Error::InvalidParameterName(e.to_string()))?;
-
-    if patterns_file.ends_with(".json") {
-        // For JSON files, write the entire content as a single row
-        conn.execute(
-            "INSERT INTO regex (query, queried_file) VALUES (?1, ?2)",
-            [&file_content, queried_file],
-        )?;
-    } else {
-        // For txt files, write one regex per row, but queried_file only in first row
-        let mut first = true;
-        for line in file_content.lines() {
-            if !line.trim().is_empty() {
-                let file_param = if first {
-                    first = false;
-                    queried_file
-                } else {
-                    "" // Empty string for all subsequent rows
-                };
-                
-                conn.execute(
-                    "INSERT INTO regex (query, queried_file) VALUES (?1, ?2)",
-                    [line.trim(), file_param],
-                )?;
-            }
-        }
-    }
-    Ok(())
-}
 
 fn main() {
     // SimpleLogger::init(LevelFilter::Info, Config::default()).unwrap();
     let cli = Cli::parse();
 
     let db_conn = if cli.write_sql {
-        let conn = create_sqlite_db().unwrap();
-        write_regex_to_db(&conn, &cli.patterns, &cli.file).unwrap();
+        let conn = output::create_sqlite_db().unwrap();
+        output::write_regex_to_db(&conn, &cli.patterns, &cli.file).unwrap();
         Some(conn)
     } else {
         None
@@ -237,11 +180,13 @@ fn main() {
                 if *found {
                     if let Some(ref db) = db_conn {
                         db.execute(
-                            "INSERT INTO fastq_data (header, sequence, quality) VALUES (?1, ?2, ?3)",
+                            "INSERT INTO fastq_data (header, sequence, quality, length, GC) VALUES (?1, ?2, ?3, ?4, ?5)",
                             rusqlite::params![
                                 String::from_utf8_lossy(record.head()),
                                 String::from_utf8_lossy(record.seq()),
-                                String::from_utf8_lossy(record.qual())
+                                String::from_utf8_lossy(record.qual()),
+                                record.seq().len() as i64,
+                                quality::gc_content(record.seq())
                             ],
                         ).unwrap();
                     }
