@@ -19,12 +19,74 @@ use clap::Parser;
 use initialise::{create_reader, create_writer, parse_patterns_file};
 use std::io::{self};
 
+use chrono::Local;
+use rusqlite::{Connection, Result as SqlResult};
+use std::fs::read_to_string;
+
 // use log::LevelFilter;
 // use simplelog::{Config, SimpleLogger};
+
+fn create_sqlite_db() -> SqlResult<Connection> {
+    let timestamp = Local::now().format("%Y%m%d_%H%M%S");
+    let db_name = format!("fastq_{}.db", timestamp);
+    let conn = Connection::open(&db_name)?;
+    
+    // Create fastq_data table
+    conn.execute(
+        "CREATE TABLE fastq_data (
+            header TEXT,
+            sequence TEXT,
+            quality TEXT
+        )",
+        [],
+    )?;
+
+    // Create regex table
+    conn.execute(
+        "CREATE TABLE regex (
+            query TEXT
+        )",
+        [],
+    )?;
+    
+    Ok(conn)
+}
+
+fn write_regex_to_db(conn: &Connection, patterns_file: &str) -> SqlResult<()> {
+    let file_content = read_to_string(patterns_file)
+        .map_err(|e| rusqlite::Error::InvalidParameterName(e.to_string()))?;
+
+    if patterns_file.ends_with(".json") {
+        // For JSON files, write the entire content as a single row
+        conn.execute(
+            "INSERT INTO regex (query) VALUES (?1)",
+            [&file_content],
+        )?;
+    } else {
+        // For txt files, write one regex per row
+        for line in file_content.lines() {
+            if !line.trim().is_empty() {
+                conn.execute(
+                    "INSERT INTO regex (query) VALUES (?1)",
+                    [line.trim()],
+                )?;
+            }
+        }
+    }
+    Ok(())
+}
 
 fn main() {
     // SimpleLogger::init(LevelFilter::Info, Config::default()).unwrap();
     let cli = Cli::parse();
+
+    let db_conn = if cli.write_sql {
+        let conn = create_sqlite_db().unwrap();
+        write_regex_to_db(&conn, &cli.patterns).unwrap();
+        Some(conn)
+    } else {
+        None
+    };
 
     // Match the command and execute the corresponding function
     match &cli.command {
@@ -163,8 +225,18 @@ fn main() {
                 }
             },
             |record, found| {
-                // runs in main thread
                 if *found {
+                    if let Some(ref db) = db_conn {
+                        db.execute(
+                            "INSERT INTO fastq_data (header, sequence, quality) VALUES (?1, ?2, ?3)",
+                            rusqlite::params![
+                                String::from_utf8_lossy(record.head()),
+                                String::from_utf8_lossy(record.seq()),
+                                String::from_utf8_lossy(record.qual())
+                            ],
+                        ).unwrap();
+                    }
+                    
                     if let Some(ref mut bucket_writers) = bucket_writers {
                         for (i, pattern) in regex_set.patterns().iter().enumerate() {
                             let regex = Regex::new(pattern).unwrap();
@@ -237,6 +309,11 @@ fn main() {
             },
         )
         .unwrap();
+    }
+    
+    // Ensure proper database cleanup
+    if let Some(conn) = db_conn {
+        conn.close().unwrap();
     }
 }
 

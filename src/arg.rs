@@ -259,6 +259,9 @@ pub struct Cli {
     )]
     pub bucket: bool,
 
+    #[arg(long = "writeSQL", help = "Write matching records to SQLite database")]
+    pub write_sql: bool,
+
     #[arg(help = "Path to the patterns file in plain text or JSON format")]
     pub patterns: String,
 
