@@ -19,14 +19,6 @@ use clap::Parser;
 use initialise::{create_reader, create_writer, parse_patterns_file};
 use std::io::{self};
 
-// Remove these imports as they're no longer needed in main.rs
-// use chrono::Local;
-// use rusqlite::{Connection, Result as SqlResult};
-// use std::fs::read_to_string;
-
-// use log::LevelFilter;
-// use simplelog::{Config, SimpleLogger};
-
 
 fn main() {
     // SimpleLogger::init(LevelFilter::Info, Config::default()).unwrap();
@@ -69,6 +61,10 @@ fn main() {
     ) = parse_patterns_file(&cli.patterns)
         .map_err(|e| io::Error::new(io::ErrorKind::Other, e))
         .unwrap();
+
+    // Store quality encoding for later use
+    let quality_encoding = quality_encoding.as_deref();
+
     assert_eq!(
         regex_set.patterns().len(),
         regex_names.len(),
@@ -106,7 +102,7 @@ fn main() {
                 let qual_check = !check_qual
                     || average_quality(
                         record.qual(),
-                        quality_encoding.as_deref().unwrap_or("Phred+33"),
+                        quality_encoding.unwrap_or("Phred+33"),
                     ) >= minimum_quality.unwrap() as f32;
                 let header_check =
                     !check_header || header_regex.as_ref().unwrap().is_match(record.head());
@@ -166,7 +162,7 @@ fn main() {
                 let qual_check = !check_qual
                     || quality::average_quality(
                         record.qual(),
-                        quality_encoding.as_deref().unwrap_or("Phred+33"),
+                        quality_encoding.unwrap_or("Phred+33"),
                     ) >= minimum_quality.unwrap() as f32;
                 let header_check =
                     !check_header || header_regex.as_ref().unwrap().is_match(record.head());
@@ -179,14 +175,20 @@ fn main() {
             |record, found| {
                 if *found {
                     if let Some(ref db) = db_conn {
+                        // Calculate average quality if we have quality encoding
+                        let avg_quality = quality_encoding.map(|encoding| quality::average_quality(record.qual(), encoding));
+
                         db.execute(
-                            "INSERT INTO fastq_data (header, sequence, quality, length, GC) VALUES (?1, ?2, ?3, ?4, ?5)",
+                            "INSERT INTO fastq_data (header, sequence, quality, length, GC, TNF, average_quality) 
+                             VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)",
                             rusqlite::params![
                                 String::from_utf8_lossy(record.head()),
                                 String::from_utf8_lossy(record.seq()),
                                 String::from_utf8_lossy(record.qual()),
                                 record.seq().len() as i64,
-                                quality::gc_content(record.seq())
+                                quality::gc_content(record.seq()),
+                                quality::tetranucleotide_frequencies(record.seq()),
+                                avg_quality,
                             ],
                         ).unwrap();
                     }

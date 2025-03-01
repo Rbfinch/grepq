@@ -2,6 +2,7 @@
 mod test_module {
     use crate::initialise;
     use crate::quality;
+    use std::collections::HashMap;
     use std::io::Write;
     use tempfile::NamedTempFile;
 
@@ -81,5 +82,22 @@ mod test_module {
         assert_eq!(quality::gc_content(b"ATGC"), 50.0);
         assert_eq!(quality::gc_content(b""), 0.0);
         assert_eq!(quality::gc_content(b"GGCC"), 100.0);
+    }
+
+    #[test]
+    fn test_tetranucleotide_frequencies() {
+        let sequence = b"ATCGATCGATCG";
+        let frequencies = quality::tetranucleotide_frequencies(sequence);
+        let result: HashMap<String, f64> = serde_json::from_str(&frequencies).unwrap();
+
+        // Check if we have the expected tetranucleotides
+        assert!(result.contains_key("ATCG"));
+        assert!(result.contains_key("TCGA"));
+        assert!(result.contains_key("CGAT"));
+        assert!(result.contains_key("GATC"));
+
+        // Check if frequencies sum to approximately 1.0
+        let sum: f64 = result.values().sum();
+        assert!((sum - 1.0).abs() < 1e-10);
     }
 }

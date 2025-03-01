@@ -72,14 +72,16 @@ pub fn create_sqlite_db() -> SqlResult<Connection> {
     let db_name = format!("fastq_{}.db", timestamp);
     let conn = Connection::open(&db_name)?;
 
-    // Create fastq_data table with new GC field
+    // Create fastq_data table with TNF field
     conn.execute(
         "CREATE TABLE fastq_data (
             header TEXT,
             sequence TEXT,
             quality TEXT,
             length INTEGER,
-            GC REAL
+            GC REAL,
+            TNF TEXT,
+            average_quality REAL
         )",
         [],
     )?;
