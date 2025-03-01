@@ -40,17 +40,3 @@ pub fn gc_content(sequence: &[u8]) -> f32 {
 
     (gc_count as f32 / sequence.len() as f32) * 100.0
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_gc_content() {
-        assert_eq!(gc_content(b"GCGC"), 100.0);
-        assert_eq!(gc_content(b"ATAT"), 0.0);
-        assert_eq!(gc_content(b"ATGC"), 50.0);
-        assert_eq!(gc_content(b""), 0.0);
-        assert_eq!(gc_content(b"GGCC"), 100.0);
-    }
-}

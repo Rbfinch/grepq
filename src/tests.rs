@@ -73,4 +73,13 @@ mod test_module {
             .expect("Failed to parse patterns file");
         assert_eq!(result.0.patterns().len(), 30);
     }
+
+    #[test]
+    fn test_gc_content() {
+        assert_eq!(quality::gc_content(b"GCGC"), 100.0);
+        assert_eq!(quality::gc_content(b"ATAT"), 0.0);
+        assert_eq!(quality::gc_content(b"ATGC"), 50.0);
+        assert_eq!(quality::gc_content(b""), 0.0);
+        assert_eq!(quality::gc_content(b"GGCC"), 100.0);
+    }
 }
