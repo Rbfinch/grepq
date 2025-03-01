@@ -1,4 +1,3 @@
-use crate::utils::round_to_4_sig_figs;
 use std::collections::HashMap;
 
 pub fn average_quality(quality: &[u8], quality_encoding: &str) -> f32 {
@@ -20,7 +19,7 @@ pub fn average_quality(quality: &[u8], quality_encoding: &str) -> f32 {
 
     // Calculate and return the average quality score
     if count > 0 {
-        round_to_4_sig_figs(sum as f32 / count as f32)
+        sum as f32 / count as f32
     } else {
         0.0
     }
@@ -53,7 +52,7 @@ pub fn gc_content(sequence: &[u8]) -> f32 {
     if unambiguous_count == 0 {
         0.0
     } else {
-        round_to_4_sig_figs((gc_count as f32 / unambiguous_count as f32) * 100.0)
+        (gc_count as f32 / unambiguous_count as f32) * 100.0
     }
 }
 
@@ -98,13 +97,11 @@ pub fn tetranucleotide_frequencies(sequence: &[u8]) -> (String, usize) {
     let total_count: f32 = tetra_counts.values().sum::<usize>() as f32;
 
     // Create a map with frequencies as percentages with 5 significant digits
-    let frequencies: HashMap<String, f32> = tetra_counts
-        .into_iter()
-        .map(|(tetra, count)| {
-            let percentage = (count as f32 / total_count) * 100.0;
-            (tetra, round_to_4_sig_figs(percentage))
-        })
-        .collect();
+    let mut frequencies: HashMap<String, f32> = HashMap::new();
+    for (tetra, count) in tetra_counts {
+        let percentage = (count as f32 / total_count) * 100.0;
+        frequencies.insert(tetra, percentage);
+    }
 
     // Convert to JSON string
     (

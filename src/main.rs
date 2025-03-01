@@ -15,7 +15,6 @@ mod output;
 mod quality;
 mod summarise;
 mod tune;
-mod utils;
 use clap::Parser;
 use initialise::{create_reader, create_writer, parse_patterns_file};
 use std::io::{self};
@@ -176,7 +175,6 @@ fn main() {
             |record, found| {
                 if *found {
                     if let Some(ref db) = db_conn {
-                        // Use utils::round_to_4_sig_figs directly for consistent rounding
                         let avg_quality = quality_encoding
                             .map(|encoding| quality::average_quality(record.qual(), encoding))
                             .unwrap_or(0.0);
@@ -184,20 +182,20 @@ fn main() {
                         let gc = quality::gc_content(record.seq());
                         let gc_int = gc.round() as i64;
 
-                        // Simple INSERT statement without any complex SQL functions
+                        // Use SQLite's ROUND function to round GC and average_quality
                         db.execute(
                             "INSERT INTO fastq_data (header, sequence, quality, length, GC, GC_int, nTN, TNF, average_quality) 
-                             VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9)",
+                             VALUES (?1, ?2, ?3, ?4, ROUND(?5, 2), ?6, ?7, ?8, ROUND(?9, 2))",
                             rusqlite::params![
                                 String::from_utf8_lossy(record.head()),
                                 String::from_utf8_lossy(record.seq()),
                                 String::from_utf8_lossy(record.qual()),
                                 record.seq().len() as i64,
-                                gc,  // already rounded by quality::gc_content
+                                gc,
                                 gc_int,
                                 ntn as i64,
                                 tnf,
-                                avg_quality,  // already rounded by quality::average_quality
+                                avg_quality,
                             ],
                         ).unwrap();
                     }
