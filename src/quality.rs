@@ -1,7 +1,5 @@
+use crate::utils::round_to_4_sig_figs;
 use std::collections::HashMap;
-
-// Calculate average quality of a sequence; supports Phred+33 and
-// Phred+64 encodings.
 
 pub fn average_quality(quality: &[u8], quality_encoding: &str) -> f32 {
     // Determine the offset based on the quality encoding
@@ -22,53 +20,95 @@ pub fn average_quality(quality: &[u8], quality_encoding: &str) -> f32 {
 
     // Calculate and return the average quality score
     if count > 0 {
-        sum as f32 / count as f32
+        round_to_4_sig_figs(sum as f32 / count as f32)
     } else {
         0.0
     }
 }
 
 /// Calculate GC content percentage of a DNA sequence
+/// Only considers unambiguous bases (ACTG) in both count and total length
 #[inline(always)]
 pub fn gc_content(sequence: &[u8]) -> f32 {
     if sequence.is_empty() {
         return 0.0;
     }
 
-    let gc_count = sequence
-        .iter()
-        .filter(|&&base| base == b'G' || base == b'C')
-        .count();
+    let mut gc_count = 0;
+    let mut unambiguous_count = 0;
 
-    (gc_count as f32 / sequence.len() as f32) * 100.0
+    for &base in sequence {
+        match base {
+            b'G' | b'C' => {
+                gc_count += 1;
+                unambiguous_count += 1;
+            }
+            b'A' | b'T' => {
+                unambiguous_count += 1;
+            }
+            _ => {} // Skip ambiguous bases
+        }
+    }
+
+    if unambiguous_count == 0 {
+        0.0
+    } else {
+        round_to_4_sig_figs((gc_count as f32 / unambiguous_count as f32) * 100.0)
+    }
 }
 
 /// Calculate relative frequencies of tetranucleotides in a DNA sequence
-/// Returns a JSON string containing tetranucleotide counts and their relative frequencies
-pub fn tetranucleotide_frequencies(sequence: &[u8]) -> String {
+/// Returns a tuple containing:
+/// - JSON string of tetranucleotide frequencies
+/// - Count of unique tetranucleotides
+///
+/// Only considers unambiguous bases (ACTG)
+///
+pub fn tetranucleotide_frequencies(sequence: &[u8]) -> (String, usize) {
     let mut tetra_counts: HashMap<String, usize> = HashMap::new();
 
     // Need at least 4 nucleotides to form a tetranucleotide
     if sequence.len() < 4 {
-        return "{}".to_string();
+        return ("{}".to_string(), 0);
     }
 
     // Count tetranucleotides using a sliding window
     for window in sequence.windows(4) {
-        if let Ok(tetra) = std::str::from_utf8(window) {
-            *tetra_counts.entry(tetra.to_string()).or_insert(0) += 1;
+        // Check if window contains only unambiguous bases (ACTG)
+        let is_unambiguous = window
+            .iter()
+            .all(|&base| matches!(base, b'A' | b'C' | b'T' | b'G'));
+
+        if is_unambiguous {
+            if let Ok(tetra) = std::str::from_utf8(window) {
+                *tetra_counts.entry(tetra.to_string()).or_insert(0) += 1;
+            }
         }
     }
 
-    // Calculate total count for relative frequency calculation
-    let total_count: f64 = tetra_counts.values().sum::<usize>() as f64;
+    // Get number of unique tetranucleotides
+    let unique_count = tetra_counts.len();
 
-    // Create a map with frequencies
-    let frequencies: HashMap<String, f64> = tetra_counts
+    // If no valid tetranucleotides found, return empty result
+    if unique_count == 0 {
+        return ("{}".to_string(), 0);
+    }
+
+    // Calculate total count for relative frequency calculation
+    let total_count: f32 = tetra_counts.values().sum::<usize>() as f32;
+
+    // Create a map with frequencies as percentages with 5 significant digits
+    let frequencies: HashMap<String, f32> = tetra_counts
         .into_iter()
-        .map(|(tetra, count)| (tetra, count as f64 / total_count))
+        .map(|(tetra, count)| {
+            let percentage = (count as f32 / total_count) * 100.0;
+            (tetra, round_to_4_sig_figs(percentage))
+        })
         .collect();
 
     // Convert to JSON string
-    serde_json::to_string(&frequencies).unwrap_or_else(|_| "{}".to_string())
+    (
+        serde_json::to_string(&frequencies).unwrap_or_else(|_| "{}".to_string()),
+        unique_count,
+    )
 }

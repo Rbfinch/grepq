@@ -50,7 +50,7 @@ pub fn run_tune(cli: &Cli, num_matches: usize, include_count: bool) -> io::Resul
             quality::average_quality(
                 record.qual(),
                 quality_encoding.as_deref().unwrap_or("Phred+33"),
-            ) >= min_q as f32
+            ) >= min_q
         });
 
         // If all checks pass, match the sequence against the regex set

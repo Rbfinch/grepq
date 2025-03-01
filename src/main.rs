@@ -15,6 +15,7 @@ mod output;
 mod quality;
 mod summarise;
 mod tune;
+mod utils;
 use clap::Parser;
 use initialise::{create_reader, create_writer, parse_patterns_file};
 use std::io::{self};
@@ -103,7 +104,7 @@ fn main() {
                     || average_quality(
                         record.qual(),
                         quality_encoding.unwrap_or("Phred+33"),
-                    ) >= minimum_quality.unwrap() as f32;
+                    ) >= minimum_quality.unwrap();
                 let header_check =
                     !check_header || header_regex.as_ref().unwrap().is_match(record.head());
                 let regex_check = regex_set.is_match(record.seq());
@@ -163,7 +164,7 @@ fn main() {
                     || quality::average_quality(
                         record.qual(),
                         quality_encoding.unwrap_or("Phred+33"),
-                    ) >= minimum_quality.unwrap() as f32;
+                    ) >= minimum_quality.unwrap();
                 let header_check =
                     !check_header || header_regex.as_ref().unwrap().is_match(record.head());
                 let regex_check = regex_set.is_match(record.seq());
@@ -175,20 +176,28 @@ fn main() {
             |record, found| {
                 if *found {
                     if let Some(ref db) = db_conn {
-                        // Calculate average quality if we have quality encoding
-                        let avg_quality = quality_encoding.map(|encoding| quality::average_quality(record.qual(), encoding));
+                        // Use utils::round_to_4_sig_figs directly for consistent rounding
+                        let avg_quality = quality_encoding
+                            .map(|encoding| quality::average_quality(record.qual(), encoding))
+                            .unwrap_or(0.0);
+                        let (tnf, ntn) = quality::tetranucleotide_frequencies(record.seq());
+                        let gc = quality::gc_content(record.seq());
+                        let gc_int = gc.round() as i64;
 
+                        // Simple INSERT statement without any complex SQL functions
                         db.execute(
-                            "INSERT INTO fastq_data (header, sequence, quality, length, GC, TNF, average_quality) 
-                             VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)",
+                            "INSERT INTO fastq_data (header, sequence, quality, length, GC, GC_int, nTN, TNF, average_quality) 
+                             VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9)",
                             rusqlite::params![
                                 String::from_utf8_lossy(record.head()),
                                 String::from_utf8_lossy(record.seq()),
                                 String::from_utf8_lossy(record.qual()),
                                 record.seq().len() as i64,
-                                quality::gc_content(record.seq()),
-                                quality::tetranucleotide_frequencies(record.seq()),
-                                avg_quality,
+                                gc,  // already rounded by quality::gc_content
+                                gc_int,
+                                ntn as i64,
+                                tnf,
+                                avg_quality,  // already rounded by quality::average_quality
                             ],
                         ).unwrap();
                     }

@@ -77,24 +77,59 @@ mod test_module {
 
     #[test]
     fn test_gc_content() {
+        // Regular sequences
         assert_eq!(quality::gc_content(b"GCGC"), 100.0);
         assert_eq!(quality::gc_content(b"ATAT"), 0.0);
         assert_eq!(quality::gc_content(b"ATGC"), 50.0);
         assert_eq!(quality::gc_content(b""), 0.0);
         assert_eq!(quality::gc_content(b"GGCC"), 100.0);
+
+        // Sequences with ambiguous bases
+        assert_eq!(quality::gc_content(b"GCNNGC"), 100.0); // Only GC bases counted
+        assert_eq!(quality::gc_content(b"GCNNNN"), 100.0); // Only GC bases counted
+        assert_eq!(quality::gc_content(b"ATNNNN"), 0.0); // Only AT bases counted
+        assert_eq!(quality::gc_content(b"NNNNN"), 0.0); // No valid bases
+        assert_eq!(quality::gc_content(b"GCRYSW"), 50.0); // Only unambiguous G,C counted
     }
 
     #[test]
     fn test_tetranucleotide_frequencies() {
+        // Regular sequence
         let sequence = b"ATCGATCGATCG";
-        let frequencies = quality::tetranucleotide_frequencies(sequence);
+        let (frequencies, unique_count) = quality::tetranucleotide_frequencies(sequence);
         let result: HashMap<String, f64> = serde_json::from_str(&frequencies).unwrap();
 
-        // Check if we have the expected tetranucleotides
         assert!(result.contains_key("ATCG"));
         assert!(result.contains_key("TCGA"));
         assert!(result.contains_key("CGAT"));
         assert!(result.contains_key("GATC"));
+        assert_eq!(unique_count, 4);
+
+        // Check if frequencies sum to approximately 100.0
+        let sum: f64 = result.values().sum();
+        assert!((sum - 100.0).abs() < 1e-10);
+
+        // Check if values are properly rounded to 5 significant digits
+        for value in result.values() {
+            let rounded_check = (value * 100000.0).round() / 100000.0;
+            assert_eq!(value, &rounded_check);
+        }
+
+        // Sequence with ambiguous bases
+        let ambiguous = b"ATCGNATCGATCG";
+        let (freq_amb, _count_amb) = quality::tetranucleotide_frequencies(ambiguous);
+        let result_amb: HashMap<String, f64> = serde_json::from_str(&freq_amb).unwrap();
+
+        // Should skip the tetranucleotide containing 'N'
+        assert!(!result_amb.contains_key("ATCG"));
+        assert!(result_amb.contains_key("GATC"));
+        assert!(result_amb.len() < 5); // Should have fewer tetranucleotides due to N
+
+        // Sequence with all ambiguous bases
+        let all_ambiguous = b"NNNNNNNN";
+        let (freq_all_amb, count_all_amb) = quality::tetranucleotide_frequencies(all_ambiguous);
+        assert_eq!(freq_all_amb, "{}");
+        assert_eq!(count_all_amb, 0);
 
         // Check if frequencies sum to approximately 1.0
         let sum: f64 = result.values().sum();

@@ -45,7 +45,7 @@ pub fn run_inverted(cli: &Cli) {
                     || crate::quality::average_quality(
                         record.qual(),
                         quality_encoding.as_deref().unwrap_or("Phred+33"),
-                    ) >= minimum_quality.unwrap() as f32;
+                    ) >= minimum_quality.unwrap();
                 let header_check =
                     !check_header || header_regex.as_ref().unwrap().is_match(record.head());
                 let regex_check = !regex_set.is_match(record.seq());
@@ -78,7 +78,7 @@ pub fn run_inverted(cli: &Cli) {
                     || crate::quality::average_quality(
                         record.qual(),
                         quality_encoding.as_deref().unwrap_or("Phred+33"),
-                    ) >= minimum_quality.unwrap() as f32;
+                    ) >= minimum_quality.unwrap();
                 let header_check =
                     !check_header || header_regex.as_ref().unwrap().is_match(record.head());
                 let regex_check = !regex_set.is_match(record.seq());
