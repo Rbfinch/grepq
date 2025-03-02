@@ -109,8 +109,6 @@ mod test_module {
         let result_amb: Vec<Value> = serde_json::from_str(&freq_amb).unwrap();
 
         // Should skip the tetranucleotide containing 'N'
-        //assert!(!result_amb.contains_key("ATCG"));
-        //assert!(result_amb.contains_key("GATC"));
         assert!(result_amb.len() < 5); // Should have fewer tetranucleotides due to N
 
         // Sequence with all ambiguous bases
