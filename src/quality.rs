@@ -1,3 +1,4 @@
+use serde::Serialize;
 use std::collections::HashMap;
 
 pub fn average_quality(quality: &[u8], quality_encoding: &str) -> f32 {
@@ -64,6 +65,12 @@ fn round_to_4_sig_figs(value: f32) -> f32 {
     (value * scale).round() / scale
 }
 
+#[derive(Serialize)]
+struct TetraFrequency {
+    tetra: String,
+    percentage: f32,
+}
+
 /// Calculate relative frequencies of tetranucleotides in a DNA sequence
 /// Returns a tuple containing:
 /// - JSON string of tetranucleotide frequencies
@@ -104,14 +111,19 @@ pub fn tetranucleotide_frequencies(sequence: &[u8]) -> (String, usize) {
     // Calculate total count for relative frequency calculation
     let total_count: f32 = tetra_counts.values().sum::<usize>() as f32;
 
-    // Create a map with frequencies as percentages with 5 significant digits
-    let frequencies: HashMap<String, f32> = tetra_counts
+    // Create a vector of TetraFrequency structs, sorted by frequency
+    let mut frequencies: Vec<TetraFrequency> = tetra_counts
         .into_iter()
         .map(|(tetra, count)| {
             let percentage = (count as f32 / total_count) * 100.0;
-            (tetra, round_to_4_sig_figs(percentage))
+            TetraFrequency {
+                tetra,
+                percentage: round_to_4_sig_figs(percentage),
+            }
         })
         .collect();
+
+    frequencies.sort_by(|a, b| b.percentage.partial_cmp(&a.percentage).unwrap());
 
     // Convert to JSON string
     (
