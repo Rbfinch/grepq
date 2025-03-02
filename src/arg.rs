@@ -207,7 +207,8 @@ pub struct Cli {
     #[arg(
         short = 'R',
         long = "includeRecord",
-        help = "Include record ID, sequence, separator, and quality field in the output (i.e. FASTQ format)"
+        help = "Include record ID, sequence, separator, and quality field in the
+output (i.e. FASTQ format)"
     )]
     pub with_full_record: bool,
 
@@ -259,13 +260,22 @@ pub struct Cli {
     )]
     pub bucket: bool,
 
-    #[arg(long = "writeSQL", help = "Write matching records to SQLite database")]
+    #[arg(
+        long = "writeSQL",
+        help = "Write matching records to SQLite database, along with length
+of the sequence field (length), percent GC content (GC), percent GC content as
+an integer (GC_int), number of unique tetranucleotides in the sequence (nTN),
+percent tetranucleotide frequency within the sequence (TNF), and average quality 
+score for the sequence field (average_quality)"
+    )]
     pub write_sql: bool,
 
     #[arg(
         short = 'N',
         long = "num-tetranucleotides",
-        help = "Limit the number of tetranucleotides written to the TNF field of the fastq_data SQLite table",
+        help = "Limit the number of tetranucleotides written to the TNF field of
+the fastq_data SQLite table, these being the most or equal most frequent
+tetranucleotides in the sequence field of the matched FASTQ records",
         requires = "write_sql"
     )]
     pub num_tetranucleotides: Option<usize>,
@@ -286,7 +296,8 @@ pub enum Commands {
     Tune(Tune),
     #[command(about = "Print records where none of the regex patterns are found")]
     Inverted,
-    #[command(about = "Summarise records matching regex patterns and variants in the FASTQ file")]
+    #[command(about = "Summarise records matching regex patterns and variants in
+the FASTQ file")]
     Summarise(Summarise),
 }
 

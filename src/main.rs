@@ -24,7 +24,16 @@ fn main() {
     let cli = Cli::parse();
 
     let db_conn = if cli.write_sql {
-        let conn = output::create_sqlite_db().unwrap();
+        let conn = if cli.patterns.ends_with(".json") {
+            let pattern_data: serde_json::Value = serde_json::from_str(&std::fs::read_to_string(&cli.patterns).unwrap()).unwrap();
+            if pattern_data["regexSet"]["qualityEncoding"].is_null() {
+                output::create_sqlite_db().unwrap()
+            } else {
+                output::create_sqlite_db_with_quality().unwrap()
+            }
+        } else {
+            output::create_sqlite_db().unwrap()
+        };
         output::write_regex_to_db(&conn, &cli.patterns, &cli.file).unwrap();
         Some(conn)
     } else {
@@ -60,6 +69,9 @@ fn main() {
     ) = parse_patterns_file(&cli.patterns)
         .map_err(|e| Error::new(ErrorKind::Other, e))
         .unwrap();
+
+    // Determine if the pattern file is a text file
+    let is_text_file = cli.patterns.ends_with(".txt");
 
     // Store quality encoding for later use
     let quality_encoding = quality_encoding.as_deref();
@@ -182,21 +194,38 @@ fn main() {
                         let gc_int = gc.round() as i64;
 
                         // Use SQLite's ROUND function to round GC and average_quality
-                        db.execute(
-                            "INSERT INTO fastq_data (header, sequence, quality, length, GC, GC_int, nTN, TNF, average_quality) 
-                             VALUES (?1, ?2, ?3, ?4, ROUND(?5, 2), ?6, ?7, ?8, ROUND(?9, 2))",
-                            rusqlite::params![
-                                String::from_utf8_lossy(record.head()),
-                                String::from_utf8_lossy(record.seq()),
-                                String::from_utf8_lossy(record.qual()),
-                                record.seq().len() as i64,
-                                gc,
-                                gc_int,
-                                ntn as i64,
-                                tnf,
-                                avg_quality,
-                            ],
-                        ).unwrap();
+                        if quality_encoding.is_some() && !is_text_file {
+                            db.execute(
+                                "INSERT INTO fastq_data (header, sequence, quality, length, GC, GC_int, nTN, TNF, average_quality) 
+                                 VALUES (?1, ?2, ?3, ?4, ROUND(?5, 2), ?6, ?7, ?8, ROUND(?9, 2))",
+                                rusqlite::params![
+                                    String::from_utf8_lossy(record.head()),
+                                    String::from_utf8_lossy(record.seq()),
+                                    String::from_utf8_lossy(record.qual()),
+                                    record.seq().len() as i64,
+                                    gc,
+                                    gc_int,
+                                    ntn as i64,
+                                    tnf,
+                                    avg_quality,
+                                ],
+                            ).unwrap();
+                        } else {
+                            db.execute(
+                                "INSERT INTO fastq_data (header, sequence, quality, length, GC, GC_int, nTN, TNF) 
+                                 VALUES (?1, ?2, ?3, ?4, ROUND(?5, 2), ?6, ?7, ?8)",
+                                rusqlite::params![
+                                    String::from_utf8_lossy(record.head()),
+                                    String::from_utf8_lossy(record.seq()),
+                                    String::from_utf8_lossy(record.qual()),
+                                    record.seq().len() as i64,
+                                    gc,
+                                    gc_int,
+                                    ntn as i64,
+                                    tnf,
+                                ],
+                            ).unwrap();
+                        }
                     }
                     
                     if let Some(ref mut bucket_writers) = bucket_writers {

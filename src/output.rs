@@ -72,7 +72,39 @@ pub fn create_sqlite_db() -> SqlResult<Connection> {
     let db_name = format!("fastq_{}.db", timestamp);
     let conn = Connection::open(&db_name)?;
 
-    // Create fastq_data table with TNF field - use REAL instead of NUMERIC which is causing issues
+    // Create fastq_data table with conditional average_quality field
+    conn.execute(
+        "CREATE TABLE fastq_data (
+            header TEXT,
+            sequence TEXT,
+            quality TEXT,
+            length INTEGER,
+            GC REAL,
+            GC_int INTEGER,
+            nTN INTEGER,
+            TNF TEXT
+        )",
+        [],
+    )?;
+
+    // Create regex table with queried_file column
+    conn.execute(
+        "CREATE TABLE regex (
+            query TEXT,
+            queried_file TEXT
+        )",
+        [],
+    )?;
+
+    Ok(conn)
+}
+
+pub fn create_sqlite_db_with_quality() -> SqlResult<Connection> {
+    let timestamp = chrono::Local::now().format("%Y%m%d_%H%M%S");
+    let db_name = format!("fastq_{}.db", timestamp);
+    let conn = Connection::open(&db_name)?;
+
+    // Create fastq_data table with average_quality field
     conn.execute(
         "CREATE TABLE fastq_data (
             header TEXT,
