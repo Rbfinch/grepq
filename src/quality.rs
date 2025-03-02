@@ -56,6 +56,14 @@ pub fn gc_content(sequence: &[u8]) -> f32 {
     }
 }
 
+fn round_to_4_sig_figs(value: f32) -> f32 {
+    if value == 0.0 {
+        return 0.0;
+    }
+    let scale = 10.0_f32.powf(4.0 - value.abs().log10().floor());
+    (value * scale).round() / scale
+}
+
 /// Calculate relative frequencies of tetranucleotides in a DNA sequence
 /// Returns a tuple containing:
 /// - JSON string of tetranucleotide frequencies
@@ -97,11 +105,13 @@ pub fn tetranucleotide_frequencies(sequence: &[u8]) -> (String, usize) {
     let total_count: f32 = tetra_counts.values().sum::<usize>() as f32;
 
     // Create a map with frequencies as percentages with 5 significant digits
-    let mut frequencies: HashMap<String, f32> = HashMap::new();
-    for (tetra, count) in tetra_counts {
-        let percentage = (count as f32 / total_count) * 100.0;
-        frequencies.insert(tetra, percentage);
-    }
+    let frequencies: HashMap<String, f32> = tetra_counts
+        .into_iter()
+        .map(|(tetra, count)| {
+            let percentage = (count as f32 / total_count) * 100.0;
+            (tetra, round_to_4_sig_figs(percentage))
+        })
+        .collect();
 
     // Convert to JSON string
     (
