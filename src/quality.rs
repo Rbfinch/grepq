@@ -78,7 +78,7 @@ struct TetraFrequency {
 ///
 /// Only considers unambiguous bases (ACTG)
 ///
-pub fn tetranucleotide_frequencies(sequence: &[u8]) -> (String, usize) {
+pub fn tetranucleotide_frequencies(sequence: &[u8], limit: Option<usize>) -> (String, usize) {
     let mut tetra_counts: HashMap<String, usize> = HashMap::new();
 
     // Need at least 4 nucleotides to form a tetranucleotide
@@ -124,6 +124,11 @@ pub fn tetranucleotide_frequencies(sequence: &[u8]) -> (String, usize) {
         .collect();
 
     frequencies.sort_by(|a, b| b.percentage.partial_cmp(&a.percentage).unwrap());
+
+    // Apply the limit if provided
+    if let Some(limit) = limit {
+        frequencies.truncate(limit);
+    }
 
     // Convert to JSON string
     (

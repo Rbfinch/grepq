@@ -90,7 +90,7 @@ mod test_module {
     fn test_tetranucleotide_frequencies() {
         // Regular sequence
         let sequence = b"ATCGATCGATCG";
-        let (frequencies, unique_count) = quality::tetranucleotide_frequencies(sequence);
+        let (frequencies, unique_count) = quality::tetranucleotide_frequencies(sequence, Some(4));
         let result: Vec<Value> = serde_json::from_str(&frequencies).unwrap();
 
         assert_eq!(unique_count, 4);
@@ -105,7 +105,7 @@ mod test_module {
 
         // Sequence with ambiguous bases
         let ambiguous = b"ATCGNATCGATCG";
-        let (freq_amb, _count_amb) = quality::tetranucleotide_frequencies(ambiguous);
+        let (freq_amb, _count_amb) = quality::tetranucleotide_frequencies(ambiguous, Some(4));
         let result_amb: Vec<Value> = serde_json::from_str(&freq_amb).unwrap();
 
         // Should skip the tetranucleotide containing 'N'
@@ -113,7 +113,8 @@ mod test_module {
 
         // Sequence with all ambiguous bases
         let all_ambiguous = b"NNNNNNNN";
-        let (freq_all_amb, count_all_amb) = quality::tetranucleotide_frequencies(all_ambiguous);
+        let (freq_all_amb, count_all_amb) =
+            quality::tetranucleotide_frequencies(all_ambiguous, Some(4));
         assert_eq!(freq_all_amb, "[]");
         assert_eq!(count_all_amb, 0);
     }

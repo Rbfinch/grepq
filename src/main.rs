@@ -17,8 +17,7 @@ mod summarise;
 mod tune;
 use clap::Parser;
 use initialise::{create_reader, create_writer, parse_patterns_file};
-use std::io::{self};
-
+use std::io::{Error, ErrorKind};
 
 fn main() {
     // SimpleLogger::init(LevelFilter::Info, Config::default()).unwrap();
@@ -59,7 +58,7 @@ fn main() {
         regex_names,
         _,
     ) = parse_patterns_file(&cli.patterns)
-        .map_err(|e| io::Error::new(io::ErrorKind::Other, e))
+        .map_err(|e| Error::new(ErrorKind::Other, e))
         .unwrap();
 
     // Store quality encoding for later use
@@ -70,7 +69,7 @@ fn main() {
         regex_names.len(),
         "The number of regex patterns and regex names must match."
     );
-    let header_regex = header_regex.map(|re| Regex::new(&re).unwrap());
+    let header_regex = header_regex.map(|re: String| Regex::new(&re).unwrap());
     let reader = create_reader(&cli);
     let mut writer = create_writer(&cli);
 
@@ -144,7 +143,7 @@ fn main() {
                         let file = std::fs::File::create(file_name).unwrap();
                         (name.clone(), std::io::BufWriter::new(file))
                     })
-                    .collect::<std::collections::HashMap<_, _>>(),
+                    .collect::<std::collections::HashMap<String, std::io::BufWriter<std::fs::File>>>(),
             )
         } else {
             None
@@ -178,7 +177,7 @@ fn main() {
                         let avg_quality = quality_encoding
                             .map(|encoding| quality::average_quality(record.qual(), encoding))
                             .unwrap_or(0.0);
-                        let (tnf, ntn) = quality::tetranucleotide_frequencies(record.seq());
+                        let (tnf, ntn) = quality::tetranucleotide_frequencies(record.seq(), cli.num_tetranucleotides);
                         let gc = quality::gc_content(record.seq());
                         let gc_int = gc.round() as i64;
 

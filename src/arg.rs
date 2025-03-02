@@ -262,6 +262,14 @@ pub struct Cli {
     #[arg(long = "writeSQL", help = "Write matching records to SQLite database")]
     pub write_sql: bool,
 
+    #[arg(
+        short = 'N',
+        long = "num-tetranucleotides",
+        help = "Limit the number of tetranucleotides written to the TNF field of the fastq_data SQLite table",
+        requires = "write_sql"
+    )]
+    pub num_tetranucleotides: Option<usize>,
+
     #[arg(help = "Path to the patterns file in plain text or JSON format")]
     pub patterns: String,
 
