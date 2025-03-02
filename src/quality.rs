@@ -35,25 +35,25 @@ pub fn gc_content(sequence: &[u8]) -> f32 {
     }
 
     let mut gc_count = 0;
-    let mut unambiguous_count = 0;
+    let mut valid_base_count = 0;
 
     for &base in sequence {
         match base {
             b'G' | b'C' => {
                 gc_count += 1;
-                unambiguous_count += 1;
+                valid_base_count += 1;
             }
             b'A' | b'T' => {
-                unambiguous_count += 1;
+                valid_base_count += 1;
             }
             _ => {} // Skip ambiguous bases
         }
     }
 
-    if unambiguous_count == 0 {
+    if valid_base_count == 0 {
         0.0
     } else {
-        (gc_count as f32 / unambiguous_count as f32) * 100.0
+        (gc_count as f32 / valid_base_count as f32) * 100.0
     }
 }
 
@@ -83,7 +83,7 @@ pub fn tetranucleotide_frequencies(sequence: &[u8]) -> (String, usize) {
 
     // Need at least 4 nucleotides to form a tetranucleotide
     if sequence.len() < 4 {
-        return ("{}".to_string(), 0);
+        return ("[]".to_string(), 0);
     }
 
     // Count tetranucleotides using a sliding window
@@ -105,7 +105,7 @@ pub fn tetranucleotide_frequencies(sequence: &[u8]) -> (String, usize) {
 
     // If no valid tetranucleotides found, return empty result
     if unique_count == 0 {
-        return ("{}".to_string(), 0);
+        return ("[]".to_string(), 0);
     }
 
     // Calculate total count for relative frequency calculation
@@ -127,7 +127,7 @@ pub fn tetranucleotide_frequencies(sequence: &[u8]) -> (String, usize) {
 
     // Convert to JSON string
     (
-        serde_json::to_string(&frequencies).unwrap_or_else(|_| "{}".to_string()),
+        serde_json::to_string(&frequencies).unwrap_or_else(|_| "[]".to_string()),
         unique_count,
     )
 }
