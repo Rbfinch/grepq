@@ -3,6 +3,12 @@ TBD
 
 Unreleased changes. Release notes have not yet been written.
 
+1.4.9
+=====
+
+**added `writeSQL` command
+** corresponding updates to documentation
+
 1.4.8
 =====
 
