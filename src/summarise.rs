@@ -87,45 +87,49 @@ pub fn run_summarise(cli: &Cli, include_count: bool) -> io::Result<()> {
                     .entry(String::from_utf8_lossy(matched_substring).to_string())
                     .or_insert(0) += 1;
 
-                // Collect match information
-                matches_info.push(json!({
-                    "pattern": matched_pattern,
-                    "start": matched.start(),
-                    "end": matched.end(),
-                    "match": String::from_utf8_lossy(matched_substring).to_string()
-                }));
+                if cli.write_sql {
+                    // Collect match information
+                    matches_info.push(json!({
+                        "pattern": matched_pattern,
+                        "start": matched.start(),
+                        "end": matched.end(),
+                        "match": String::from_utf8_lossy(matched_substring).to_string()
+                    }));
+                }
             }
 
-            // Calculate additional metrics
-            let avg_quality = quality_encoding
-                .as_ref()
-                .map(|encoding| quality::average_quality(record.qual(), encoding.as_str()))
-                .unwrap_or(0.0);
-            let (tnf, ntn) =
-                quality::tetranucleotide_frequencies(record.seq(), cli.num_tetranucleotides);
-            let gc = quality::gc_content(record.seq());
-            let gc_int = gc.round() as i64;
+            if cli.write_sql {
+                // Calculate additional metrics
+                let avg_quality = quality_encoding
+                    .as_ref()
+                    .map(|encoding| quality::average_quality(record.qual(), encoding.as_str()))
+                    .unwrap_or(0.0);
+                let (tnf, ntn) =
+                    quality::tetranucleotide_frequencies(record.seq(), cli.num_tetranucleotides);
+                let gc = quality::gc_content(record.seq());
+                let gc_int = gc.round() as i64;
 
-            // Write matches_info to the database
-            if let Some(ref db) = db_conn {
-                let matches_json =
-                    serde_json::to_string(&matches_info).unwrap_or_else(|_| "[]".to_string());
-                db.execute(
-                    "INSERT INTO fastq_data (header, sequence, quality, length, GC, GC_int, nTN, TNF, average_quality, variants) 
-                     VALUES (?1, ?2, ?3, ?4, ROUND(?5, 2), ?6, ?7, ?8, ROUND(?9, 2), ?10)",
-                    rusqlite::params![
-                        String::from_utf8_lossy(record.head()),
-                        String::from_utf8_lossy(record.seq()),
-                        String::from_utf8_lossy(record.qual()),
-                        record.seq().len() as i64,
-                        gc,
-                        gc_int,
-                        ntn as i64,
-                        tnf,
-                        avg_quality,
-                        matches_json,
-                    ],
-                ).unwrap();
+                // Write matches_info to the database
+                if let Some(ref db) = db_conn {
+                    let matches_json =
+                        serde_json::to_string(&matches_info).unwrap_or_else(|_| "[]".to_string());
+                    db.execute(
+                        "INSERT INTO fastq_data (header, sequence, quality, length, GC, GC_int, nTN, TNF, average_quality, variants) 
+                         VALUES (?1, ?2, ?3, ?4, ROUND(?5, 2), ?6, ?7, ?8, ROUND(?9, 2), ?10)",
+                        rusqlite::params![
+                            String::from_utf8_lossy(record.head()),
+                            String::from_utf8_lossy(record.seq()),
+                            String::from_utf8_lossy(record.qual()),
+                            record.seq().len() as i64,
+                            gc,
+                            gc_int,
+                            ntn as i64,
+                            tnf,
+                            avg_quality,
+                            matches_json,
+                        ],
+                    ).unwrap();
+                }
             }
         }
     }
