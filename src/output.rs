@@ -87,9 +87,9 @@ pub fn create_sqlite_db() -> SqlResult<Connection> {
         [],
     )?;
 
-    // Create regex table with queried_file column
+    // Create query table with queried_file column
     conn.execute(
-        "CREATE TABLE regex (
+        "CREATE TABLE query (
             query TEXT,
             queried_file TEXT
         )",
@@ -123,7 +123,7 @@ pub fn create_sqlite_db_with_quality() -> SqlResult<Connection> {
 
     // Create regex table with queried_file column
     conn.execute(
-        "CREATE TABLE regex (
+        "CREATE TABLE query (
             query TEXT,
             queried_file TEXT
         )",
@@ -144,7 +144,7 @@ pub fn write_regex_to_db(
     if patterns_file.ends_with(".json") {
         // For JSON files, write the entire content as a single row
         conn.execute(
-            "INSERT INTO regex (query, queried_file) VALUES (?1, ?2)",
+            "INSERT INTO query (query, queried_file) VALUES (?1, ?2)",
             [&file_content, queried_file],
         )?;
     } else {
@@ -160,7 +160,7 @@ pub fn write_regex_to_db(
                 };
 
                 conn.execute(
-                    "INSERT INTO regex (query, queried_file) VALUES (?1, ?2)",
+                    "INSERT INTO query (query, queried_file) VALUES (?1, ?2)",
                     [line.trim(), file_param],
                 )?;
             }

@@ -31,7 +31,7 @@ This README contains documentation for the latest version of `grepq`. If you are
 - use **predicates** to filter on the header field (= record ID line) using a regex, minimum sequence length, and minimum average quality score (supports Phred+33 and Phred+64)
 - does not match false positives
 - output matched sequences to one of four formats
-- optionally output matched sequences to a **SQLite** database file, including GC content and tetranucleotide frequencies, allowing for further analysis
+- optionally output matched sequences to a **SQLite** database file, including GC content, tetranucleotide frequencies, and regex pattern matches and their position(s) in each matched FASTQ sequence, allowing for further analysis
 - tune your pattern file and **enumerate named and unnamed variants** with the `tune` command (use the `summarise` command to process all FASTQ records)
 - **bucket matching sequences** to separate files named after each regexName with the `--bucket` flag, in any of the four output formats
 - supports inverted matching with the `inverted` command
@@ -98,9 +98,9 @@ Other than when the `tune` or `summarise` command is run (see below), a FASTQ re
 
 **6. Optionally output matched sequences to a SQLite database file**
 
-Output to a SQLite database is supported, with the `writeSQL` option. The SQLite database will contain a table called `fastq_data` with the following fields:
-the fastq record (header, sequence and quality fields), length of the sequence field (length), percent GC content (GC), percent GC content as an integer (GC_int), number of unique tetranucleotides in the sequence (nTN), and percent tetranucleotide frequency within the sequence (TNF). If the pattern file was given in JSON format and contained a non-null qualityEncoding field, then the average quality score for the sequence field (average_quality) will also be written. The `--num-tetranucleotides` option can be used to limit the number of tetranucleotides written to the TNF field of the fastq_data SQLite table, these
-being the most or equal most frequent tetranucleotides in the sequence field of the matched FASTQ records.
+Other than when the `inverted` command is given, output to a SQLite database is supported with the `writeSQL` option. The SQLite database will contain a table called `fastq_data` with the following fields: the fastq record (header, sequence and quality fields), length of the sequence field (length), percent GC content (GC), percent GC content as an integer (GC_int), number of unique tetranucleotides in the sequence (nTN), percent tetranucleotide frequency within the sequence (TNF), and a JSON array containing the matched regex patterns, the matches and their position(s) in the FASTQ sequence (variants). If the pattern file was given in JSON format and contained a non-null qualityEncoding field, then the average quality score for the sequence field (average_quality) will also be written. The `--num-tetranucleotides` option can be used to limit the number of tetranucleotides written to the TNF field of the fastq_data SQLite table, these being the most or equal most frequent tetranucleotides in the sequence field of the matched FASTQ records. A summary of the invoked query (pattern and data files) is written to a second table called `query`.
+
+The structure of the `fastq_data` table facilitates database indexing and provides a rich dataset to further query. Since all elements of each matched FASTQ record are also written, a FASTQ file can be reconstructed from the SQLite database.
 
 **7. Tune your pattern file and enumerate named and unnamed variants with the `tune` command**
 

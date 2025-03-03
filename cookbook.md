@@ -16,6 +16,12 @@
 
 <br>
 
+*Print the help message for the **summarise** command*
+
+**grepq summarise -h**
+
+<br>
+
 *Print the help message for the **inverted** command*
 
 **grepq inverted -h**

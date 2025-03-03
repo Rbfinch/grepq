@@ -25,7 +25,7 @@ fn main() {
     // SimpleLogger::init(LevelFilter::Info, Config::default()).unwrap();
     let cli = Cli::parse();
 
-    let db_conn = if cli.write_sql {
+    let db_conn = if cli.write_sql && !matches!(&cli.command, Some(Commands::Inverted)) {
         let conn = if cli.patterns.ends_with(".json") {
             let pattern_data: serde_json::Value = serde_json::from_str(&std::fs::read_to_string(&cli.patterns).unwrap()).unwrap();
             if pattern_data["regexSet"]["qualityEncoding"].is_null() {
@@ -187,7 +187,7 @@ fn main() {
             },
             |record, found| {
                 if *found {
-                    if cli.write_sql {
+                    if cli.write_sql && !matches!(cli.command, Some(Commands::Inverted)) {
                         let mut matches_info = vec![];
                         for pattern in regex_set.patterns() {
                             let regex = BytesRegex::new(pattern).unwrap();
@@ -211,40 +211,29 @@ fn main() {
                             let matches_json = serde_json::to_string(&matches_info).unwrap_or_else(|_| "[]".to_string());
 
                             // Use SQLite's ROUND function to round GC and average_quality
-                            if quality_encoding.is_some() && !is_text_file {
-                                db.execute(
-                                    "INSERT INTO fastq_data (header, sequence, quality, length, GC, GC_int, nTN, TNF, average_quality, variants) 
-                                     VALUES (?1, ?2, ?3, ?4, ROUND(?5, 2), ?6, ?7, ?8, ROUND(?9, 2), ?10)",
-                                    rusqlite::params![
-                                        String::from_utf8_lossy(record.head()),
-                                        String::from_utf8_lossy(record.seq()),
-                                        String::from_utf8_lossy(record.qual()),
-                                        record.seq().len() as i64,
-                                        gc,
-                                        gc_int,
-                                        ntn as i64,
-                                        tnf,
-                                        avg_quality,
-                                        matches_json,
-                                    ],
-                                ).unwrap();
+                            let insert_stmt = if quality_encoding.is_some() && !is_text_file {
+                                "INSERT INTO fastq_data (header, sequence, quality, length, GC, GC_int, nTN, TNF, average_quality, variants) 
+                                 VALUES (?1, ?2, ?3, ?4, ROUND(?5, 2), ?6, ?7, ?8, ROUND(?9, 2), ?10)"
                             } else {
-                                db.execute(
-                                    "INSERT INTO fastq_data (header, sequence, quality, length, GC, GC_int, nTN, TNF, variants) 
-                                     VALUES (?1, ?2, ?3, ?4, ROUND(?5, 2), ?6, ?7, ?8, ?9)",
-                                    rusqlite::params![
-                                        String::from_utf8_lossy(record.head()),
-                                        String::from_utf8_lossy(record.seq()),
-                                        String::from_utf8_lossy(record.qual()),
-                                        record.seq().len() as i64,
-                                        gc,
-                                        gc_int,
-                                        ntn as i64,
-                                        tnf,
-                                        matches_json,
-                                    ],
-                                ).unwrap();
-                            }
+                                "INSERT INTO fastq_data (header, sequence, quality, length, GC, GC_int, nTN, TNF, variants) 
+                                 VALUES (?1, ?2, ?3, ?4, ROUND(?5, 2), ?6, ?7, ?8, ?9)"
+                            };
+
+                            db.execute(
+                                insert_stmt,
+                                rusqlite::params![
+                                    String::from_utf8_lossy(record.head()),
+                                    String::from_utf8_lossy(record.seq()),
+                                    String::from_utf8_lossy(record.qual()),
+                                    record.seq().len() as i64,
+                                    gc,
+                                    gc_int,
+                                    ntn as i64,
+                                    tnf,
+                                    avg_quality,
+                                    matches_json,
+                                ],
+                            ).unwrap();
                         }
                     }
                     
