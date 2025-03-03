@@ -1,6 +1,6 @@
 [package]
 name = "grepq"
-version = "1.4.9"
+version = "1.5.0"
 edition = "2021"
 authors = ["Nicholas D. Crosbie"]
 license = "MIT"

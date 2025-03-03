@@ -104,7 +104,7 @@ pub fn create_sqlite_db_with_quality() -> SqlResult<Connection> {
     let db_name = format!("fastq_{}.db", timestamp);
     let conn = Connection::open(&db_name)?;
 
-    // Create fastq_data table with average_quality field
+    // Create fastq_data table with average_quality and variants fields
     conn.execute(
         "CREATE TABLE fastq_data (
             header TEXT,
@@ -115,7 +115,8 @@ pub fn create_sqlite_db_with_quality() -> SqlResult<Connection> {
             GC_int INTEGER,
             nTN INTEGER,
             TNF TEXT,
-            average_quality REAL
+            average_quality REAL,
+            variants TEXT
         )",
         [],
     )?;
