@@ -12,26 +12,29 @@ log_time() {
         else
             version=$(target/release/grepq -V)
         fi
-        date "+%Y-%m-%d %H:%M:%S, $test_number, $duration, seconds, $version" >> "$log_file"
+        date "+%Y-%m-%d %H:%M:%S, $test_number, $duration, seconds, $version" >>"$log_file"
     fi
 }
 
 setup() {
     # Get absolute paths
-    REPO_ROOT="$( cd "$( dirname "${BATS_TEST_FILENAME}" )/.." && pwd )"
+    REPO_ROOT="$(cd "$(dirname "${BATS_TEST_FILENAME}")/.." && pwd)"
     EXAMPLES_DIR="${REPO_ROOT}/examples"
-    
+
     # Detect OS for stat command
     case "$(uname -s)" in
-        Darwin*)
-            STAT_CMD="stat -f%z";;
-        Linux*)
-            STAT_CMD="stat -c%s";;
-        *)
-            echo "Unsupported operating system"
-            exit 1;;
+    Darwin*)
+        STAT_CMD="stat -f%z"
+        ;;
+    Linux*)
+        STAT_CMD="stat -c%s"
+        ;;
+    *)
+        echo "Unsupported operating system"
+        exit 1
+        ;;
     esac
-    
+
     # Ensure we're in the examples directory
     cd "${EXAMPLES_DIR}" || exit 1
 }
@@ -39,6 +42,7 @@ setup() {
 teardown() {
     rm -f /tmp/test-*.txt matches.json
     rm -f "${EXAMPLES_DIR}"/Primer-contig*.fastq
+    rm -f "${EXAMPLES_DIR}"/fastq_*.db # Add cleanup for the SQLite database
 }
 
 verify_size() {
@@ -53,7 +57,7 @@ verify_count() {
     local output_file=$1
     local expected_count=$2
     local actual_count
-    actual_count=$(cat "$output_file" | tr -d '\n\r')  # Remove newlines and carriage returns
+    actual_count=$(cat "$output_file" | tr -d '\n\r') # Remove newlines and carriage returns
     [ "$actual_count" -eq "$expected_count" ]
 }
 
@@ -90,7 +94,7 @@ verify_bucket_files() {
         ["Primer-contig-08bR.fastq"]=225200
         ["Primer-contig-07b.fastq"]=238068
     )
-    
+
     for file in "${!expected_sizes[@]}"; do
         local full_path="${EXAMPLES_DIR}/${file}"
         if [ ! -f "$full_path" ]; then
@@ -403,3 +407,25 @@ measure_time() {
     log_time "test-47" "$duration"
 }
 
+# bats test_tags=tag:sqlite
+@test "test-48: Write to SQLite file" {
+    # Clean up any existing database files
+    #    rm -f "${EXAMPLES_DIR}"/fastq_*.db
+    APP="/Users/nicholascrosbie/Documents/repos/grepq/target/release/grepq"
+    cmd="${APP} -R --writeSQL 16S-iupac-and-predicates.json small.fastq"
+    duration=$(measure_time "$cmd")
+
+    # Find the most recently created database file
+    local db_file
+    db_file=$(find "${EXAMPLES_DIR}" -name "fastq_*.db" -type f -print0 | xargs -0 ls -t | head -1)
+
+    # Verify the file exists
+    [ -f "$db_file" ] || {
+        echo "Database file not found"
+        return 1
+    }
+
+    # Now verify its size
+    verify_size "$db_file" 225280
+    log_time "test-48" "$duration"
+}
