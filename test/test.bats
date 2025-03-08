@@ -1,6 +1,6 @@
 #!/usr/bin/env bats
 
-log_file="/Users/nicholascrosbie/Documents/repos/grepq/test/test_timings.log"
+log_file="$(dirname "${BATS_TEST_FILENAME}")/test_timings.log"
 
 log_time() {
     if [ "$COMPUTE_TIMINGS" = true ]; then
@@ -114,7 +114,7 @@ verify_bucket_files() {
 measure_time() {
     local command="$1"
     local result
-    result=$(hyperfine --warmup 1 --runs 5 --export-json /tmp/hyperfine.json "$command")
+    result=$(hyperfine --warmup 1 --runs 3 --export-json /tmp/hyperfine.json "$command")
     jq '.results[0].mean' /tmp/hyperfine.json
 }
 
@@ -411,7 +411,7 @@ measure_time() {
 @test "test-48: Write to SQLite file" {
     # Clean up any existing database files
     #    rm -f "${EXAMPLES_DIR}"/fastq_*.db
-    APP="/Users/nicholascrosbie/Documents/repos/grepq/target/release/grepq"
+    #   APP="/Users/nicholascrosbie/Documents/repos/grepq/target/release/grepq"
     cmd="${APP} -R --writeSQL 16S-iupac-and-predicates.json small.fastq"
     duration=$(measure_time "$cmd")
 

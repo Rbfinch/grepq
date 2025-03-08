@@ -3,6 +3,13 @@ TBD
 
 Unreleased changes. Release notes have not yet been written.
 
+1.5.1
+=====
+
+* updated testing scripts
+* added export_fastq.sql to examples directory
+* corresponding updates to documentation
+
 1.5.0
 =====
 

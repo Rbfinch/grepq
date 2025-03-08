@@ -165,6 +165,7 @@ This README contains documentation for the latest version of <code>grepq</code>.
 <li>use <strong>predicates</strong> to filter on the header field (= record ID line) using a regex, minimum sequence length, and minimum average quality score (supports Phred+33 and Phred+64)</li>
 <li>does not match false positives</li>
 <li>output matched sequences to one of four formats</li>
+<li>optionally output matched sequences to a <strong>SQLite</strong> database file, including GC content, tetranucleotide frequencies, and regex pattern matches and their position(s) in each matched FASTQ sequence, allowing for further analysis</li>
 <li>tune your pattern file and <strong>enumerate named and unnamed variants</strong> with the <code>tune</code> command (use the <code>summarise</code> command to process all FASTQ records)</li>
 <li><strong>bucket matching sequences</strong> to separate files named after each regexName with the <code>--bucket</code> flag, in any of the four output formats</li>
 <li>supports inverted matching with the <code>inverted</code> command</li>
@@ -196,6 +197,22 @@ This README contains documentation for the latest version of <code>grepq</code>.
 
         </div>
 
+        <!-- Livereload script (if served using the cli tool) -->
+        <script>
+            const wsProtocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
+            const wsAddress = wsProtocol + "//" + location.host + "/" + "__livereload";
+            const socket = new WebSocket(wsAddress);
+            socket.onmessage = function (event) {
+                if (event.data === "reload") {
+                    socket.close();
+                    location.reload();
+                }
+            };
+
+            window.onbeforeunload = function() {
+                socket.close();
+            }
+        </script>
 
 
 

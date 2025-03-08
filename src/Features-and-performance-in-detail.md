@@ -55,7 +55,13 @@ Predicates are specified in a JSON pattern file. For an example, see `16S-iupac-
 > **Note:**
 Other than when the `tune` or `summarise` command is run (see below), a FASTQ record is deemed to match (and hence provided in the output) when _any_ of the regex patterns in the pattern file match the sequence field of the FASTQ record.
 
-**6. Tune your pattern file and enumerate named and unnamed variants with the `tune` command**
+**6. Optionally output matched sequences to a SQLite database file**
+
+Other than when the `inverted` command is given, output to a SQLite database is supported with the `writeSQL` option. The SQLite database will contain a table called `fastq_data` with the following fields: the fastq record (header, sequence and quality fields), length of the sequence field (length), percent GC content (GC), percent GC content as an integer (GC_int), number of unique tetranucleotides in the sequence (nTN), percent tetranucleotide frequency within the sequence (TNF), and a JSON array containing the matched regex patterns, the matches and their position(s) in the FASTQ sequence (variants). If the pattern file was given in JSON format and contained a non-null qualityEncoding field, then the average quality score for the sequence field (average_quality) will also be written. The `--num-tetranucleotides` option can be used to limit the number of tetranucleotides written to the TNF field of the fastq_data SQLite table, these being the most or equal most frequent tetranucleotides in the sequence field of the matched FASTQ records. A summary of the invoked query (pattern and data files) is written to a second table called `query`.
+
+The structure of the `fastq_data` table facilitates database indexing and provides a rich dataset to further query. Since all elements of each matched FASTQ record are also written, a FASTQ file can be reconstructed from the SQLite database (see `examples/export_fastq.sql` for an example of how to do this).
+
+**7. Tune your pattern file and enumerate named and unnamed variants with the `tune` command**
 
 Use the `tune` or `summarise` command (`grepq tune -h` and `grepq summarise -h` for instructions) in a simple shell script to update the number and order of regex patterns in your pattern file according to their matched frequency, further targeting and speeding up the filtering process.
 
@@ -125,11 +131,11 @@ jq -r '
 > **Note:**
 When the count option (-c) is given with the `tune` or `summarise` command, `grepq` will count the number of FASTQ records containing a sequence that is matched, for each matching regex in the pattern file. If, however, there are multiple occurrences of a given regex _within a FASTQ record sequence field_, `grepq` will count this as one match. To ensure all records are processed, use the `summarise` command instead of the `tune` command. When the count option (-c) is not given as part of the `tune` or `summarise` command, `grepq` provides the total number of matching FASTQ records for the set of regex patterns in the pattern file.
 
-**7. Supports inverted matching with the `inverted` command**
+**8. Supports inverted matching with the `inverted` command**
 
 Use the `inverted` command to output sequences that do not match any of the regex patterns in your pattern file.
 
-**8. Plays nicely with your unix workflows**
+**9. Plays nicely with your unix workflows**
 
 For example, see `tune.sh` in the `examples` directory. This simple script will filter a FASTQ file using `grepq`, tune the pattern file on a user-specified number of total matches, and then filter the FASTQ file again using the tuned pattern file for a user-specified number of the most frequent regex pattern matches.
 

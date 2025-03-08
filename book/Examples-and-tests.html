@@ -190,9 +190,14 @@ command was: ../target/release/grepq -c 16S-no-iupac.txt small.fastq <br>
 </span>
 <br>
 <p>Further, you can run the <code>cookbook.sh</code> script in the <code>examples</code> directory to test the cookbook examples, and you can use <code>predate</code> (<a href="https://crates.io/crates/predate">https://crates.io/crates/predate</a>) if you prefer a Rust application to a shell script.</p>
-<p><strong>SARS-CoV-2 example</strong></p>
-<p>Count of the top five most frequently matched patterns found in SRX26602697.fastq using the pattern file SARS-CoV-2.txt (this pattern file contains 64 sequences of length 60 from Table II of this <a href="https://doi.org/10.1101/2021.04.14.439840">preprint</a>):</p>
-<pre><code class="language-bash">time grepq SARS-CoV-2.txt SRX26602697.fastq tune -n 10000 -c | head -5
+<p>Finally, you can run the <code>test.bats</code> script in the <code>test</code> directory to test the <code>grepq</code> executable (<code>/target/release/grepq</code>). The <code>bats</code> shell script testing framework is required to run the <code>test.bats</code> script. You can install <code>bats</code> using <code>brew install bats-core</code> on macOS, or <code>sudo apt-get install bats</code> on Ubuntu. You will need to put the the file <code>SRX26365298.fastq.gz</code> (obtain from the SRA using <code>fastq-dump --accession SRX26365298</code>) in the <code>examples</code> directory to run all tests. There is a <code>run_tests.sh</code> script in the <code>test</code> directory that will run the <code>test.bats</code> script, with various options.</p>
+<pre><code class="language-bash">
+**SARS-CoV-2 example**
+
+Count of the top five most frequently matched patterns found in SRX26602697.fastq using the pattern file SARS-CoV-2.txt (this pattern file contains 64 sequences of length 60 from Table II of this [preprint](https://doi.org/10.1101/2021.04.14.439840)):
+
+```bash
+time grepq SARS-CoV-2.txt SRX26602697.fastq tune -n 10000 -c | head -5
 GTATGGAAAAGTTATGTGCATGTTGTAGACGGTTGTAATTCATCAACTTGTATGATGTGT: 1595
 CGGAACGTTCTGAAAAGAGCTATGAATTGCAGACACCTTTTGAAATTAAATTGGCAAAGA: 693
 TCCTTACTGCGCTTCGATTGTGTGCGTACTGCTGCAATATTGTTAACGTGAGTCTTGTAA: 356
@@ -236,6 +241,22 @@ Executed in  218.80 millis    fish           external
 
         </div>
 
+        <!-- Livereload script (if served using the cli tool) -->
+        <script>
+            const wsProtocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
+            const wsAddress = wsProtocol + "//" + location.host + "/" + "__livereload";
+            const socket = new WebSocket(wsAddress);
+            socket.onmessage = function (event) {
+                if (event.data === "reload") {
+                    socket.close();
+                    location.reload();
+                }
+            };
+
+            window.onbeforeunload = function() {
+                socket.close();
+            }
+        </script>
 
 
 

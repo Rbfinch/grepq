@@ -3,7 +3,7 @@
 
 -- This script exports the FASTQ data from the database to a file called output.fastq
 -- run the following to execute this script:
---    sqlite3 your_database.db < export_fastq.sql
+--    sqlite3 path/to/database.db < path/to/export_fastq.sql
 
 -- Create a view that concatenates the FASTQ components into one record
 CREATE VIEW fastq_export AS
