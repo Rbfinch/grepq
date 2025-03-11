@@ -3,6 +3,11 @@ TBD
 
 Unreleased changes. Release notes have not yet been written.
 
+1.5.3
+=====
+
+* updates to documentation
+
 1.5.2
 =====
 
