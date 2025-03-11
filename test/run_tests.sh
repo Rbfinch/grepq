@@ -81,6 +81,18 @@ EOF
     echo "Test environment setup complete!"
 }
 
+measure_time() {
+    local command="$1"
+    local result
+    if [ "$COMPUTE_TIMINGS" = true ]; then
+        result=$(hyperfine --warmup 1 --runs 3 --export-json /tmp/hyperfine.json "$command")
+        jq '.results[0].mean' /tmp/hyperfine.json
+    else
+        result=$($command)
+        echo 0 # Return 0 as default duration
+    fi
+}
+
 # Process command line arguments
 while [[ $# -gt 0 ]]; do
     case "$1" in
