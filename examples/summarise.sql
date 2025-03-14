@@ -24,5 +24,5 @@ WITH match_totals AS (
 SELECT match_string, total_matches
 FROM match_totals
 UNION ALL
-SELECT 'total matches', SUM(total_matches)
+SELECT 'grand total', SUM(total_matches)
 FROM match_totals;
