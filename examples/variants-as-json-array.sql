@@ -2,7 +2,7 @@
 -- Nick Crosbie, 2025
 
 -- Outputs all variants data as a single JSON array
---    Usage: sqlite3 path/to/database.db < path/to/variants-as-json-array.sql > variants.json
+--    Usage: sqlite3 path/to/database.db < path/to/variants-as-json-array.sql
 
 -- Set minimal output options for raw, unescaped output
 .output variants.json
