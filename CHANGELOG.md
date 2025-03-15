@@ -7,6 +7,7 @@ Unreleased changes. Release notes have not yet been written.
 =====
 
 * updates to documentation
+* addition of two help scripts for SQLite output, `summarise.sql` and `variants-as-json-array.sql`
 
 1.5.2
 =====

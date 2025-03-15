@@ -13,7 +13,7 @@ categories = ["science"]
 keywords = ["bioinformatics", "FASTQ", "REGEX", "JSON", "cli"]
 
 [dependencies]
-seq_io = "0.3.3"
+seq_io = "0.3.4"
 regex = "1.11.1"
 mimalloc = "0.1.43"
 clap = { version = "4.5.32", features = ["derive", "cargo"] }
@@ -28,7 +28,7 @@ chrono = "0.4.40"
 serde = "1.0.219"
 
 [dev-dependencies]
-tempfile = "3.18.0"
+tempfile = "3.19.0"
 criterion = { version = "0.5.1", features = ["html_reports"] }
 
 [lib]
