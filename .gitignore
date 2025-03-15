@@ -101,19 +101,19 @@ target/
 *.fq
 
 # Other project specific ignores and allows
-test/
-fastq*
-meta.yaml
-generate.rb
-!examples/small-copy.fastq.gz
+test/*
+fastq*aml
+meta.yamlrb
+generate.rbmall-copy.fastq.gz
+!examples/small-copy.fastq.gzt
 !examples/small-copy.fastq.zst
-!paper/paper.md
+!paper/paper.mdb
 !paper/paper.bib
 paper/paper.html
 paper/paper.pdf
 paper/perf*
-paper/plot*
+paper/plot*-bioRxiv.md
 paper/paper-bioRxiv.md
 split_readme.sh
-justfile
+justfile/variants*.json
 examples/variants*.json
