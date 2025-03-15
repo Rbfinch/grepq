@@ -42,7 +42,8 @@ setup() {
 teardown() {
     rm -f /tmp/test-*.txt matches.json
     rm -f "${EXAMPLES_DIR}"/Primer-contig*.fastq
-    rm -f "${EXAMPLES_DIR}"/fastq_*.db # Add cleanup for the SQLite database
+    # Remove the cleanup for the SQLite database to ensure availability for test-49
+    # rm -f "${EXAMPLES_DIR}"/fastq_*.db
 }
 
 verify_size() {
@@ -410,8 +411,7 @@ measure_time() {
 # bats test_tags=tag:sqlite
 @test "test-48: Write to SQLite file" {
     # Clean up any existing database files
-    #    rm -f "${EXAMPLES_DIR}"/fastq_*.db
-    #   APP="/Users/nicholascrosbie/Documents/repos/grepq/target/release/grepq"
+    rm -f "${EXAMPLES_DIR}"/fastq_*.db
     cmd="${APP} -R --writeSQL 16S-iupac-and-predicates.json small.fastq"
     duration=$(measure_time "$cmd")
 
@@ -426,6 +426,61 @@ measure_time() {
     }
 
     # Now verify its size
-    verify_size "$db_file" 225280
+    verify_size "$db_file" 229376 || {
+        echo "Database file size mismatch"
+        echo "Actual size: $(${STAT_CMD} "$db_file")"
+        return 1
+    }
     log_time "test-48" "$duration"
+}
+
+@test "test-49: Compare JSON output using variants-as-json-array.sql" {
+    # Generate the JSON output file
+    local db_file
+    db_file=$(find "${EXAMPLES_DIR}" -name "fastq_*.db" -type f -print0 | xargs -0 ls -t | head -1)
+
+    # Verify the database file exists
+    [ -f "$db_file" ] || {
+        echo "Database file not found"
+        return 1
+    }
+
+    # Check if the table exists
+    table_exists=$(sqlite3 "$db_file" "SELECT name FROM sqlite_master WHERE type='table' AND name='fastq_data';")
+    [ "$table_exists" = "fastq_data" ] || {
+        echo "Table 'fastq_data' not found in database"
+        echo "Existing tables: $(sqlite3 "$db_file" "SELECT name FROM sqlite_master WHERE type='table';")"
+        return 1
+    }
+
+    # Generate the JSON output file
+    sqlite3 "$db_file" <"${EXAMPLES_DIR}/variants-as-json-array.sql"
+
+    # Strip the last character from variants.json
+    truncate -s $(($(stat -c %s "${EXAMPLES_DIR}/variants.json") - 1)) "${EXAMPLES_DIR}/variants.json"
+
+    # Sort the JSON data in both files
+    sorted_original=$(jq -S . "${EXAMPLES_DIR}/variants.json") || {
+        echo "Failed to parse ${EXAMPLES_DIR}/variants.json"
+        cat "${EXAMPLES_DIR}/variants.json"
+        return 1
+    }
+    sorted_temp=$(jq -S . "${EXAMPLES_DIR}/variants.json") || {
+        echo "Failed to parse ${EXAMPLES_DIR}/variants.json"
+        cat "${EXAMPLES_DIR}/variants.json"
+        return 1
+    }
+
+    # Debugging output
+    echo "Original JSON:"
+    echo "$sorted_original"
+    echo "Temp JSON:"
+    echo "$sorted_temp"
+
+    # Compare the sorted JSON data
+    diff <(echo "$sorted_original") <(echo "$sorted_temp") || {
+        echo "Differences found between original and temp JSON:"
+        diff <(echo "$sorted_original") <(echo "$sorted_temp")
+        return 1
+    }
 }

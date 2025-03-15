@@ -101,8 +101,7 @@ target/
 *.fq
 
 # Other project specific ignores and allows
-test/lib/
-test/test_timings.log
+test/
 fastq*
 meta.yaml
 generate.rb
@@ -117,3 +116,4 @@ paper/plot*
 paper/paper-bioRxiv.md
 split_readme.sh
 justfile
+examples/variants*.json
