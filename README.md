@@ -17,6 +17,7 @@ _Quickly filter FASTQ files_
 - [Further testing](#futher-testing)
 - [Citation and preprint](#citation)
 - [Update changes](#update-changes)
+- [Contributing](#contributing)
 - [License](#license)
 
 ## Feature set
@@ -314,6 +315,10 @@ Crosbie, N.D. (2025). grepq: A Rust application that quickly filters FASTQ files
 ## Update changes
 
 see [CHANGELOG](https://github.com/Rbfinch/grepq/blob/main/CHANGELOG.md)
+
+## Contributing
+
+see [CONTRIBUTING](https://github.com/Rbfinch/grepq/blob/main/CONTRIBUTING.md)
 
 ## License
 
