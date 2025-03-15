@@ -10,6 +10,7 @@ use std::io::BufWriter;
 use std::io::{self, BufRead, BufReader, Write};
 use zstd::stream::{read::Decoder as ZstdDecoder, write::Encoder as ZstdEncoder};
 
+// Static JSON schema used to validate the input patterns file.
 static SCHEMA: &str = r#"
 {
     "$schema": "http://json-schema.org/draft-07/schema#",
@@ -98,29 +99,45 @@ type ParseResult = Result<
     String,
 >;
 
-// IUAPC to regex conversion (note, DNA only)
+// Function: convert_iupac_to_regex
+// Converts IUPAC nucleotide codes to a regex pattern by replacing ambiguous characters.
+// It panics if an illegal character is encountered.
 pub fn convert_iupac_to_regex(pattern: &str) -> String {
-    let legal_chars = "ACGTYRWSKMBDHVN";
-    for c in pattern.chars() {
-        if c.is_alphabetic() && !legal_chars.contains(c.to_ascii_uppercase()) {
-            panic!("Illegal character found in pattern: {}", c);
+    let legal = "ACGTYRWSKMBDHVN";
+
+    // Check if the pattern *could* be an IUPAC pattern (all chars are alphabetic).
+    let could_be_iupac = pattern.chars().all(|c| c.is_alphabetic());
+
+    if could_be_iupac {
+        // If it *could* be IUPAC, check for illegal characters and panic if found.
+        for c in pattern.chars() {
+            if c.is_alphabetic() && !legal.contains(c.to_ascii_uppercase()) {
+                panic!("Illegal character found in pattern: {}", c);
+            }
         }
+
+        // If it's a valid IUPAC pattern, convert it to uppercase and replace characters.
+        let uppercase = pattern.to_uppercase();
+        uppercase
+            .replace('Y', "[CT]")
+            .replace('R', "[AG]")
+            .replace('W', "[AT]")
+            .replace('S', "[CG]")
+            .replace('K', "[GT]")
+            .replace('M', "[AC]")
+            .replace('B', "[CGT]")
+            .replace('D', "[AGT]")
+            .replace('H', "[ACT]")
+            .replace('V', "[ACG]")
+            .replace('N', "[ACGT]")
+    } else {
+        // If it's not IUPAC, return the original pattern unchanged.
+        pattern.to_string()
     }
-    pattern
-        .to_uppercase()
-        .replace('Y', "[CT]")
-        .replace('R', "[AG]")
-        .replace('W', "[AT]")
-        .replace('S', "[CG]")
-        .replace('K', "[GT]")
-        .replace('M', "[AC]")
-        .replace('B', "[CGT]")
-        .replace('D', "[AGT]")
-        .replace('H', "[ACT]")
-        .replace('V', "[ACG]")
-        .replace('N', "[ACGT]")
 }
 
+// Function: validate_dna_sequence
+// Validates that a given sequence contains only valid DNA nucleotides.
 fn validate_dna_sequence(sequence: &str) -> Result<(), String> {
     if sequence.chars().all(|c| "ACTG".contains(c)) {
         Ok(())
@@ -129,9 +146,12 @@ fn validate_dna_sequence(sequence: &str) -> Result<(), String> {
     }
 }
 
-// Parse patterns file (JSON or plain text)
+// Function: parse_patterns_file
+// Parses a patterns file which may be JSON or plain text, validates it against a schema,
+// and compiles regex patterns. It also extracts optional settings.
 pub fn parse_patterns_file(patterns_path: &str) -> ParseResult {
     if patterns_path.ends_with(".json") {
+        // Open and parse the JSON file.
         let json_file =
             File::open(patterns_path).map_err(|e| format!("Failed to open JSON file: {}", e))?;
         let json: Value = serde_json::from_reader(json_file)
@@ -151,6 +171,7 @@ pub fn parse_patterns_file(patterns_path: &str) -> ParseResult {
             return Err(format!("JSON validation errors: {:?}", error_messages));
         }
 
+        // Convert patterns using IUPAC-to-regex conversion.
         let regex_strings: Vec<String> = json["regexSet"]["regex"]
             .as_array()
             .ok_or("Invalid JSON structure")?
@@ -175,6 +196,7 @@ pub fn parse_patterns_file(patterns_path: &str) -> ParseResult {
             .as_str()
             .map(|s| s.to_string());
 
+        // Process regex variants with additional DNA validation.
         let variants: Vec<_> = json["regexSet"]["regex"]
             .as_array()
             .ok_or("Invalid JSON structure")?
@@ -213,10 +235,11 @@ pub fn parse_patterns_file(patterns_path: &str) -> ParseResult {
             minimum_sequence_length,
             minimum_quality,
             quality_encoding,
-            regex_names, // Return regex_names
-            variants,    // Return variants
+            regex_names, // Regex pattern names.
+            variants,    // Regex variants.
         ))
     } else {
+        // Process plain-text pattern files.
         let file = File::open(patterns_path)
             .map_err(|e| format!("Failed to open patterns file: {}", e))?;
         let reader = BufReader::new(file);
@@ -228,22 +251,26 @@ pub fn parse_patterns_file(patterns_path: &str) -> ParseResult {
             .collect();
         let regex_set = RegexSet::new(&regex_strings)
             .map_err(|e| format!("Failed to compile regex patterns: {}", e))?;
-        let regex_names = regex_strings.clone(); // Use regex_strings as regex_names for plain text files
-        Ok((regex_set, None, None, None, None, regex_names, Vec::new())) // Return regex_names and empty Vec for variants
+        let regex_names = regex_strings.clone(); // Use regex strings as names.
+        Ok((regex_set, None, None, None, None, regex_names, Vec::new()))
     }
 }
 
-// Open a file and return the file handle
+// Function: open_file
+// Opens the given file path and returns a File handle.
 pub fn open_file(file_path: &str) -> File {
     File::open(file_path).expect("Failed to open file")
 }
 
-// Create a reader for the input file
+// Function: create_reader
+// Creates a buffered reader for the input file, handling compression based on CLI flags.
 pub fn create_reader(cli: &Cli) -> Reader<Box<dyn BufRead + Send>> {
     let file = open_file(&cli.file);
     let reader: Box<dyn BufRead + Send> = if cli.gzip_input {
+        // Use Gzip decompression.
         Box::new(BufReader::new(MultiGzDecoder::new(file)))
     } else if cli.zstd_input {
+        // Use Zstd decompression.
         match ZstdDecoder::new(file) {
             Ok(decoder) => Box::new(BufReader::new(decoder)),
             Err(e) => {
@@ -258,12 +285,14 @@ pub fn create_reader(cli: &Cli) -> Reader<Box<dyn BufRead + Send>> {
     Reader::with_capacity(reader, 8 * 1024 * 1024)
 }
 
-// zstd writer
+// Struct ZstdWriter
+// A wrapper for writing Zstd compressed data.
 struct ZstdWriter<W: Write> {
     encoder: Option<ZstdEncoder<'static, W>>,
 }
 
 impl<W: Write> ZstdWriter<W> {
+    // Create a new ZstdWriter with specified compression level.
     fn new(writer: W, compression_level: i32) -> io::Result<Self> {
         let mut encoder = ZstdEncoder::new(writer, compression_level)?;
         encoder.include_checksum(true)?;
@@ -274,6 +303,7 @@ impl<W: Write> ZstdWriter<W> {
 }
 
 impl<W: Write> Write for ZstdWriter<W> {
+    // Write data to the underlying Zstd encoder.
     fn write(&mut self, buf: &[u8]) -> io::Result<usize> {
         if let Some(encoder) = &mut self.encoder {
             encoder.write(buf)
@@ -285,6 +315,7 @@ impl<W: Write> Write for ZstdWriter<W> {
         }
     }
 
+    // Flush the encoder.
     fn flush(&mut self) -> io::Result<()> {
         if let Some(encoder) = &mut self.encoder {
             encoder.flush()
@@ -295,6 +326,7 @@ impl<W: Write> Write for ZstdWriter<W> {
 }
 
 impl<W: Write> Drop for ZstdWriter<W> {
+    // Finalize the encoder when ZstdWriter is dropped.
     fn drop(&mut self) {
         if let Some(encoder) = self.encoder.take() {
             let _ = encoder.finish();
@@ -302,11 +334,13 @@ impl<W: Write> Drop for ZstdWriter<W> {
     }
 }
 
-// Create a writer for the output file
+// Function: create_writer
+// Creates a writer for the output file, handling various compression or formatting options based on CLI flags.
 pub fn create_writer(cli: &Cli) -> Box<dyn Write> {
     let stdout_lock = io::stdout().lock();
 
     if cli.gzip_output {
+        // Write output using Gzip compression.
         let compression = if cli.fast_compression {
             Compression::fast()
         } else if cli.best_compression {
@@ -316,6 +350,7 @@ pub fn create_writer(cli: &Cli) -> Box<dyn Write> {
         };
         Box::new(MultiGzEncoder::new(stdout_lock, compression))
     } else if cli.zstd_output {
+        // Write output using Zstd compression.
         let level = if cli.fast_compression {
             1
         } else if cli.best_compression {
@@ -325,8 +360,10 @@ pub fn create_writer(cli: &Cli) -> Box<dyn Write> {
         };
         Box::new(ZstdWriter::new(stdout_lock, level).unwrap())
     } else if cli.with_fasta {
+        // Write output in FASTA format.
         Box::new(BufWriter::new(stdout_lock))
     } else {
+        // Default to writing plain output.
         Box::new(stdout_lock)
     }
 }
