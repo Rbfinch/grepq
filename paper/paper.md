@@ -10,7 +10,7 @@ authors:
 affiliations:
   - index: 1
     name: Melbourne Veterinary School, University of Melbourne, Parkville, Victoria, Australia
-date: "22 February 2025"
+date: "15 March 2025"
 bibliography: paper.bib
 tags: 
   - FASTQ records
@@ -22,7 +22,7 @@ tags:
 
 # Summary
 
-Regular expressions (regex) [@kleene1951representationof] have been an important tool for finding patterns in biological codes for decades [@hodgman2000historical and citations therein], and unlike fuzzy-finding approaches, do not result in approximate matches. The performance of regular expressions can be slow, however, especially when searching for matching patterns in large files. *grepq* is a Rust application that quickly filters FASTQ files by matching sequences to a set of regular expressions. *grepq* is designed with a focus on performance and scalability, is easy to install and easy to use, enabling users to quickly filter large FASTQ files, to enumerate named and unnamed variants and update the order in which patterns are matched against sequences through in-built *tune* and *summarise* commands. *grepq* is open-source and available on *GitHub* and *Crates.io*.
+Regular expressions (regex) [@kleene1951representationof] have been an important tool for finding patterns in biological codes for decades [@hodgman2000historical and citations therein], and unlike fuzzy-finding approaches, do not result in approximate matches. The performance of regular expressions can be slow, however, especially when searching for matching patterns in large files. *grepq* is a Rust application that quickly filters FASTQ files by matching sequences to a set of regular expressions. *grepq* is designed with a focus on performance and scalability, is easy to install and easy to use, enabling users to quickly filter large FASTQ files, to enumerate named and unnamed variants, to update the order in which patterns are matched against sequences through in-built *tune* and *summarise* commands, and optionally, to output a SQLite file for further sequence analysis. *grepq* is open-source and available on *GitHub*, *Crates.io* and *bioconda*.
 
 # Statement of need
 
@@ -47,6 +47,8 @@ Further performance gains were obtained by:
 - in-lining of performance-critical functions
 - use of the *write_all* I/O operation that ensures the data is written in one go, rather than writing data in smaller chunks
 
+\newpage
+
 # Feature set
 
 *grepq* has the following features:
@@ -55,13 +57,16 @@ Further performance gains were obtained by:
 - IUPAC ambiguity code support (N, R, Y, etc.)
 - support for gzip and zstd compression (reading and writing)
 - JSON support for pattern file input and *tune* and *summarise* command output, allowing named regular expression sets and named regular expressions (pattern files can also be in plain text)
-- the ability to set predicates to filter FASTQ records on the header field (= record ID line) using a regular expression, minimum sequence length, and minimum average quality score (supports Phred+33 and Phred+64)
-- the ability to output matched sequences to one of four formats (including FASTQ and FASTA)
-- the ability to tune the pattern file and enumerate named and unnamed variants with the *tune* and *summarise* commands: these commands will output a plain text or JSON file with the patterns sorted by their frequency of occurrence in the input FASTQ file or gzip-compressed FASTQ file (or for a user-specified number of total matches). This can be useful for optimizing the pattern file for performance, for example by removing patterns that are rarely matched and reordering nucleotides within the variable regions of the patterns to improve matching efficiency
-- the ability to count and summarise the total number of records and the number of matching records (or records that don't match in the case of inverted matching) in the input FASTQ file
-- the ability to bucket matching sequences to separate files named after each regexName with the `--bucket` flag, in any of the four output formats
+- the ability to:
+  - set predicates to filter FASTQ records on the header field (= record ID line) using a regular expression, minimum sequence length, and minimum average quality score (supports Phred+33 and Phred+64)
+  - output matched sequences to one of four formats (including FASTQ and FASTA)
+  - tune the pattern file and enumerate named and unnamed variants with the *tune* and *summarise* commands: these commands will output a plain text or JSON file with the patterns sorted by their frequency of occurrence in the input FASTQ file or gzip-compressed FASTQ file (or a user-specified number of total matches). This can be useful for optimizing the pattern file for performance, for example by removing patterns that are rarely matched and reordering nucleotides within the variable regions of the patterns to improve matching efficiency
+  - count and summarise the total number of records and the number of matching records (or records that don't match in the case of inverted matching) in the input FASTQ file
+  - bucket matching sequences to separate files named after each regexName with the **--bucket** flag, in any of the four output formats
 
-Other than when the *tune* or *summarise* command is run, a FASTQ record is deemed to match (and hence provided in the output) when any of the regular expressions in the pattern file match the sequence field of the FASTQ record. An example (abridged) output of the *tune* command (when given with the **`--`json-matches** and **--variants** flags) is shown below:
+Other than when the **inverted** command is given, output to a SQLite database is supported with the **writeSQL** option. The SQLite database will contain a table called **fastq_data** with the following fields: the fastq record (header, sequence and quality fields), length of the sequence field (length), percent GC content (GC), percent GC content as an integer (GC_int), number of unique tetranucleotides in the sequence (nTN), percent tetranucleotide frequency within the sequence (TNF), and a JSON array containing the matched regex patterns, the matches and their position(s) in the FASTQ sequence (variants). If the pattern file was given in JSON format and contained a non-null qualityEncoding field, then the average quality score for the sequence field (average_quality) will also be written. The **--num-tetranucleotides** option can be used to limit the number of tetranucleotides written to the TNF field of the fastq_data SQLite table, these being the most or equal most frequent tetranucleotides in the sequence field of the matched FASTQ records. A summary of the invoked query (pattern and data files) is written to a second table called **query**.
+
+Other than when the *tune* or *summarise* command is run, a FASTQ record is deemed to match (and hence provided in the output) when any of the regular expressions in the pattern file match the sequence field of the FASTQ record. Example output of the *tune* command (when given with the **--json-matches** flag) is shown below:
 
 ```bash
 # For each matched pattern in a search of no more than
@@ -117,9 +122,9 @@ grepq --read-gzip 16S-no-iupac.json SRX26365298.fastq.gz \
  tune -n 20000 -c --names --json-matches --all
 ```
 
-When the count option (**-c**) is given with the *tune* or *summarise* command, *grepq* will count the number of FASTQ records containing a sequence that is matched, for each matching regular expression in the pattern file. If, however, there are multiple occurrences of a given regular expression within a FASTQ record sequence field, *grepq* will count this as one match. To ensure all records are processed, the *summarise* command is used instead of the *tune* command.
+When the count option (**-c**) is given with the *tune* or *summarise* command, *grepq* will count the number of FASTQ records containing a sequence that is matched, for each matching regular expression in the pattern file. If, however, there are multiple occurrences of a given regular expression within a FASTQ record sequence field, *grepq* will count this as one match. To ensure all records are processed, the *summarise* command is used instead of the *tune* command. Further, note that counts produced through independently matching regex patterns to the sequence field of a FASTQ record inherently underestimate the true number of those patterns in the biological sample, since a regex pattern may span two reads (i.e., be truncated at either the beginning or end of a read). To illustrate, a regex pattern representing a 12-mer motif has a 5.5% chance of being truncated for a read length of 400 nucleotides (11/400 + 11/400 = 22/400 = 0.055 or 5.5%), assuming a uniform distribution of motif positions and reads are sampled randomly with respect to motifs (this calculation would need to be adjusted to the extent that motifs are not uniformly distributed and reads are not randomly sampled with respect to motifs).
 
-When the count option (**-c**) is not given with the *tune* or *summarise* command, *grepq* provides the total number of matching FASTQ records for the set of regular expressions in the pattern file.
+When the count option (**-c**) is not given as part of the *tune* or *summarise* command, *grepq* provides the total number of matching FASTQ records for the set of regular expressions in the pattern file.
 
 Colorized output for matching regular expressions is not implemented to maximise speed and minimise code complexity, but can be achieved by piping the output to *grep* or *ripgrep* for testing purposes.
 
@@ -172,7 +177,7 @@ Finally, a bash test script (see *examples/test.sh*, available at *grepq*'s Gith
 
 # Availability and documentation
 
-*grepq* is open-source and available at *GitHub* (<https://github.com/Rbfinch/grepq>) and *Crates.io* (<https://crates.io/crates/grepq>).
+*grepq* is open-source and available at *GitHub* (<https://github.com/Rbfinch/grepq>), *Crates.io* (<https://crates.io/crates/grepq>) and *bioconda* (<https://anaconda.org/bioconda/grepq>).
 
 Documentation and installation instructions for *grepq* are available at the same GitHub repository, and through the **-h** and **`--`help** command-line options, which includes a list of all available commands and options, and examples of how to use them. Example pattern files in plain text and JSON format are also provided, as well as test scripts. *grepq* is distributed under the MIT license.
 
