@@ -53,15 +53,15 @@ pub fn run_inverted(cli: &Cli) {
             |record, found| {
                 // Worker thread: Apply filters on each record.
                 *found = false;
-                let seq_len_check = !check_seq_len ||
-                    record.seq().len() >= minimum_sequence_length.unwrap() as usize;
-                let qual_check = !check_qual ||
-                    crate::quality::average_quality(
+                let seq_len_check = !check_seq_len
+                    || record.seq().len() >= minimum_sequence_length.unwrap() as usize;
+                let qual_check = !check_qual
+                    || crate::quality::average_quality(
                         record.qual(),
                         quality_encoding.as_deref().unwrap_or("Phred+33"),
                     ) >= minimum_quality.unwrap();
-                let header_check = !check_header ||
-                    header_regex.as_ref().unwrap().is_match(record.head());
+                let header_check =
+                    !check_header || header_regex.as_ref().unwrap().is_match(record.head());
                 let regex_check = !regex_set.is_match(record.seq());
 
                 // Mark record as matching if all conditions are met.
@@ -89,15 +89,15 @@ pub fn run_inverted(cli: &Cli) {
             |record, found| {
                 // Worker thread: Check filter criteria.
                 *found = false;
-                let seq_len_check = !check_seq_len ||
-                    record.seq().len() >= minimum_sequence_length.unwrap() as usize;
-                let qual_check = !check_qual ||
-                    crate::quality::average_quality(
+                let seq_len_check = !check_seq_len
+                    || record.seq().len() >= minimum_sequence_length.unwrap() as usize;
+                let qual_check = !check_qual
+                    || crate::quality::average_quality(
                         record.qual(),
                         quality_encoding.as_deref().unwrap_or("Phred+33"),
                     ) >= minimum_quality.unwrap();
-                let header_check = !check_header ||
-                    header_regex.as_ref().unwrap().is_match(record.head());
+                let header_check =
+                    !check_header || header_regex.as_ref().unwrap().is_match(record.head());
                 let regex_check = !regex_set.is_match(record.seq());
 
                 if seq_len_check && qual_check && header_check && regex_check {

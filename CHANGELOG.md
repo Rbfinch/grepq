@@ -3,6 +3,12 @@ TBD
 
 Unreleased changes. Release notes have not yet been written.
 
+1.5.4
+=====
+
+* improvement to command-line parsing when `writeSQL` is invoked
+* updates to documentation
+
 1.5.3
 =====
 
