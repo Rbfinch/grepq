@@ -29,8 +29,12 @@ fn main() {
     // Parse command line arguments using clap.
     let cli = Cli::parse();
 
-    // Set up SQL database connection if writing SQL output and command is not Inverted.
-    let db_conn = if cli.write_sql && !matches!(&cli.command, Some(Commands::Inverted)) {
+    // Invoked as: `$ my-app --markdown-help`
+    if cli.markdown_help {
+        clap_markdown::print_help_markdown::<Cli>();
+    }
+    // Set up SQL database connection if writing SQL output and no command is given.
+    let db_conn = if cli.write_sql && cli.command.is_none() {
         // If pattern file is JSON, check for qualityEncoding.
         let conn = if cli.patterns.ends_with(".json") {
             let pattern_data: serde_json::Value = serde_json::from_str(&std::fs::read_to_string(&cli.patterns).unwrap()).unwrap();
@@ -210,7 +214,7 @@ fn main() {
             |record, found| {
                 // Main thread: Depending on flags, write the record in various formats.
                 if *found {
-                    if cli.write_sql && !matches!(cli.command, Some(Commands::Inverted)) {
+                    if cli.write_sql && cli.command.is_none() {
                         // Process SQL write: extract match details and record quality statistics.
                         let mut matches_info = vec![];
                         for pattern in regex_set.patterns() {

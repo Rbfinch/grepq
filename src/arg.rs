@@ -213,10 +213,13 @@ FASTQ files by matching sequences to a set of regular expressions. bioRxiv, doi:
     author = "Nicholas D. Crosbie",
     version = clap::crate_version!(),
     about = "Quickly filter FASTQ files",
-    long_about = "Copyright (c) 2024 Nicholas D. Crosbie, licensed under the MIT License.",
+    long_about = "Copyright (c) 2024 - 2025 Nicholas D. Crosbie, licensed under the MIT License.",
     after_help = &**AFTER_HELP
 )]
 pub struct Cli {
+    #[arg(long, hide = true)]
+    pub markdown_help: bool,
+
     #[arg(
         short = 'I',
         long = "includeID",
@@ -286,8 +289,7 @@ output (i.e. FASTQ format)"
 of the sequence field (length), percent GC content (GC), percent GC content as
 an integer (GC_int), number of unique tetranucleotides in the sequence (nTN),
 percent tetranucleotide frequency within the sequence (TNF), and average quality 
-score for the sequence field (average_quality)",
-        conflicts_with = "inverted"
+score for the sequence field (average_quality)"
     )]
     pub write_sql: bool,
 

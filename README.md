@@ -184,7 +184,7 @@ For example, see `tune.sh` in the `examples` directory. This simple script will 
 
 ## Usage
 
-Get instructions and examples using `grepq -h`, or `grepq tune -h`, `grepq summarise -h` and `grepq inverted -h` for more information on the `tune`, `summarise` and `inverted` commands, respectively. See the `examples` directory for examples of pattern files and FASTQ files, and the `cookbook.sh` and `cookbook.md` files for more examples.
+Get instructions and examples using `grepq -h`, or `grepq tune -h`, `grepq summarise -h` and `grepq inverted -h` for more information on the `tune`, `summarise` and `inverted` commands, respectively. See the `examples` directory for examples of pattern files and FASTQ files, and the `cookbook.sh` and `cookbook.md` files for more examples. Finally, `help.md` contains a full dump of the help output, in markdown format.
 
 ```bash
 

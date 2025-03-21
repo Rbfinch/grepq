@@ -1,6 +1,6 @@
 [package]
 name = "grepq"
-version = "1.5.3"
+version = "1.5.4"
 edition = "2021"
 authors = ["Nicholas D. Crosbie"]
 license = "MIT"
@@ -15,7 +15,7 @@ keywords = ["bioinformatics", "FASTQ", "REGEX", "JSON", "cli"]
 [dependencies]
 seq_io = "0.3.4"
 regex = "1.11.1"
-mimalloc = "0.1.43"
+mimalloc = "0.1.44"
 clap = { version = "4.5.32", features = ["derive", "cargo"] }
 num_cpus = "1.16.0"
 flate2 = { version = "1.1.0", features = ["zlib-ng"], default-features = false }
@@ -26,9 +26,10 @@ zstd = "0.13.3"
 rusqlite = "0.34.0"
 chrono = "0.4.40"
 serde = "1.0.219"
+clap-markdown = "0.1.4"
 
 [dev-dependencies]
-tempfile = "3.19.0"
+tempfile = "3.19.1"
 criterion = { version = "0.5.1", features = ["html_reports"] }
 
 [lib]
