@@ -119,3 +119,4 @@ examples/variants-as-json-array.sql
 justfile
 book.toml
 generate.rb
+RELEASE.md
