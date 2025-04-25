@@ -1,0 +1,16 @@
+# Custom Dictionary Words
+grepq
+FASTQ
+IUPAC
+zstd
+summarise
+Phred
+tetranucleotide
+tetranucleotides
+bioRxiv
+fqgrep
+seqkit
+FASTA
+contig
+spikeq
+Crosbie
