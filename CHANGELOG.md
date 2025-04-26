@@ -1,6 +1,11 @@
 
 # Changelog
 
+1.5.6 (maintenance release)
+
+* added build.rs
+* updated README.md with new installation instructions
+
 1.5.5 (maintenance release)
 
 * updated dependencies
