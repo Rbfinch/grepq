@@ -1,0 +1,43 @@
+name: Ubuntu CI
+
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+    branches: [main]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Rust toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
+
+      - name: Install hyperfine
+        run: cargo install hyperfine
+
+      - name: Set up Node.js for bats
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20" # Or any LTS version
+
+      - name: Install bats
+        run: sudo npm install -g bats # Use sudo for global install on runner
+
+      - name: Build grepq
+        run: cargo build --release --verbose
+
+      - name: Run tests
+        run: |
+          cd tests
+          ./run_tests.sh
