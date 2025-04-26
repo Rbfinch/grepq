@@ -209,10 +209,17 @@ ajv --strict=false -s grepq-schema.json -d pattern-file.json
 
 - `grepq` has been tested on Linux (x86-64) and macOS (ARM64). It might work on other platforms, but it has not been tested.
 - Ensure that Rust is installed on your system (<https://www.rust-lang.org/tools/install>)
+- Ensure that SQLite and zstd are installed on your system. If you are using a package manager, you can install them with the following commands:
+  - For Ubuntu/Debian: `sudo apt-get install sqlite3 zstd`
+  - For macOS: `brew install sqlite zstd`
+- If you are installing from `bioconda`, you will need to have conda or miniconda installed on your system. You can install conda or miniconda from <https://docs.conda.io/en/latest/miniconda.html> or <https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html>.
+- If you are installing from Docker, you will need to have Docker installed on your system. You can install Docker from <https://docs.docker.com/get-docker/>.
 - If the build fails, make sure you have the latest version of the Rust compiler by running `rustup update`
 - To run the `test.sh` and `cookbook.sh` scripts in the `examples` directory, you will need `yq` (v4.44.6 or later), `gunzip` and version 4 or later of `bash`.
 
 ## Installation
+
+System requirements: `grepq` requires Rust (v1.56.0 or later) and the Rust toolchain to be installed on your system. You will also need system libraries for SQLite and zstd. The cargo install command will check if these libraries are installed, and if not, it will prompt you to install them.
 
 - From _crates.io_ (easiest method, but will not install the `examples` directory)
   - `cargo install grepq`
@@ -222,6 +229,21 @@ ajv --strict=false -s grepq-schema.json -d pattern-file.json
   - Run `cargo build --release`
   - Relative to the cloned parent directory, the executable will be located in `./target/release`
   - Make sure the executable is in your `PATH` or use the full path to the executable
+
+- From _bioconda_ (assumes conda or miniconda is installed; will not install the `examples` directory)
+  - `conda init fish`  # Or conda init bash, or conda init zsh
+  - `conda create -n myenv`  # Create a new environment named "myenv"
+  - `conda activate myenv`  # Activate the new environment
+  - `conda config --add channels conda-forge` # Add conda-forge channel
+  - `conda config --prepend channels bioconda` # Add bioconda channel with higher priority
+  - `conda config --set channel_priority strict` # Set strict channel priority
+  - `conda install grepq` # Install grepq
+
+- From _Docker_ (will not install the `examples` directory)
+
+  - Pull with `docker pull milesforjazz/grepq:latest`
+  - Run with `docker run --rm -v $(pwd):/data milesforjazz/grepq:latest grepq --help`
+  - Run with `docker run --rm -v $(pwd):/data milesforjazz/grepq:latest grepq --version`
 
 ## Examples and tests
 
