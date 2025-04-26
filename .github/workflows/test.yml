@@ -44,5 +44,5 @@ jobs:
 
       - name: Run tests
         run: |
-          cd tests
+          cd test
           ./run_tests.sh
