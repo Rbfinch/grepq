@@ -26,6 +26,7 @@ use regex::bytes::Regex as BytesRegex; // Alias to avoid confusion
 // and dispatches commands to the appropriate module functions.
 
 // adding a comment to simulate a change
+// adding a comment to simulate a change
 
 fn main() {
     // Parse command line arguments using clap.
