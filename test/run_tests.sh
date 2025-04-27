@@ -134,9 +134,9 @@ BATS_CMD=("bats" "${SCRIPT_DIR}/test.bats")
 OS_TYPE=$(uname -s)
 if [ "$OS_TYPE" = "Linux" ]; then
     # Regex to match tests 1-40 and 48+ (allowing for trailing descriptions)
-    LINUX_FILTER='^test-(([1-9]|[1-3][0-9]|40)|(4[8-9]|[5-9][0-9]|[1-9][0-9]{2,}))'
-    BATS_CMD+=("--filter" "$LINUX_FILTER")
+    # Pass the filter regex directly using single quotes to avoid shell expansion issues
     echo "Running on Linux, excluding tests 41-47."
+    BATS_CMD+=("--filter" '^test-(([1-9]|[1-3][0-9]|40)|(4[8-9]|[5-9][0-9]|[1-9][0-9]{2,}))')
 fi
 
 # Add any remaining arguments passed to the script
