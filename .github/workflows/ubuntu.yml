@@ -36,8 +36,8 @@ jobs:
         with:
           node-version: "20" # Or any LTS version
 
-      - name: Install bats
-        run: sudo npm install -g bats # Use sudo for global install on runner
+      - name: Install bats-core
+        run: sudo npm install -g bats-core # Use bats-core instead of bats
 
       - name: Build grepq
         run: cargo build --release
