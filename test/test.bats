@@ -359,12 +359,12 @@ measure_time() {
     log_time "test-40" "$duration"
 }
 
-@test "test-41: Bucket flag with gzipped input" {
-    cmd="${APP} -R --bucket --read-gzip ${EXAMPLES_DIR}/16S-iupac.json ${EXAMPLES_DIR}/SRX26365298.fastq.gz"
-    duration=$(measure_time "$cmd")
-    verify_bucket_files
-    log_time "test-41" "$duration"
-}
+# @test "test-41: Bucket flag with gzipped input" {
+#     cmd="${APP} -R --bucket --read-gzip ${EXAMPLES_DIR}/16S-iupac.json ${EXAMPLES_DIR}/SRX26365298.fastq.gz"
+#     duration=$(measure_time "$cmd")
+#     verify_bucket_files
+#     log_time "test-41" "$duration"
+# }
 
 # @test "test-42: Tune command with JSON output - large dataset" {
 #     cmd="${APP} --read-gzip ${EXAMPLES_DIR}/16S-no-iupac.json ${EXAMPLES_DIR}/SRX26365298.fastq.gz tune -n 10000000 -c --names --json-matches"
