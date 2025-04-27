@@ -110,7 +110,7 @@ while [[ $# -gt 0 ]]; do
         ;;
     esac
     shift
-end
+done
 
 # Run setup if requested
 if [ "$SETUP_ONLY" = true ]; then
