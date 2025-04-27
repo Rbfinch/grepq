@@ -101,7 +101,7 @@ target/
 *.fq
 
 # Other project specific ignores and allows
-test/
+test/lib
 fastq*
 meta.yaml
 !examples/small-copy.fastq.gzt
