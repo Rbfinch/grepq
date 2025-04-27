@@ -36,8 +36,11 @@ jobs:
         with:
           node-version: "20" # Or any LTS version
 
-      - name: Install bats-core
-        run: sudo npm install -g bats-core # Use bats-core instead of bats
+      - name: Install bats-core from source
+        run: |
+          git clone https://github.com/bats-core/bats-core.git
+          cd bats-core
+          sudo ./install.sh /usr/local
 
       - name: Build grepq
         run: cargo build --release
