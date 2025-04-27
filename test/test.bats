@@ -359,54 +359,54 @@ measure_time() {
     log_time "test-40" "$duration"
 }
 
-# @test "test-41: Bucket flag with gzipped input" {
-#     cmd="${APP} -R --bucket --read-gzip ${EXAMPLES_DIR}/16S-iupac.json ${EXAMPLES_DIR}/SRX26365298.fastq.gz"
-#     duration=$(measure_time "$cmd")
-#     verify_bucket_files
-#     log_time "test-41" "$duration"
-# }
+@test "test-41: Bucket flag with gzipped input" {
+    cmd="${APP} -R --bucket --read-gzip ${EXAMPLES_DIR}/16S-iupac.json ${EXAMPLES_DIR}/SRX26365298.fastq.gz"
+    duration=$(measure_time "$cmd")
+    verify_bucket_files
+    log_time "test-41" "$duration"
+}
 
-# @test "test-42: Tune command with JSON output - large dataset" {
-#     cmd="${APP} --read-gzip ${EXAMPLES_DIR}/16S-no-iupac.json ${EXAMPLES_DIR}/SRX26365298.fastq.gz tune -n 10000000 -c --names --json-matches"
-#     duration=$(measure_time "$cmd")
-#     verify_size "matches.json" 4827
-#     log_time "test-42" "$duration"
-# }
+@test "test-42: Tune command with JSON output - large dataset" {
+    cmd="${APP} --read-gzip ${EXAMPLES_DIR}/16S-no-iupac.json ${EXAMPLES_DIR}/SRX26365298.fastq.gz tune -n 10000000 -c --names --json-matches"
+    duration=$(measure_time "$cmd")
+    verify_size "matches.json" 4827
+    log_time "test-42" "$duration"
+}
 
-# @test "test-43: Summarise command with JSON output - large dataset" {
-#     cmd="${APP} --read-gzip ${EXAMPLES_DIR}/16S-no-iupac.json ${EXAMPLES_DIR}/SRX26365298.fastq.gz summarise -c --names --json-matches"
-#     duration=$(measure_time "$cmd")
-#     verify_size "matches.json" 4827
-#     log_time "test-43" "$duration"
-# }
+@test "test-43: Summarise command with JSON output - large dataset" {
+    cmd="${APP} --read-gzip ${EXAMPLES_DIR}/16S-no-iupac.json ${EXAMPLES_DIR}/SRX26365298.fastq.gz summarise -c --names --json-matches"
+    duration=$(measure_time "$cmd")
+    verify_size "matches.json" 4827
+    log_time "test-43" "$duration"
+}
 
-# @test "test-44: Tune command with JSON output and 3 variants - large dataset" {
-#     cmd="${APP} --read-gzip ${EXAMPLES_DIR}/16S-no-iupac.json ${EXAMPLES_DIR}/SRX26365298.fastq.gz tune -n 10000000 -c --names --json-matches --variants 3"
-#     duration=$(measure_time "$cmd")
-#     verify_size "matches.json" 7527
-#     log_time "test-44" "$duration"
-# }
+@test "test-44: Tune command with JSON output and 3 variants - large dataset" {
+    cmd="${APP} --read-gzip ${EXAMPLES_DIR}/16S-no-iupac.json ${EXAMPLES_DIR}/SRX26365298.fastq.gz tune -n 10000000 -c --names --json-matches --variants 3"
+    duration=$(measure_time "$cmd")
+    verify_size "matches.json" 7527
+    log_time "test-44" "$duration"
+}
 
-# @test "test-45: Summarise command with JSON output and 3 variants - large dataset" {
-#     cmd="${APP} --read-gzip ${EXAMPLES_DIR}/16S-no-iupac.json ${EXAMPLES_DIR}/SRX26365298.fastq.gz summarise -c --names --json-matches --variants 3"
-#     duration=$(measure_time "$cmd")
-#     verify_size "matches.json" 7527
-#     log_time "test-45" "$duration"
-# }
+@test "test-45: Summarise command with JSON output and 3 variants - large dataset" {
+    cmd="${APP} --read-gzip ${EXAMPLES_DIR}/16S-no-iupac.json ${EXAMPLES_DIR}/SRX26365298.fastq.gz summarise -c --names --json-matches --variants 3"
+    duration=$(measure_time "$cmd")
+    verify_size "matches.json" 7527
+    log_time "test-45" "$duration"
+}
 
-# @test "test-46: Tune command with JSON output and all variants - large dataset" {
-#     cmd="${APP} --read-gzip ${EXAMPLES_DIR}/16S-no-iupac.json ${EXAMPLES_DIR}/SRX26365298.fastq.gz tune -n 10000000 -c --names --json-matches --all"
-#     duration=$(measure_time "$cmd")
-#     verify_size "matches.json" 17995
-#     log_time "test-46" "$duration"
-# }
+@test "test-46: Tune command with JSON output and all variants - large dataset" {
+    cmd="${APP} --read-gzip ${EXAMPLES_DIR}/16S-no-iupac.json ${EXAMPLES_DIR}/SRX26365298.fastq.gz tune -n 10000000 -c --names --json-matches --all"
+    duration=$(measure_time "$cmd")
+    verify_size "matches.json" 17995
+    log_time "test-46" "$duration"
+}
 
-# @test "test-47: Summarise command with JSON output and all variants - large dataset" {
-#     cmd="${APP} --read-gzip ${EXAMPLES_DIR}/16S-no-iupac.json ${EXAMPLES_DIR}/SRX26365298.fastq.gz summarise -c --names --json-matches --all"
-#     duration=$(measure_time "$cmd")
-#     verify_size "matches.json" 17995
-#     log_time "test-47" "$duration"
-# }
+@test "test-47: Summarise command with JSON output and all variants - large dataset" {
+    cmd="${APP} --read-gzip ${EXAMPLES_DIR}/16S-no-iupac.json ${EXAMPLES_DIR}/SRX26365298.fastq.gz summarise -c --names --json-matches --all"
+    duration=$(measure_time "$cmd")
+    verify_size "matches.json" 17995
+    log_time "test-47" "$duration"
+}
 
 # bats test_tags=tag:sqlite
 @test "test-48: Write to SQLite file" {
