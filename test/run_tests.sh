@@ -127,21 +127,19 @@ fi
 export APP
 export COMPUTE_TIMINGS
 
-# Base bats command
-BATS_CMD=("bats" "${SCRIPT_DIR}/test.bats")
-
-# Detect OS and add filter if Linux
-OS_TYPE=$(uname -s)
-if [ "$OS_TYPE" = "Linux" ]; then
-    # Regex to match tests 1-40 and 48+ (allowing for trailing descriptions)
-    # Pass the filter regex directly using single quotes to avoid shell expansion issues
-    echo "Running on Linux, excluding tests 41-47."
-    BATS_CMD+=("--filter" '^test-(([1-9]|[1-3][0-9]|40)|(4[8-9]|[5-9][0-9]|[1-9][0-9]{2,}))')
-fi
-
-# Add any remaining arguments passed to the script
-BATS_CMD+=("${REMAINING_ARGS[@]}")
+# Determine the correct BATS file based on OS
+case "$(uname -s)" in
+Darwin*)
+    BATS_FILE="${SCRIPT_DIR}/test.bats"
+    ;;
+Linux*)
+    BATS_FILE="${SCRIPT_DIR}/test-ubuntu.bats"
+    ;;
+*)
+    echo "Error: Unsupported operating system for test selection"
+    exit 1
+    ;;
+esac
 
 # Run the tests
-echo "Executing: ${BATS_CMD[*]}"
-"${BATS_CMD[@]}" # Remove 'exec'
+exec bats "$BATS_FILE" "${REMAINING_ARGS[@]}"
