@@ -106,6 +106,7 @@ fastq*
 meta.yaml
 !examples/small-copy.fastq.gzt
 !examples/small-copy.fastq.zst
+!examples/SRX26365298.fastq.gz
 !paper/paper.mdb
 !paper/paper.bib
 paper/paper.html
