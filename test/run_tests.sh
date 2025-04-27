@@ -110,7 +110,7 @@ while [[ $# -gt 0 ]]; do
         ;;
     esac
     shift
-done
+end
 
 # Run setup if requested
 if [ "$SETUP_ONLY" = true ]; then
@@ -144,4 +144,4 @@ BATS_CMD+=("${REMAINING_ARGS[@]}")
 
 # Run the tests
 echo "Executing: ${BATS_CMD[*]}"
-exec "${BATS_CMD[@]}"
+"${BATS_CMD[@]}" # Remove 'exec'
