@@ -40,7 +40,7 @@ jobs:
         run: sudo npm install -g bats # Use sudo for global install on runner
 
       - name: Build grepq
-        run: cargo build --release --verbose
+        run: cargo build --release
 
       - name: Run tests
         run: |
