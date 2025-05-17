@@ -1,6 +1,10 @@
 
 # Changelog
 
+1.5.7 (maintenance release)
+
+* updated README.md to clarify use of test.sh script
+
 1.5.6 (maintenance release)
 
 * added build.rs

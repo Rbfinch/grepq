@@ -1,3 +1,25 @@
+// MIT License
+
+// Copyright (c) 2024 - present Nicholas D. Crosbie
+
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+
 use rusqlite::{Connection, Result as SqlResult};
 use seq_io::fastq::{Record, RefRecord};
 use std::fs::read_to_string;
@@ -19,14 +41,14 @@ pub fn write_record_with_id<W: Write>(
     seq_buffer: &mut Vec<u8>,
 ) {
     head_buffer.clear(); // Ensure header buffer is empty.
-    seq_buffer.clear();  // Ensure sequence buffer is empty.
+    seq_buffer.clear(); // Ensure sequence buffer is empty.
     head_buffer.extend_from_slice(record.head()); // Cache header from record.
-    seq_buffer.extend_from_slice(record.seq());    // Cache sequence from record.
-    writer.write_all(b"@").unwrap();                // FASTQ header prefix.
-    writer.write_all(head_buffer).unwrap();         // Write header.
-    writer.write_all(b"\n").unwrap();               // Newline separator.
-    writer.write_all(seq_buffer).unwrap();          // Write sequence.
-    writer.write_all(b"\n").unwrap();               // Newline after sequence.
+    seq_buffer.extend_from_slice(record.seq()); // Cache sequence from record.
+    writer.write_all(b"@").unwrap(); // FASTQ header prefix.
+    writer.write_all(head_buffer).unwrap(); // Write header.
+    writer.write_all(b"\n").unwrap(); // Newline separator.
+    writer.write_all(seq_buffer).unwrap(); // Write sequence.
+    writer.write_all(b"\n").unwrap(); // Newline after sequence.
 }
 
 // Write full record
@@ -47,20 +69,20 @@ pub fn write_full_record<W: Write>(
     qual_buffer: &mut Vec<u8>,
 ) {
     head_buffer.clear(); // Clear header buffer.
-    seq_buffer.clear();  // Clear sequence buffer.
+    seq_buffer.clear(); // Clear sequence buffer.
     qual_buffer.clear(); // Clear quality buffer.
     head_buffer.extend_from_slice(record.head()); // Cache header.
-    seq_buffer.extend_from_slice(record.seq());    // Cache sequence.
-    qual_buffer.extend_from_slice(record.qual());    // Cache quality scores.
-    writer.write_all(b"@").unwrap();    // Begin FASTQ record with '@'.
+    seq_buffer.extend_from_slice(record.seq()); // Cache sequence.
+    qual_buffer.extend_from_slice(record.qual()); // Cache quality scores.
+    writer.write_all(b"@").unwrap(); // Begin FASTQ record with '@'.
     writer.write_all(head_buffer).unwrap(); // Write header.
-    writer.write_all(b"\n").unwrap();   // Newline.
+    writer.write_all(b"\n").unwrap(); // Newline.
     writer.write_all(seq_buffer).unwrap(); // Write sequence.
-    writer.write_all(b"\n").unwrap();   // Newline.
-    writer.write_all(b"+").unwrap();    // Separator line for quality.
-    writer.write_all(b"\n").unwrap();   // Newline.
+    writer.write_all(b"\n").unwrap(); // Newline.
+    writer.write_all(b"+").unwrap(); // Separator line for quality.
+    writer.write_all(b"\n").unwrap(); // Newline.
     writer.write_all(qual_buffer).unwrap(); // Write quality scores.
-    writer.write_all(b"\n").unwrap();   // Newline.
+    writer.write_all(b"\n").unwrap(); // Newline.
 }
 
 // Write record in FASTA format
@@ -79,14 +101,14 @@ pub fn write_record_with_fasta<W: Write>(
     seq_buffer: &mut Vec<u8>,
 ) {
     head_buffer.clear(); // Clear header buffer.
-    seq_buffer.clear();  // Clear sequence buffer.
+    seq_buffer.clear(); // Clear sequence buffer.
     head_buffer.extend_from_slice(record.head()); // Cache header.
-    seq_buffer.extend_from_slice(record.seq());    // Cache sequence.
-    writer.write_all(b">").unwrap();               // FASTA header prefix.
-    writer.write_all(head_buffer).unwrap();          // Write header.
-    writer.write_all(b"\n").unwrap();               // Newline.
-    writer.write_all(seq_buffer).unwrap();           // Write sequence.
-    writer.write_all(b"\n").unwrap();               // Newline.
+    seq_buffer.extend_from_slice(record.seq()); // Cache sequence.
+    writer.write_all(b">").unwrap(); // FASTA header prefix.
+    writer.write_all(head_buffer).unwrap(); // Write header.
+    writer.write_all(b"\n").unwrap(); // Newline.
+    writer.write_all(seq_buffer).unwrap(); // Write sequence.
+    writer.write_all(b"\n").unwrap(); // Newline.
 }
 
 // Function: create_sqlite_db

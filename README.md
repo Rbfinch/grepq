@@ -277,7 +277,7 @@ For more examples, see the `examples` directory and the [cookbook](https://githu
 
 **Test script**
 
-You may also run the test script (`test.sh`) in the `examples` directory to more fully test `grepq`. From the `examples directory`, run the following command:
+To run the test script, you must have `yq` (v4.44.6 or later), `gunzip` and version 4 or later of `bash` installed on your system. Then follow all steps to install `grepq` _from source_ (refer instructions in the Installation section), cd into the `examples` directory and run the following command:
 
 ```bash
 ./test.sh commands-1.yaml; ./test.sh commands-2.yaml; ./test.sh commands-3.yaml; ./test.sh commands-4.yaml
