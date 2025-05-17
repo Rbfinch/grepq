@@ -1,3 +1,25 @@
+// MIT License
+
+// Copyright (c) 2024 - present Nicholas D. Crosbie
+
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+
 // This module contains unit tests for various components of the grepq tool,
 // including quality scoring, IUPAC conversion, pattern parsing, GC content calculation,
 // and tetranucleotide frequency computation.
@@ -32,7 +54,7 @@ mod test_module {
         // Standard bases remain unchanged.
         assert_eq!(initialise::convert_iupac_to_regex("ACTG"), "ACTG");
         // Ambiguous codes are converted to their regex equivalents.
-        assert_eq!(initialise::convert_iupac_to_regex("N"), "[ACGT]");  // 'N' to [ACGT]
+        assert_eq!(initialise::convert_iupac_to_regex("N"), "[ACGT]"); // 'N' to [ACGT]
         assert_eq!(initialise::convert_iupac_to_regex("Y"), "[CT]");
         assert_eq!(initialise::convert_iupac_to_regex("R"), "[AG]");
         assert_eq!(initialise::convert_iupac_to_regex("W"), "[AT]");
@@ -102,10 +124,10 @@ mod test_module {
         // Additional comment: Testing GC content calculation with various types of sequences.
         // Test: Confirm GC content is correctly calculated.
         assert_eq!(quality::gc_content(b"GCGC"), 100.0); // All bases are G or C.
-        assert_eq!(quality::gc_content(b"ATAT"), 0.0);   // No GC bases.
-        assert_eq!(quality::gc_content(b"ATGC"), 50.0);   // Equal mix of GC and AT.
-        assert_eq!(quality::gc_content(b""), 0.0);         // Empty sequence returns 0.
-        assert_eq!(quality::gc_content(b"GGCC"), 100.0);    // All bases are G or C.
+        assert_eq!(quality::gc_content(b"ATAT"), 0.0); // No GC bases.
+        assert_eq!(quality::gc_content(b"ATGC"), 50.0); // Equal mix of GC and AT.
+        assert_eq!(quality::gc_content(b""), 0.0); // Empty sequence returns 0.
+        assert_eq!(quality::gc_content(b"GGCC"), 100.0); // All bases are G or C.
 
         // Test with ambiguous bases: only standard bases should be counted.
         assert_eq!(quality::gc_content(b"GCNGC"), 100.0);
@@ -129,7 +151,10 @@ mod test_module {
         assert_eq!(result.len(), 4);
 
         // Verify that the summed percentages are approximately 100%.
-        let sum: f32 = result.iter().map(|v| v["percentage"].as_f64().unwrap() as f32).sum();
+        let sum: f32 = result
+            .iter()
+            .map(|v| v["percentage"].as_f64().unwrap() as f32)
+            .sum();
         assert!((sum - 100.0).abs() < 1e-3);
 
         // Test: Verify that tetranucleotides with ambiguous bases ('N') are skipped.
@@ -154,7 +179,7 @@ mod test_module {
         assert_eq!(json, "[]");
         assert_eq!(count, 0);
     }
-    
+
     #[test]
     fn test_iupac_case_insensitivity_conversion() {
         // Additional comment: Ensures that lowercase inputs are correctly transformed to uppercase.
@@ -176,12 +201,12 @@ mod test_module {
         // Copy to a ".txt" file since parse_patterns_file checks the file extension.
         let txt_path = temp_file.path().with_extension("txt");
         fs::copy(temp_file.path(), &txt_path).unwrap();
-        
+
         let result = initialise::parse_patterns_file(txt_path.to_str().unwrap())
             .expect("Failed to parse plain text pattern file");
         // Expect exactly 2 regex patterns.
         assert_eq!(result.0.patterns().len(), 2);
-        
+
         // Cleanup the temporary ".txt" file.
         let _ = fs::remove_file(&txt_path);
     }
@@ -230,9 +255,15 @@ mod test_module {
         use std::io::Write;
         use tempfile::NamedTempFile;
         let temp_file = NamedTempFile::new().unwrap();
-        temp_file.as_file().write_all(json_content.as_bytes()).unwrap();
+        temp_file
+            .as_file()
+            .write_all(json_content.as_bytes())
+            .unwrap();
         let result = initialise::parse_patterns_file(temp_file.path().to_str().unwrap());
-        assert!(result.is_err(), "Expected error due to invalid variant DNA sequence.");
+        assert!(
+            result.is_err(),
+            "Expected error due to invalid variant DNA sequence."
+        );
     }
 
     #[test]
@@ -255,20 +286,28 @@ mod test_module {
             }
         }
         "#;
-        use std::io::Write;
         use std::fs;
+        use std::io::Write;
         use tempfile::NamedTempFile;
-        
+
         // Create a temp file with a .json extension
         let temp_file = NamedTempFile::new().unwrap();
-        temp_file.as_file().write_all(json_content.as_bytes()).unwrap();
+        temp_file
+            .as_file()
+            .write_all(json_content.as_bytes())
+            .unwrap();
         let json_path = temp_file.path().with_extension("json");
         fs::copy(temp_file.path(), &json_path).unwrap();
-        
+
         let result = initialise::parse_patterns_file(json_path.to_str().unwrap());
-        assert!(result.is_ok(), "Expected valid JSON pattern parsing to succeed.");
-        
-        if let Ok((regex_set, header, min_len, min_qual, quality_enc, regex_names, variants)) = result {
+        assert!(
+            result.is_ok(),
+            "Expected valid JSON pattern parsing to succeed."
+        );
+
+        if let Ok((regex_set, header, min_len, min_qual, quality_enc, regex_names, variants)) =
+            result
+        {
             // Verify one regex is parsed.
             assert_eq!(regex_set.patterns().len(), 1);
             // Verify headerRegex was parsed.
@@ -284,7 +323,7 @@ mod test_module {
             // Verify no variants (since none are provided).
             assert_eq!(variants.len(), 0);
         }
-        
+
         // Clean up the temp file
         let _ = fs::remove_file(&json_path);
     }
