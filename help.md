@@ -298,10 +298,3 @@ the FASTQ file
 * `--json-matches` — Write the output to a JSON file called matches.json
 * `--variants <VARIANTS>` — Number of top most frequent variants to include in the output
 * `--all` — Include all variants in the output
-
-<hr/>
-
-<small><i>
-    This document was generated with the assistance of
-    <a href="https://crates.io/crates/clap-markdown"><code>clap-markdown</code></a>.
-</i></small>
