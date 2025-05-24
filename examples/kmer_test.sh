@@ -14,14 +14,18 @@ rm -f examples/kmers_*.db
 
 # Build the project first
 echo "Building grepq..."
-cargo build
+cargo build --release
+if [ $? -ne 0 ]; then
+    echo "Build failed. Please check the output for errors."
+    exit 1
+fi
 
 # Get path to the built binary
-GREPQ_BIN="./target/debug/grepq"
+GREPQ_BIN="./target/release/grepq"
 
 # Test tetranucleotide (4-mer) counting with SQL output
 echo "Testing tetranucleotide (4-mer) counting..."
-$GREPQ_BIN examples/16S-no-iupac.txt examples/small.fastq --tetranucleotides --writeSQL examples/kmers_4.db
+$GREPQ_BIN examples/16S-no-iupac.txt examples/small.fastq --tetra --writeSQL examples/kmers_4.db
 
 # Test pentanucleotide (5-mer) counting with SQL output
 echo "Testing pentanucleotide (5-mer) counting..."
@@ -37,7 +41,7 @@ $GREPQ_BIN examples/16S-no-iupac.txt examples/small.fastq --hepta --writeSQL exa
 
 # Test multiple k-mer sizes simultaneously
 echo "Testing multiple k-mer sizes simultaneously..."
-$GREPQ_BIN examples/16S-no-iupac.txt examples/small.fastq --tetranucleotides --penta --hexa --hepta --writeSQL examples/kmers_all.db
+$GREPQ_BIN examples/16S-no-iupac.txt examples/small.fastq --tetra --penta --hexa --hepta --writeSQL examples/kmers_all.db
 
 echo "K-mer tests complete."
 echo "DB files created: kmers_4.db, kmers_5.db, kmers_6.db, kmers_7.db, kmers_all.db"

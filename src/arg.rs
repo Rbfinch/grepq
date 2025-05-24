@@ -327,7 +327,7 @@ tetranucleotides in the sequence field of the matched FASTQ records",
     pub num_tetranucleotides: Option<usize>,
 
     #[arg(
-        long = "tetranucleotides",
+        long = "tetra",
         help = "Count tetranucleotides and write to SQL",
         requires = "write_sql"
     )]
@@ -338,21 +338,21 @@ tetranucleotides in the sequence field of the matched FASTQ records",
         help = "Count pentanucleotides and write to SQL",
         requires = "write_sql"
     )]
-    pub penta: bool,
+    pub pentanucleotides: bool,
 
     #[arg(
         long = "hexa",
         help = "Count hexanucleotides and write to SQL",
         requires = "write_sql"
     )]
-    pub hexa: bool,
+    pub hexanucleotides: bool,
 
     #[arg(
         long = "hepta",
         help = "Count heptanucleotides and write to SQL",
         requires = "write_sql"
     )]
-    pub hepta: bool,
+    pub heptanucleotides: bool,
 
     #[arg(help = "Path to the patterns file in plain text or JSON format")]
     pub patterns: String,

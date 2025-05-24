@@ -390,7 +390,7 @@ fn main() {
     }
 
     // Check that higher-order k-mers require --write-sql
-    if (cli.penta || cli.hexa || cli.hepta) && cli.write_sql.is_none() {
+    if (cli.pentanucleotides || cli.hexanucleotides || cli.heptanucleotides) && cli.write_sql.is_none() {
         eprintln!("Error: --penta, --hexa, and --hepta options require --write-sql to be specified");
         std::process::exit(1);
     }
@@ -416,15 +416,15 @@ fn main() {
             process_kmers(&sequences, KmerSize::Tetra, db_path, "tetranucleotides");
         }
         
-        if cli.penta {
+        if cli.pentanucleotides {
             process_kmers(&sequences, KmerSize::Penta, db_path, "pentanucleotides");
         }
         
-        if cli.hexa {
+        if cli.hexanucleotides {
             process_kmers(&sequences, KmerSize::Hexa, db_path, "hexanucleotides"); 
         }
         
-        if cli.hepta {
+        if cli.heptanucleotides {
             process_kmers(&sequences, KmerSize::Hepta, db_path, "heptanucleotides");
         }
     }
