@@ -311,9 +311,10 @@ output (i.e. FASTQ format)"
 of the sequence field (length), percent GC content (GC), percent GC content as
 an integer (GC_int), number of unique tetranucleotides in the sequence (nTN),
 percent tetranucleotide frequency within the sequence (TNF), and average quality 
-score for the sequence field (average_quality)"
+score for the sequence field (average_quality)",
+        value_name = "DATABASE_PATH"
     )]
-    pub write_sql: bool,
+    pub write_sql: Option<String>,
 
     #[arg(
         short = 'N',
@@ -324,6 +325,34 @@ tetranucleotides in the sequence field of the matched FASTQ records",
         requires = "write_sql"
     )]
     pub num_tetranucleotides: Option<usize>,
+
+    #[arg(
+        long = "tetranucleotides",
+        help = "Count tetranucleotides and write to SQL",
+        requires = "write_sql"
+    )]
+    pub tetranucleotides: bool,
+
+    #[arg(
+        long = "penta",
+        help = "Count pentanucleotides and write to SQL",
+        requires = "write_sql"
+    )]
+    pub penta: bool,
+
+    #[arg(
+        long = "hexa",
+        help = "Count hexanucleotides and write to SQL",
+        requires = "write_sql"
+    )]
+    pub hexa: bool,
+
+    #[arg(
+        long = "hepta",
+        help = "Count heptanucleotides and write to SQL",
+        requires = "write_sql"
+    )]
+    pub hepta: bool,
 
     #[arg(help = "Path to the patterns file in plain text or JSON format")]
     pub patterns: String,

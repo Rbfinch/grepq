@@ -26,6 +26,7 @@
 
 use crate::arg::Cli;
 use crate::initialise::{create_reader, parse_patterns_file};
+use crate::kmer_utils::{count_canonical_kmers, count_kmers, KmerSize};
 use crate::output;
 use crate::quality;
 use regex::bytes::Regex;
@@ -34,6 +35,98 @@ use serde_json::{self, json};
 use std::collections::HashMap;
 use std::fs::File;
 use std::io::{self};
+
+// Define a simple sequence structure for k-mer processing
+struct Sequence {
+    id: String,
+    sequence: String,
+}
+
+// Function to process k-mers and store them in a SQLite database
+fn process_kmers(sequences: &[Sequence], kmer_size: KmerSize, db_path: &str, table_name: &str) {
+    // Connect to database
+    let mut conn = rusqlite::Connection::open(db_path).expect("Failed to open database");
+
+    // Create table for this k-mer size if it doesn't exist
+    conn.execute(
+        &format!(
+            "CREATE TABLE IF NOT EXISTS {} (
+                id INTEGER PRIMARY KEY,
+                sequence_id TEXT NOT NULL,
+                kmer TEXT NOT NULL,
+                count INTEGER NOT NULL,
+                frequency REAL NOT NULL
+            )",
+            table_name
+        ),
+        [],
+    )
+    .expect("Failed to create table");
+
+    // Process each sequence
+    for sequence in sequences {
+        let seq_str = &sequence.sequence;
+        let k = kmer_size as usize;
+
+        // Count both regular and canonical k-mers
+        let kmer_counts = count_kmers(seq_str, k);
+        let canonical_counts = count_canonical_kmers(seq_str, kmer_size);
+
+        // Calculate the total number of valid k-mers
+        let total_kmers: usize = kmer_counts.values().sum();
+        if total_kmers == 0 {
+            continue; // Skip if no valid k-mers found
+        }
+
+        // Insert regular k-mers
+        let tx = conn.transaction().expect("Failed to begin transaction");
+        for (kmer, count) in kmer_counts {
+            let frequency = count as f64 / total_kmers as f64;
+            tx.execute(
+                &format!(
+                    "INSERT INTO {} (sequence_id, kmer, count, frequency) VALUES (?, ?, ?, ?)",
+                    table_name
+                ),
+                rusqlite::params![&sequence.id, &kmer, count as i64, frequency],
+            )
+            .expect("Failed to insert k-mer data");
+        }
+        tx.commit().expect("Failed to commit transaction");
+
+        // Insert canonical k-mers to a separate table
+        let canonical_table = format!("canonical_{}", table_name);
+        conn.execute(
+            &format!(
+                "CREATE TABLE IF NOT EXISTS {} (
+                    id INTEGER PRIMARY KEY,
+                    sequence_id TEXT NOT NULL,
+                    canonical_kmer TEXT NOT NULL,
+                    count INTEGER NOT NULL,
+                    frequency REAL NOT NULL
+                )",
+                canonical_table
+            ),
+            [],
+        )
+        .expect("Failed to create canonical table");
+
+        let total_canonical: usize = canonical_counts.values().sum();
+        if total_canonical == 0 {
+            continue; // Skip if no valid canonical k-mers found
+        }
+
+        let tx = conn.transaction().expect("Failed to begin transaction");
+        for (kmer, count) in canonical_counts {
+            let frequency = count as f64 / total_canonical as f64;
+            tx.execute(
+                &format!("INSERT INTO {} (sequence_id, canonical_kmer, count, frequency) VALUES (?, ?, ?, ?)", 
+                    canonical_table),
+                rusqlite::params![&sequence.id, &kmer, count as i64, frequency],
+            ).expect("Failed to insert canonical k-mer data");
+        }
+        tx.commit().expect("Failed to commit transaction");
+    }
+}
 
 pub fn run_summarise(cli: &Cli, include_count: bool) -> io::Result<()> {
     let patterns_path = &cli.patterns;
@@ -53,7 +146,7 @@ pub fn run_summarise(cli: &Cli, include_count: bool) -> io::Result<()> {
     let mut match_strings: HashMap<String, HashMap<String, usize>> = HashMap::new();
 
     // Initialize database connection if SQL output is enabled.
-    let db_conn = if cli.write_sql {
+    let db_conn = if cli.write_sql.is_some() {
         let conn = if cli.patterns.ends_with(".json") {
             let pattern_data: serde_json::Value =
                 serde_json::from_str(&std::fs::read_to_string(&cli.patterns).unwrap()).unwrap();
@@ -124,7 +217,7 @@ pub fn run_summarise(cli: &Cli, include_count: bool) -> io::Result<()> {
                     .or_insert(0) += 1;
 
                 // If SQL write is enabled, collect match info in JSON format.
-                if cli.write_sql {
+                if cli.write_sql.is_some() {
                     matches_info.push(json!({
                         "pattern": matched_pattern,
                         "start": matched.start(),
@@ -135,25 +228,28 @@ pub fn run_summarise(cli: &Cli, include_count: bool) -> io::Result<()> {
             }
 
             // Write record data and match details to the database if enabled.
-            if cli.write_sql {
+            if cli.write_sql.is_some() {
                 let avg_quality = quality_encoding
                     .as_ref()
                     .map(|encoding| quality::average_quality(record.qual(), encoding.as_str()))
                     .unwrap_or(0.0);
+
+                // Get tetranucleotide frequencies (for backward compatibility)
                 let (tnf, ntn) =
                     quality::tetranucleotide_frequencies(record.seq(), cli.num_tetranucleotides);
                 let (ctnf, nctn) = quality::canonical_tetranucleotide_frequencies(
                     record.seq(),
                     cli.num_tetranucleotides,
                 );
+
                 let gc = quality::gc_content(record.seq());
                 let gc_int = gc.round() as i64;
 
-                if let Some(ref db) = db_conn {
-                    let matches_json =
-                        serde_json::to_string(&matches_info).unwrap_or_else(|_| "[]".to_string());
+                let matches_json =
+                    serde_json::to_string(&matches_info).unwrap_or_else(|_| "[]".to_string());
 
-                    // Use different SQL statements based on pattern file type and quality encoding
+                // Use different SQL statements based on pattern file type and quality encoding
+                if let Some(ref db) = db_conn {
                     if cli.patterns.ends_with(".json") {
                         let pattern_data: serde_json::Value =
                             serde_json::from_str(&std::fs::read_to_string(&cli.patterns).unwrap())
@@ -163,7 +259,7 @@ pub fn run_summarise(cli: &Cli, include_count: bool) -> io::Result<()> {
                             // With quality encoding
                             db.execute(
                                 "INSERT INTO fastq_data (header, sequence, quality, length, GC, GC_int, nTN, nCTN, TNF, CTNF, average_quality, variants) 
-                                 VALUES (?1, ?2, ?3, ?4, ROUND(?5, 2), ?6, ?7, ?8, ?9, ?10, ROUND(?11, 2), ?12)",
+                                VALUES (?1, ?2, ?3, ?4, ROUND(?5, 2), ?6, ?7, ?8, ?9, ?10, ROUND(?11, 2), ?12)",
                                 rusqlite::params![
                                     String::from_utf8_lossy(record.head()),
                                     String::from_utf8_lossy(record.seq()),
@@ -183,7 +279,7 @@ pub fn run_summarise(cli: &Cli, include_count: bool) -> io::Result<()> {
                             // JSON without quality encoding
                             db.execute(
                                 "INSERT INTO fastq_data (header, sequence, quality, length, GC, GC_int, nTN, nCTN, TNF, CTNF, variants) 
-                                 VALUES (?1, ?2, ?3, ?4, ROUND(?5, 2), ?6, ?7, ?8, ?9, ?10, ?11)",
+                                VALUES (?1, ?2, ?3, ?4, ROUND(?5, 2), ?6, ?7, ?8, ?9, ?10, ?11)",
                                 rusqlite::params![
                                     String::from_utf8_lossy(record.head()),
                                     String::from_utf8_lossy(record.seq()),
@@ -203,7 +299,7 @@ pub fn run_summarise(cli: &Cli, include_count: bool) -> io::Result<()> {
                         // Text file patterns - no quality encoding
                         db.execute(
                             "INSERT INTO fastq_data (header, sequence, quality, length, GC, GC_int, nTN, nCTN, TNF, CTNF, variants) 
-                             VALUES (?1, ?2, ?3, ?4, ROUND(?5, 2), ?6, ?7, ?8, ?9, ?10, ?11)",
+                            VALUES (?1, ?2, ?3, ?4, ROUND(?5, 2), ?6, ?7, ?8, ?9, ?10, ?11)",
                             rusqlite::params![
                                 String::from_utf8_lossy(record.head()),
                                 String::from_utf8_lossy(record.seq()),
@@ -227,6 +323,46 @@ pub fn run_summarise(cli: &Cli, include_count: bool) -> io::Result<()> {
     // Sort the collected match counts by descending order.
     let mut match_counts: Vec<_> = match_counts.into_iter().collect();
     match_counts.sort_by(|a, b| b.1.cmp(&a.1));
+
+    // Check if higher-order k-mers require --write-sql
+    if (cli.penta || cli.hexa || cli.hepta) && cli.write_sql.is_none() {
+        eprintln!(
+            "Error: --penta, --hexa, and --hepta options require --write-sql to be specified"
+        );
+        std::process::exit(1);
+    }
+
+    // Process higher order k-mers if requested
+    if let Some(ref db_path) = cli.write_sql {
+        // Collect sequences from the FASTQ file for k-mer processing
+        let mut sequences = Vec::new();
+
+        // Create a new reader for the FASTQ file
+        let mut reader = create_reader(cli);
+
+        // Read all sequences from the FASTQ file
+        for record in reader.records().flatten() {
+            let id = String::from_utf8_lossy(record.head()).to_string();
+            let seq = String::from_utf8_lossy(record.seq()).to_string();
+            sequences.push(Sequence { id, sequence: seq });
+        }
+
+        if cli.tetranucleotides {
+            process_kmers(&sequences, KmerSize::Tetra, db_path, "tetranucleotides");
+        }
+
+        if cli.penta {
+            process_kmers(&sequences, KmerSize::Penta, db_path, "pentanucleotides");
+        }
+
+        if cli.hexa {
+            process_kmers(&sequences, KmerSize::Hexa, db_path, "hexanucleotides");
+        }
+
+        if cli.hepta {
+            process_kmers(&sequences, KmerSize::Hepta, db_path, "heptanucleotides");
+        }
+    }
 
     // Process output based on the type of patterns file.
     if patterns_path.ends_with(".json") {

@@ -27,6 +27,7 @@ pub mod output;
 pub mod quality;
 pub mod summarise;
 pub mod tune;
+pub mod kmer_utils;
 
 #[cfg(test)]
 mod tests;

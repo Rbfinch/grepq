@@ -34,6 +34,7 @@ use std::io::{Error, ErrorKind};
 use serde_json::json;
 use regex::bytes::Regex as BytesRegex; // Alias to avoid confusion
 use arg::{Cli, Commands};
+use kmer_utils::{KmerSize, count_kmers, count_canonical_kmers};
 
 mod arg;
 mod initialise;
@@ -42,6 +43,13 @@ mod output;
 mod quality;
 mod summarise;
 mod tune;
+mod kmer_utils;
+
+// Define a simple sequence structure for k-mer processing
+struct Sequence {
+    id: String,
+    sequence: String,
+}
 
 // Main entry point for the grepq tool.
 // This file handles CLI argument parsing, SQL database connection (if enabled),
@@ -56,7 +64,7 @@ fn main() {
         clap_markdown::print_help_markdown::<Cli>();
     }
     // Set up SQL database connection if writing SQL output and no command is given.
-    let db_conn = if cli.write_sql && cli.command.is_none() {
+    let db_conn = if cli.write_sql.is_some() && cli.command.is_none() {
         // If pattern file is JSON, check for qualityEncoding.
         let conn = if cli.patterns.ends_with(".json") {
             let pattern_data: serde_json::Value = serde_json::from_str(&std::fs::read_to_string(&cli.patterns).unwrap()).unwrap();
@@ -236,7 +244,7 @@ fn main() {
             |record, found| {
                 // Main thread: Depending on flags, write the record in various formats.
                 if *found {
-                    if cli.write_sql && cli.command.is_none() {
+                    if cli.write_sql.is_some() && cli.command.is_none() {
                         // Process SQL write: extract match details and record quality statistics.
                         let mut matches_info = vec![];
                         for pattern in regex_set.patterns() {
@@ -379,6 +387,119 @@ fn main() {
     // Ensure the database connection is properly closed, if one was established.
     if let Some(conn) = db_conn {
         conn.close().unwrap();
+    }
+
+    // Check that higher-order k-mers require --write-sql
+    if (cli.penta || cli.hexa || cli.hepta) && cli.write_sql.is_none() {
+        eprintln!("Error: --penta, --hexa, and --hepta options require --write-sql to be specified");
+        std::process::exit(1);
+    }
+    
+    // Process higher order k-mers if requested
+    if cli.write_sql.is_some() {
+        let db_path = cli.write_sql.as_ref().unwrap();
+        
+        // Collect sequences from the FASTQ file for k-mer processing
+        let mut sequences = Vec::new();
+        
+        // Create a new reader for the FASTQ file
+        let mut reader = create_reader(&cli);
+        
+        // Read all sequences from the FASTQ file
+        for record in reader.records().flatten() {
+            let id = String::from_utf8_lossy(record.head()).to_string();
+            let seq = String::from_utf8_lossy(record.seq()).to_string();
+            sequences.push(Sequence { id, sequence: seq });
+        }
+        
+        if cli.tetranucleotides {
+            process_kmers(&sequences, KmerSize::Tetra, db_path, "tetranucleotides");
+        }
+        
+        if cli.penta {
+            process_kmers(&sequences, KmerSize::Penta, db_path, "pentanucleotides");
+        }
+        
+        if cli.hexa {
+            process_kmers(&sequences, KmerSize::Hexa, db_path, "hexanucleotides"); 
+        }
+        
+        if cli.hepta {
+            process_kmers(&sequences, KmerSize::Hepta, db_path, "heptanucleotides");
+        }
+    }
+}
+
+fn process_kmers(sequences: &[Sequence], kmer_size: KmerSize, db_path: &str, table_name: &str) {
+    // Connect to database
+    let mut conn = rusqlite::Connection::open(db_path).expect("Failed to open database");
+    
+    // Create table for this k-mer size if it doesn't exist
+    conn.execute(
+        &format!(
+            "CREATE TABLE IF NOT EXISTS {} (
+                id INTEGER PRIMARY KEY,
+                sequence_id TEXT NOT NULL,
+                kmer TEXT NOT NULL,
+                count INTEGER NOT NULL,
+                frequency REAL NOT NULL
+            )", 
+            table_name
+        ),
+        [],
+    ).expect("Failed to create table");
+    
+    // Process each sequence
+    for sequence in sequences {
+        let seq_str = &sequence.sequence;
+        let k = kmer_size as usize;
+        
+        // Count both regular and canonical k-mers
+        let kmer_counts = count_kmers(seq_str, k);
+        let canonical_counts = count_canonical_kmers(seq_str, kmer_size);
+        
+        // Calculate the total number of valid k-mers
+        let total_kmers: usize = kmer_counts.values().sum();
+        
+        // Insert regular k-mers
+        let tx = conn.transaction().expect("Failed to begin transaction");
+        for (kmer, count) in kmer_counts {
+            let frequency = count as f64 / total_kmers as f64;
+            tx.execute(
+                &format!("INSERT INTO {} (sequence_id, kmer, count, frequency) VALUES (?, ?, ?, ?)", table_name),
+                rusqlite::params![&sequence.id, &kmer, count as i64, frequency],
+            ).expect("Failed to insert k-mer data");
+        }
+        tx.commit().expect("Failed to commit transaction");
+        
+        // Insert canonical k-mers to a separate table
+        let canonical_table = format!("canonical_{}", table_name);
+        conn.execute(
+            &format!(
+                "CREATE TABLE IF NOT EXISTS {} (
+                    id INTEGER PRIMARY KEY,
+                    sequence_id TEXT NOT NULL,
+                    canonical_kmer TEXT NOT NULL,
+                    count INTEGER NOT NULL,
+                    frequency REAL NOT NULL
+                )", 
+                canonical_table
+            ),
+            [],
+        ).expect("Failed to create canonical table");
+        
+        let total_canonical: usize = canonical_counts.values().sum();
+        
+        let tx = conn.transaction().expect("Failed to begin transaction");
+        for (kmer, count) in canonical_counts {
+            let frequency = count as f64 / total_canonical as f64;
+            tx.execute(
+                &format!("INSERT INTO {} (sequence_id, canonical_kmer, count, frequency) VALUES (?, ?, ?, ?)", 
+                    canonical_table),
+                rusqlite::params![&sequence.id, &kmer, count as i64, frequency],
+            ).expect("Failed to insert canonical k-mer data");
+        }
+        tx.commit().expect("Failed to commit transaction");
     }
 }
 

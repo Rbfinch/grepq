@@ -32,69 +32,20 @@ fn main() {
     // Check Rust version
     check_rust_version();
 
-    // Generate canonical tetranucleotides lookup table
+    // Generate canonical kmers lookup tables for k=4,5,6,7
     let out_dir = env::var("OUT_DIR").unwrap();
-    let dest_path = Path::new(&out_dir).join("canonical_kmers.rs");
-    let mut file = BufWriter::new(File::create(&dest_path).unwrap());
 
-    let k = 4; // We are pre-computing for k=4 (tetranucleotides)
-    let bases = ['A', 'C', 'G', 'T'];
+    // Generate canonical tetranucleotides (k=4)
+    generate_canonical_kmers(4, &out_dir);
 
-    // Start generating the map code - using phf_codegen instead of phf_map macro
-    writeln!(
-        &mut file,
-        "use phf::Map;\n\nstatic CANONICAL_K_MERS: Map<&'static str, &'static str> = {{"
-    )
-    .unwrap();
+    // Generate canonical pentanucleotides (k=5)
+    generate_canonical_kmers(5, &out_dir);
 
-    writeln!(
-        &mut file,
-        "    // Generated map of tetranucleotides to their canonical forms"
-    )
-    .unwrap();
-    writeln!(
-        &mut file,
-        "    const DATA: phf::Map<&'static str, &'static str> = {{"
-    )
-    .unwrap();
+    // Generate canonical hexanucleotides (k=6)
+    generate_canonical_kmers(6, &out_dir);
 
-    // Use phf_codegen to create a phf::Map
-    let mut builder = phf_codegen::Map::new();
-
-    // Iterate through all possible k-mers (4^k combinations)
-    // For k=4, this is 4^4 = 256 combinations.
-    let mut current_kmer_chars = vec![' '; k];
-    for i0 in 0..4 {
-        current_kmer_chars[0] = bases[i0];
-        for i1 in 0..4 {
-            current_kmer_chars[1] = bases[i1];
-            for i2 in 0..4 {
-                current_kmer_chars[2] = bases[i2];
-                for &base3 in &bases {
-                    current_kmer_chars[3] = base3;
-
-                    let kmer: String = current_kmer_chars.iter().collect();
-                    let rc_kmer = reverse_complement(&kmer);
-                    let canonical = if kmer <= rc_kmer {
-                        kmer.clone()
-                    } else {
-                        rc_kmer
-                    };
-
-                    // Add the k-mer -> canonical k-mer entry to the builder
-                    builder.entry(kmer, &format!("\"{}\"", canonical));
-                }
-            }
-        }
-    }
-
-    // Write the generated phf::Map code
-    write!(&mut file, "{}", builder.build()).unwrap();
-
-    // Close the map definition
-    writeln!(&mut file, "    }};").unwrap();
-    writeln!(&mut file, "    DATA").unwrap();
-    writeln!(&mut file, "}};").unwrap();
+    // Generate canonical heptanucleotides (k=7)
+    generate_canonical_kmers(7, &out_dir);
 
     // Check if SQLite is installed
     let sqlite_installed = check_library("sqlite3");
@@ -136,6 +87,84 @@ fn main() {
     if env::consts::OS == "macos" {
         println!("cargo:rustc-link-search=/usr/local/lib");
         println!("cargo:rustc-link-search=/opt/homebrew/lib");
+    }
+}
+
+// Function to generate canonical k-mers lookup tables
+fn generate_canonical_kmers(k: usize, out_dir: &str) {
+    let dest_path = Path::new(out_dir).join(format!("canonical_kmers_{}.rs", k));
+    let mut file = BufWriter::new(File::create(&dest_path).unwrap());
+
+    let bases = ['A', 'C', 'G', 'T'];
+
+    // Write the map header without phf import (it will be imported in kmer_utils.rs only once)
+    writeln!(
+        &mut file,
+        "static CANONICAL_K_MERS_{}: phf::Map<&'static str, &'static str> = {{",
+        k
+    )
+    .unwrap();
+
+    writeln!(
+        &mut file,
+        "    // Generated map of {}-nucleotides to their canonical forms",
+        k
+    )
+    .unwrap();
+
+    writeln!(
+        &mut file,
+        "    const DATA: phf::Map<&'static str, &'static str> = {{"
+    )
+    .unwrap();
+
+    // Use phf_codegen to create a phf::Map
+    let mut builder = phf_codegen::Map::new();
+
+    // Generate all possible k-mers recursively
+    let mut current_kmer_chars = vec![' '; k];
+    generate_kmers_recursive(&bases, &mut current_kmer_chars, 0, k, &mut builder);
+
+    // Write the generated phf::Map code
+    write!(&mut file, "{}", builder.build()).unwrap();
+
+    // Close the map definition
+    writeln!(&mut file, "    }};").unwrap();
+    writeln!(&mut file, "    DATA").unwrap();
+    writeln!(&mut file, "}};").unwrap();
+}
+
+// Recursive function to generate all k-mers efficiently
+fn generate_kmers_recursive(
+    bases: &[char],
+    current_kmer: &mut Vec<char>,
+    position: usize,
+    k: usize,
+    builder: &mut phf_codegen::Map<&str>,
+) {
+    if position == k {
+        // We have a complete k-mer
+        let kmer: String = current_kmer.iter().collect();
+        let rc_kmer = reverse_complement(&kmer);
+        let canonical = if kmer <= rc_kmer {
+            kmer.clone()
+        } else {
+            rc_kmer
+        };
+
+        // Add the k-mer -> canonical k-mer entry to the builder
+        // Convert to string literals that live for the 'static lifetime
+        builder.entry(
+            Box::leak(kmer.into_boxed_str()),
+            &format!("\"{}\"", canonical),
+        );
+        return;
+    }
+
+    // Try each base at the current position
+    for &base in bases {
+        current_kmer[position] = base;
+        generate_kmers_recursive(bases, current_kmer, position + 1, k, builder);
     }
 }
 
