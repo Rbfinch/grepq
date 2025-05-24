@@ -1,6 +1,7 @@
-use criterion::{black_box, criterion_group, criterion_main, Criterion};
+use criterion::{criterion_group, criterion_main, Criterion};
 use grepq::initialise;
 use grepq::quality;
+use std::hint::black_box;
 use std::io::Write;
 use tempfile::NamedTempFile;
 

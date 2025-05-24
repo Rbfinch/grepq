@@ -23,6 +23,9 @@
 use serde::Serialize;
 use std::collections::HashMap;
 
+// Include the generated canonical k-mers lookup table
+include!(concat!(env!("OUT_DIR"), "/canonical_kmers.rs"));
+
 // Function: average_quality
 // Calculates the average quality score for a sequence using the specified quality encoding.
 pub fn average_quality(quality: &[u8], quality_encoding: &str) -> f32 {
@@ -155,6 +158,84 @@ pub fn tetranucleotide_frequencies(sequence: &[u8], limit: Option<usize>) -> (St
         .collect();
 
     // Sort tetranucleotides by descending percentage.
+    frequencies.sort_by(|a, b| b.percentage.partial_cmp(&a.percentage).unwrap());
+
+    // If a limit is provided, truncate the frequency list.
+    if let Some(limit) = limit {
+        frequencies.truncate(limit);
+    }
+
+    // Convert the frequency list to a JSON string.
+    (
+        serde_json::to_string(&frequencies).unwrap_or_else(|_| "[]".to_string()),
+        unique_count,
+    )
+}
+
+#[derive(Serialize)]
+struct CTetraFrequency {
+    tetra: String,
+    percentage: f32,
+}
+
+/// Function: canonical_tetranucleotide_frequencies
+/// Calculates relative frequencies of canonical tetranucleotides in a DNA sequence.
+/// A canonical tetranucleotide is the lexicographically smaller of a tetranucleotide and its reverse complement.
+/// Returns a tuple with a JSON string of sorted canonical tetranucleotide frequencies and the total count of unique canonical tetranucleotides.
+/// Only considers windows containing unambiguous bases (A, C, T, G).
+pub fn canonical_tetranucleotide_frequencies(
+    sequence: &[u8],
+    limit: Option<usize>,
+) -> (String, usize) {
+    let mut ctetra_counts: HashMap<String, usize> = HashMap::new();
+
+    // If the sequence is too short, no tetranucleotides can be formed.
+    if sequence.len() < 4 {
+        return ("[]".to_string(), 0);
+    }
+
+    // Slide a window of size 4 across the sequence.
+    for window in sequence.windows(4) {
+        // Verify that all bases in this window are unambiguous.
+        let is_unambiguous = window
+            .iter()
+            .all(|&base| matches!(base, b'A' | b'C' | b'T' | b'G'));
+
+        if is_unambiguous {
+            // Convert the window to a string if possible and count its occurrence.
+            if let Ok(tetra) = std::str::from_utf8(window) {
+                // Use the lookup table to get the canonical tetranucleotide
+                if let Some(&canonical) = CANONICAL_K_MERS.get(tetra) {
+                    *ctetra_counts.entry(canonical.to_string()).or_insert(0) += 1;
+                }
+            }
+        }
+    }
+
+    // Get the number of unique canonical tetranucleotides.
+    let unique_count = ctetra_counts.len();
+
+    // Return empty result if no valid tetranucleotides were found.
+    if unique_count == 0 {
+        return ("[]".to_string(), 0);
+    }
+
+    // Calculate the total count of all tetranucleotides for frequency calculation.
+    let total_count: f32 = ctetra_counts.values().sum::<usize>() as f32;
+
+    // Convert counts to a vector of CTetraFrequency structs with percentages.
+    let mut frequencies: Vec<CTetraFrequency> = ctetra_counts
+        .into_iter()
+        .map(|(tetra, count)| {
+            let percentage = (count as f32 / total_count) * 100.0;
+            CTetraFrequency {
+                tetra,
+                percentage: round_to_4_sig_figs(percentage),
+            }
+        })
+        .collect();
+
+    // Sort canonical tetranucleotides by descending percentage.
     frequencies.sort_by(|a, b| b.percentage.partial_cmp(&a.percentage).unwrap());
 
     // If a limit is provided, truncate the frequency list.

@@ -129,7 +129,10 @@ pub fn create_sqlite_db() -> SqlResult<Connection> {
             GC REAL,
             GC_int INTEGER,
             nTN INTEGER,
-            TNF TEXT
+            nCTN INTEGER,
+            TNF TEXT,
+            CTNF TEXT,
+            variants TEXT
         )",
         [],
     )?;
@@ -164,7 +167,9 @@ pub fn create_sqlite_db_with_quality() -> SqlResult<Connection> {
             GC REAL,
             GC_int INTEGER,
             nTN INTEGER,
+            nCTN INTEGER,
             TNF TEXT,
+            CTNF TEXT,
             average_quality REAL,
             variants TEXT
         )",

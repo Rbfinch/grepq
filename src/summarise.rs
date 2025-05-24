@@ -142,28 +142,83 @@ pub fn run_summarise(cli: &Cli, include_count: bool) -> io::Result<()> {
                     .unwrap_or(0.0);
                 let (tnf, ntn) =
                     quality::tetranucleotide_frequencies(record.seq(), cli.num_tetranucleotides);
+                let (ctnf, nctn) = quality::canonical_tetranucleotide_frequencies(
+                    record.seq(),
+                    cli.num_tetranucleotides,
+                );
                 let gc = quality::gc_content(record.seq());
                 let gc_int = gc.round() as i64;
 
                 if let Some(ref db) = db_conn {
                     let matches_json =
                         serde_json::to_string(&matches_info).unwrap_or_else(|_| "[]".to_string());
-                    db.execute(
-                        "INSERT INTO fastq_data (header, sequence, quality, length, GC, GC_int, nTN, TNF, average_quality, variants) 
-                         VALUES (?1, ?2, ?3, ?4, ROUND(?5, 2), ?6, ?7, ?8, ROUND(?9, 2), ?10)",
-                        rusqlite::params![
-                            String::from_utf8_lossy(record.head()),
-                            String::from_utf8_lossy(record.seq()),
-                            String::from_utf8_lossy(record.qual()),
-                            record.seq().len() as i64,
-                            gc,
-                            gc_int,
-                            ntn as i64,
-                            tnf,
-                            avg_quality,
-                            matches_json,
-                        ],
-                    ).unwrap();
+
+                    // Use different SQL statements based on pattern file type and quality encoding
+                    if cli.patterns.ends_with(".json") {
+                        let pattern_data: serde_json::Value =
+                            serde_json::from_str(&std::fs::read_to_string(&cli.patterns).unwrap())
+                                .unwrap();
+
+                        if !pattern_data["regexSet"]["qualityEncoding"].is_null() {
+                            // With quality encoding
+                            db.execute(
+                                "INSERT INTO fastq_data (header, sequence, quality, length, GC, GC_int, nTN, nCTN, TNF, CTNF, average_quality, variants) 
+                                 VALUES (?1, ?2, ?3, ?4, ROUND(?5, 2), ?6, ?7, ?8, ?9, ?10, ROUND(?11, 2), ?12)",
+                                rusqlite::params![
+                                    String::from_utf8_lossy(record.head()),
+                                    String::from_utf8_lossy(record.seq()),
+                                    String::from_utf8_lossy(record.qual()),
+                                    record.seq().len() as i64,
+                                    gc,
+                                    gc_int,
+                                    ntn as i64,
+                                    nctn as i64,
+                                    tnf,
+                                    ctnf,
+                                    avg_quality,
+                                    matches_json,
+                                ],
+                            ).unwrap();
+                        } else {
+                            // JSON without quality encoding
+                            db.execute(
+                                "INSERT INTO fastq_data (header, sequence, quality, length, GC, GC_int, nTN, nCTN, TNF, CTNF, variants) 
+                                 VALUES (?1, ?2, ?3, ?4, ROUND(?5, 2), ?6, ?7, ?8, ?9, ?10, ?11)",
+                                rusqlite::params![
+                                    String::from_utf8_lossy(record.head()),
+                                    String::from_utf8_lossy(record.seq()),
+                                    String::from_utf8_lossy(record.qual()),
+                                    record.seq().len() as i64,
+                                    gc,
+                                    gc_int,
+                                    ntn as i64,
+                                    nctn as i64,
+                                    tnf,
+                                    ctnf,
+                                    matches_json,
+                                ],
+                            ).unwrap();
+                        }
+                    } else {
+                        // Text file patterns - no quality encoding
+                        db.execute(
+                            "INSERT INTO fastq_data (header, sequence, quality, length, GC, GC_int, nTN, nCTN, TNF, CTNF, variants) 
+                             VALUES (?1, ?2, ?3, ?4, ROUND(?5, 2), ?6, ?7, ?8, ?9, ?10, ?11)",
+                            rusqlite::params![
+                                String::from_utf8_lossy(record.head()),
+                                String::from_utf8_lossy(record.seq()),
+                                String::from_utf8_lossy(record.qual()),
+                                record.seq().len() as i64,
+                                gc,
+                                gc_int,
+                                ntn as i64,
+                                nctn as i64,
+                                tnf,
+                                ctnf,
+                                matches_json,
+                            ],
+                        ).unwrap();
+                    }
                 }
             }
         }
@@ -181,7 +236,7 @@ pub fn run_summarise(cli: &Cli, include_count: bool) -> io::Result<()> {
             .as_str()
             .unwrap_or("Unknown");
 
-        // If the summarise command includes names, print the Regex Set Name.
+        // JSON-specific processing for regex patterns with names and variants
         if cli.command.as_ref().map_or(
             false,
             |cmd| matches!(cmd, crate::arg::Commands::Summarise(s) if s.include_names),

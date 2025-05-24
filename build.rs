@@ -1,4 +1,28 @@
+// MIT License
+
+// Copyright (c) 2024 - present Nicholas D. Crosbie
+
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+
 use std::env;
+use std::fs::File;
+use std::io::{BufWriter, Write};
 use std::path::Path;
 use std::process::Command;
 
@@ -7,6 +31,70 @@ fn main() {
 
     // Check Rust version
     check_rust_version();
+
+    // Generate canonical tetranucleotides lookup table
+    let out_dir = env::var("OUT_DIR").unwrap();
+    let dest_path = Path::new(&out_dir).join("canonical_kmers.rs");
+    let mut file = BufWriter::new(File::create(&dest_path).unwrap());
+
+    let k = 4; // We are pre-computing for k=4 (tetranucleotides)
+    let bases = ['A', 'C', 'G', 'T'];
+
+    // Start generating the map code - using phf_codegen instead of phf_map macro
+    writeln!(
+        &mut file,
+        "use phf::Map;\n\nstatic CANONICAL_K_MERS: Map<&'static str, &'static str> = {{"
+    )
+    .unwrap();
+
+    writeln!(
+        &mut file,
+        "    // Generated map of tetranucleotides to their canonical forms"
+    )
+    .unwrap();
+    writeln!(
+        &mut file,
+        "    const DATA: phf::Map<&'static str, &'static str> = {{"
+    )
+    .unwrap();
+
+    // Use phf_codegen to create a phf::Map
+    let mut builder = phf_codegen::Map::new();
+
+    // Iterate through all possible k-mers (4^k combinations)
+    // For k=4, this is 4^4 = 256 combinations.
+    let mut current_kmer_chars = vec![' '; k];
+    for i0 in 0..4 {
+        current_kmer_chars[0] = bases[i0];
+        for i1 in 0..4 {
+            current_kmer_chars[1] = bases[i1];
+            for i2 in 0..4 {
+                current_kmer_chars[2] = bases[i2];
+                for &base3 in &bases {
+                    current_kmer_chars[3] = base3;
+
+                    let kmer: String = current_kmer_chars.iter().collect();
+                    let rc_kmer = reverse_complement(&kmer);
+                    let canonical = if kmer <= rc_kmer {
+                        kmer.clone()
+                    } else {
+                        rc_kmer
+                    };
+
+                    // Add the k-mer -> canonical k-mer entry to the builder
+                    builder.entry(kmer, &format!("\"{}\"", canonical));
+                }
+            }
+        }
+    }
+
+    // Write the generated phf::Map code
+    write!(&mut file, "{}", builder.build()).unwrap();
+
+    // Close the map definition
+    writeln!(&mut file, "    }};").unwrap();
+    writeln!(&mut file, "    DATA").unwrap();
+    writeln!(&mut file, "}};").unwrap();
 
     // Check if SQLite is installed
     let sqlite_installed = check_library("sqlite3");
@@ -49,6 +137,21 @@ fn main() {
         println!("cargo:rustc-link-search=/usr/local/lib");
         println!("cargo:rustc-link-search=/opt/homebrew/lib");
     }
+}
+
+// Helper function to get the reverse complement of a DNA sequence
+fn complement_base(base: char) -> char {
+    match base.to_ascii_uppercase() {
+        'A' => 'T',
+        'T' => 'A',
+        'C' => 'G',
+        'G' => 'C',
+        _ => base,
+    }
+}
+
+fn reverse_complement(sequence: &str) -> String {
+    sequence.chars().rev().map(complement_base).collect()
 }
 
 fn check_rust_version() {
