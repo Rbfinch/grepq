@@ -99,6 +99,7 @@ target/
 *.zst
 *.xz
 *.fq
+*.db
 
 # Other project specific ignores and allows
 test/lib
