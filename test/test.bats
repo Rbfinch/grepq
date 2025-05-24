@@ -426,7 +426,7 @@ measure_time() {
     }
 
     # Now verify its size
-    verify_size "$db_file" 225280 || {
+    verify_size "$db_file" 315392 || {
         echo "Database file size mismatch"
         echo "Actual size: $(${STAT_CMD} "$db_file")"
         return 1

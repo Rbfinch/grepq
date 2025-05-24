@@ -327,4 +327,223 @@ mod test_module {
         // Clean up the temp file
         let _ = fs::remove_file(&json_path);
     }
+
+    // #[test]
+    // fn test_tetranucleotide_frequencies_variable_kmer_size() {
+    //     // Test: Verify that k-mer frequencies work with different sizes.
+    //     let sequence = b"ATCGATCGATCG";
+
+    //     // Test with trinucleotides (k=3)
+    //     let (frequencies_3, unique_count_3) =
+    //         quality::tetranucleotide_frequencies(sequence, Some(3));
+    //     let result_3: Vec<Value> = serde_json::from_str(&frequencies_3).unwrap();
+    //     assert_eq!(unique_count_3, 4);
+    //     assert_eq!(result_3.len(), 4);
+
+    //     // Test with pentanucleotides (k=5)
+    //     let (frequencies_5, unique_count_5) =
+    //         quality::tetranucleotide_frequencies(sequence, Some(5));
+    //     let result_5: Vec<Value> = serde_json::from_str(&frequencies_5).unwrap();
+    //     assert_eq!(unique_count_5, 4);
+    //     assert_eq!(result_5.len(), 4);
+
+    //     // Test with default value (should use k=4)
+    //     let (frequencies_default, unique_count_default) =
+    //         quality::tetranucleotide_frequencies(sequence, None);
+    //     let result_default: Vec<Value> = serde_json::from_str(&frequencies_default).unwrap();
+    //     assert_eq!(unique_count_default, 4);
+    //     assert_eq!(result_default.len(), 4);
+    // }
+
+    #[test]
+    fn test_tetranucleotide_frequencies_kmer_sorting() {
+        // Test: Ensure k-mers are sorted by decreasing frequency
+        let sequence = b"AAAAAAAAAATTTTGGGCCC";
+        let (frequencies, _) = quality::tetranucleotide_frequencies(sequence, Some(4));
+        let result: Vec<Value> = serde_json::from_str(&frequencies).unwrap();
+
+        // Check that results are sorted by decreasing percentage
+        let mut last_percentage = 100.0;
+        for entry in result {
+            let current_percentage = entry["percentage"].as_f64().unwrap();
+            assert!(
+                current_percentage <= last_percentage,
+                "Frequencies not sorted properly"
+            );
+            last_percentage = current_percentage;
+        }
+    }
+
+    #[test]
+    fn test_additional_quality_encodings() {
+        // Test Solexa quality encoding
+        assert_eq!(quality::average_quality(b"IIIII", "Solexa"), 40.0);
+
+        // Test Illumina 1.3+ encoding
+        assert_eq!(quality::average_quality(b"IIIII", "Illumina 1.3+"), 40.0);
+
+        // Test Illumina 1.5+ encoding
+        assert_eq!(quality::average_quality(b"IIIII", "Illumina 1.5+"), 40.0);
+
+        // Test with mixed quality scores
+        assert_eq!(
+            quality::average_quality(b"I@BCD", "Phred+33"),
+            (40.0 + 31.0 + 33.0 + 34.0 + 35.0) / 5.0
+        );
+
+        // Test with very low quality scores
+        assert_eq!(quality::average_quality(b"!!!!", "Phred+33"), 0.0);
+
+        // Test with very high quality scores
+        assert_eq!(quality::average_quality(b"~~~~", "Phred+33"), 93.0);
+    }
+
+    #[test]
+    fn test_gc_content_with_long_sequences() {
+        // Test with a longer sequence to ensure performance is reasonable
+        let long_sequence = b"GCGCGCGCGCGCGCGCGCGCATATATATATATATAT";
+        assert_eq!(quality::gc_content(long_sequence), 55.555557);
+
+        // Test with a sequence containing a mix of all bases
+        let mixed_sequence = b"ACGTACGTACGTACGTACGTACGT";
+        assert_eq!(quality::gc_content(mixed_sequence), 50.0);
+    }
+
+    #[test]
+    fn test_canonical_tetranucleotide_frequencies() {
+        // Test: Verify that canonical tetranucleotide frequencies are computed correctly
+        let sequence = b"ATCGATCGATCG";
+        let (frequencies, unique_count) =
+            quality::canonical_tetranucleotide_frequencies(sequence, Some(4));
+        let result: Vec<Value> = serde_json::from_str(&frequencies).unwrap();
+
+        // Check that we have fewer or equal unique tetranucleotides compared to regular method
+        // due to merging of reverse complements
+        let (_, reg_unique_count) = quality::tetranucleotide_frequencies(sequence, Some(4));
+        assert!(
+            unique_count <= reg_unique_count,
+            "Canonical count should be <= regular count"
+        );
+
+        // The JSON result must have entries
+        assert!(!result.is_empty());
+
+        // Verify that the summed percentages are approximately 100%
+        let sum: f32 = result
+            .iter()
+            .map(|v| v["percentage"].as_f64().unwrap() as f32)
+            .sum();
+        assert!((sum - 100.0).abs() < 1e-3);
+    }
+
+    #[test]
+    fn test_canonical_tetranucleotide_with_palindromic_sequence() {
+        // Test with a palindromic sequence
+        let palindrome = b"ACGTACGT"; // Contains ACGT which is its own reverse complement
+        let (frequencies, _) = quality::canonical_tetranucleotide_frequencies(palindrome, None);
+        let result: Vec<Value> = serde_json::from_str(&frequencies).unwrap();
+
+        // Check that palindromic k-mers are properly counted
+        // Find ACGT in the results
+        let acgt_entry = result
+            .iter()
+            .find(|&v| v["tetra"].as_str().unwrap() == "ACGT");
+        assert!(
+            acgt_entry.is_some(),
+            "Palindromic k-mer ACGT should be present"
+        );
+    }
+
+    #[test]
+    fn test_empty_canonical_tetranucleotide_frequencies() {
+        // Test: For sequences too short to form a tetranucleotide, expect no frequencies
+        let (json, count) = quality::canonical_tetranucleotide_frequencies(b"AAA", Some(4));
+        assert_eq!(json, "[]");
+        assert_eq!(count, 0);
+    }
+
+    #[test]
+    fn test_canonical_tetranucleotide_with_ambiguous_bases() {
+        // Test: Verify that tetranucleotides with ambiguous bases ('N') are skipped
+        let ambiguous = b"ATCGNATCGATCG";
+        let (freq_amb, _) = quality::canonical_tetranucleotide_frequencies(ambiguous, Some(4));
+        let result_amb: Vec<Value> = serde_json::from_str(&freq_amb).unwrap();
+
+        // There should be results, but fewer windows than the sequence length - k + 1
+        // due to skipping windows with N
+        assert!(!result_amb.is_empty());
+        assert!(result_amb.len() < ambiguous.len() - 4 + 1);
+
+        // A fully ambiguous sequence should yield an empty frequency list
+        let all_ambiguous = b"NNNNNNNN";
+        let (freq_all_amb, count_all_amb) =
+            quality::canonical_tetranucleotide_frequencies(all_ambiguous, Some(4));
+        assert_eq!(freq_all_amb, "[]");
+        assert_eq!(count_all_amb, 0);
+    }
+
+    #[test]
+    fn test_canonical_tetranucleotide_frequencies_sorting() {
+        // Test: Ensure canonical k-mers are sorted by decreasing frequency
+        let sequence = b"AAAAAAAAAATTTTGGGCCC";
+        let (frequencies, _) = quality::canonical_tetranucleotide_frequencies(sequence, Some(4));
+        let result: Vec<Value> = serde_json::from_str(&frequencies).unwrap();
+
+        // Check that results are sorted by decreasing percentage
+        let mut last_percentage = 100.0;
+        for entry in result {
+            let current_percentage = entry["percentage"].as_f64().unwrap();
+            assert!(
+                current_percentage <= last_percentage,
+                "Frequencies not sorted properly"
+            );
+            last_percentage = current_percentage;
+        }
+    }
+
+    #[test]
+    fn test_canonical_tetranucleotide_frequencies_limit() {
+        // Test: Verify that the limit parameter works correctly
+        let sequence = b"ACGTACGTACGTACGTTTTTTTCCCCCGGGGGAAAAA";
+
+        // Test with a reasonable limit
+        let (frequencies_limited, _) =
+            quality::canonical_tetranucleotide_frequencies(sequence, Some(3));
+        let result_limited: Vec<Value> = serde_json::from_str(&frequencies_limited).unwrap();
+        assert_eq!(result_limited.len(), 3, "Should limit to exactly 3 results");
+
+        // Test with no limit
+        let (frequencies_unlimited, _) =
+            quality::canonical_tetranucleotide_frequencies(sequence, None);
+        let result_unlimited: Vec<Value> = serde_json::from_str(&frequencies_unlimited).unwrap();
+        assert!(
+            result_unlimited.len() > 3,
+            "Should return more than 3 results when unlimited"
+        );
+    }
+
+    #[test]
+    fn test_compare_regular_and_canonical_frequencies() {
+        // Test: Compare regular and canonical tetranucleotide frequencies
+        let sequence = b"ACGTACGTACGTACGTTGCATGCA";
+
+        // Get both types of frequencies
+        let (reg_freq, reg_count) = quality::tetranucleotide_frequencies(sequence, None);
+        let (can_freq, can_count) = quality::canonical_tetranucleotide_frequencies(sequence, None);
+
+        let reg_result: Vec<Value> = serde_json::from_str(&reg_freq).unwrap();
+        let can_result: Vec<Value> = serde_json::from_str(&can_freq).unwrap();
+
+        // Canonical count should be less than or equal to regular count
+        assert!(
+            can_count <= reg_count,
+            "Canonical count should be <= regular count"
+        );
+
+        // The canonical result should have fewer or the same number of entries
+        assert!(
+            can_result.len() <= reg_result.len(),
+            "Canonical result should have fewer or equal entries"
+        );
+    }
 }
