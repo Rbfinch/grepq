@@ -18,7 +18,7 @@ _Quickly filter FASTQ files_
 - [Further testing](#further-testing)
 - [Citation and preprint](#citation-and-preprint)
 - [Update changes](#update-changes)
-- [Contributing](#contributing)
+- [Contributing and issue reporting](#contributing-and-issue-reporting)
 - [License](#license)
 
 ## Feature set
@@ -211,7 +211,6 @@ ajv --strict=false -s grepq-schema.json -d pattern-file.json
   - For Ubuntu/Debian: `sudo apt-get install sqlite3 zstd`
   - For macOS: `brew install sqlite zstd`
 - If you are installing from `bioconda`, you will need to have conda or miniconda installed on your system. You can install conda or miniconda from <https://docs.conda.io/en/latest/miniconda.html> or <https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html>.
-- If you are installing from Docker, you will need to have Docker installed on your system. You can install Docker from <https://docs.docker.com/get-docker/>.
 - If the build fails, make sure you have the latest version of the Rust compiler by running `rustup update`
 - To run the `test.sh` and `cookbook.sh` scripts in the `examples` directory, you will need `yq` (v4.44.6 or later), `gunzip` and version 4 or later of `bash`.
 
@@ -236,12 +235,6 @@ System requirements: `grepq` requires Rust (v1.56.0 or later) and the Rust toolc
   - `conda config --prepend channels bioconda` # Add bioconda channel with higher priority
   - `conda config --set channel_priority strict` # Set strict channel priority
   - `conda install grepq` # Install grepq
-
-- From _Docker_ (will not install the `examples` directory)
-
-  - Pull with `docker pull milesforjazz/grepq:latest`
-  - Run with `docker run --rm -v $(pwd):/data milesforjazz/grepq:latest grepq --help`
-  - Run with `docker run --rm -v $(pwd):/data milesforjazz/grepq:latest grepq --version`
 
 ## Examples and tests
 
@@ -335,7 +328,7 @@ Crosbie, N.D. (2025). grepq: A Rust application that quickly filters FASTQ files
 
 see [CHANGELOG](https://github.com/Rbfinch/grepq/blob/main/CHANGELOG.md)
 
-## Contributing
+## Contributing and issue reporting
 
 see [CONTRIBUTING](https://github.com/Rbfinch/grepq/blob/main/CONTRIBUTING.md)
 

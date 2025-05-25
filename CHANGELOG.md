@@ -1,6 +1,11 @@
 
 # Changelog
 
+1.5.9 (maintenance release)
+
+* removed Dockerfile support
+* corresponding updates to documentation
+
 1.5.8
 
 * inclusion of canonical tetranucleotide output when `writeSQL` invoked
