@@ -197,6 +197,7 @@ named after each regexName, with the output in FASTQ format*
 
 *For a gzip-compressed FASTQ file, bucket matched sequences into separate files
 named after each regexName, with the output in FASTQ format, and write a SQLite
-database file, limiting the number of tetranucleotides in the TNF field to two*
+database file, limiting the number of tetranucleotides in the TNF and CTNF fields
+to two*
 
 **grepq -R --read-gzip --writeSQL -N 2 --bucket regex.json file.fastq.gz**

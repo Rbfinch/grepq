@@ -27,97 +27,122 @@ to their matched frequency (refer to the examples directory of the `grepq` GitHu
 repository, <https://github.com/Rbfinch/grepq>), further targeting and speeding up
 the filtering process.
 
-**Examples**:
+**Examples:**
 
 *Print only the matching sequences*
-    **grepq regex.txt file.fastq**
+
+**grepq regex.txt file.fastq**
 
 *Print the matching sequences with the record ID*
-    **grepq -I regex.txt file.fastq**
+
+**grepq -I regex.txt file.fastq**
 
 *Print the matching sequences in FASTA format*
-    **grepq -F regex.txt file.fastq**
+
+**grepq -F regex.txt file.fastq**
 
 *Print the matching sequences in FASTQ format*
-    **grepq -R regex.txt file.fastq**
+
+**grepq -R regex.txt file.fastq**
 
 *Save the matching sequences in gzip compressed FASTQ format*
-    **grepq -R --write-gzip regex.txt file.fastq > output.fastq.gz**
+
+**grepq -R --write-gzip regex.txt file.fastq > output.fastq.gz**
 
 *Read the FASTQ file in gzip compressed format*
-    **grepq --read-gzip regex.txt file.fastq.gz**
+
+**grepq --read-gzip regex.txt file.fastq.gz**
 
 *Read and save the output in gzip compressed format, with fast compression*
-    **grepq --read-gzip --write-gzip --fast regex.txt file.fastq.gz > output.fastq.gz**
+
+**grepq --read-gzip --write-gzip --fast regex.txt file.fastq.gz > output.fastq.gz**
 
 *Read and save the output in gzip compressed format, with best compression*
-    **grepq --read-gzip --write-gzip --best regex.txt file.fastq.gz > output.fastq.gz**
+
+**grepq --read-gzip --write-gzip --best regex.txt file.fastq.gz > output.fastq.gz**
 
 *Read and save the output in zstd compressed format, with best compression*
-    **grepq --read-zstd --write-zstd --best regex.txt file.fastq.zst > output.fastq.zst**
+
+**grepq --read-zstd --write-zstd --best regex.txt file.fastq.zst > output.fastq.zst**
 
 *Count the number of matching FASTQ records*
-    **grepq -c regex.txt file.fastq**
+
+**grepq -c regex.txt file.fastq**
 
 *For each matched pattern in a search of no more than 100000 matches, print the
     pattern and the number of matches*
-    **grepq regex.txt file.fastq tune -n 100000 -c**
+
+**grepq regex.txt file.fastq tune -n 100000 -c**
 
 *For each matched pattern in a search of no more than 100000 matches of a
     gzip-compressed FASTQ file, print the pattern and the number of matches*
-    **grepq --read-gzip regex.txt file.fastq.gz tune -n 100000 -c**
+
+**grepq --read-gzip regex.txt file.fastq.gz tune -n 100000 -c**
 
 *For each matched pattern in a search of no more than 100000 matches of a
 gzip-compressed FASTQ file, print the pattern and the number of matches to a
 JSON file called matches.json*
-    **grepq --read-gzip regex.json file.fastq.gz tune -n 100000 -c --names --json-matches**
+
+**grepq --read-gzip regex.json file.fastq.gz tune -n 100000 -c --names --json-matches**
 
 *As above, but uses the summarise command to ensure that all FASTQ records are processed*
-    **grepq --read-gzip regex.json file.fastq.gz summarise -c --names --json-matches**
+
+**grepq --read-gzip regex.json file.fastq.gz summarise -c --names --json-matches**
 
 *For each matched pattern in a search of no more than 100000 matches of a
 gzip-compressed FASTQ file, print the pattern and the number of matches to a
 JSON file called matches.json, and include the top three most frequent variants of
 each pattern, and their respective counts*
-    **grepq --read-gzip regex.json file.fastq.gz tune -n 100000 -c --names --json-matches --variants 3**
+
+**grepq --read-gzip regex.json file.fastq.gz tune -n 100000 -c --names --json-matches --variants 3**
 
 *As above, but uses the summarise command to ensure that all FASTQ records are processed*
-    **grepq --read-gzip regex.json file.fastq.gz summarise -c --names --json-matches --variants 3**
+
+**grepq --read-gzip regex.json file.fastq.gz summarise -c --names --json-matches --variants 3**
 
 *For each matched pattern in a search of no more than 100000 matches of a
 gzip-compressed FASTQ file, print the pattern and the number of matches to a JSON
 file called matches.json, and include all variants of each pattern, and their
 respective counts. Note that the `--variants` argument is not given when `--all`
 is specified*
-    **grepq --read-gzip regex.json file.fastq.gz tune -n 100000 -c --names --json-matches --all**
+
+**grepq --read-gzip regex.json file.fastq.gz tune -n 100000 -c --names --json-matches --all**
 
 *As above, but uses the summarise command to ensure that all FASTQ records are processed*
-    **grepq --read-gzip regex.json file.fastq.gz summarise -c --names --json-matches --all**
+
+**grepq --read-gzip regex.json file.fastq.gz summarise -c --names --json-matches --all**
 
 *Print the records where none of the regex patterns are found*
-    **grepq regex.txt file.fastq inverted**
+
+**grepq regex.txt file.fastq inverted**
 
 *Print the records where none of the regex patterns are found, with the record ID*
-    **grepq -I regex.txt file.fastq inverted**
+
+**grepq -I regex.txt file.fastq inverted**
 
 *Print the records where none of the regex patterns are found, in FASTQ format*
-    **grepq -R regex.txt file.fastq inverted**
+
+**grepq -R regex.txt file.fastq inverted**
 
 *Count the number of records where none of the regex patterns are found*
-    **grepq -c regex.txt file.fastq inverted**
+
+**grepq -c regex.txt file.fastq inverted**
 
 *Count the total number of records in the FASTQ file using an empty pattern file*
-    **grepq -c empty.txt file.fastq inverted**
+
+**grepq -c empty.txt file.fastq inverted**
 
 *For a gzip-compressed FASTQ file, bucket matched sequences into separate files
 named after each regexName, with the output in FASTQ format*
-    **grepq -R --bucket --read-gzip regex.json file.fastq.gz**
+
+**grepq -R --bucket --read-gzip regex.json file.fastq.gz**
 
 *For a gzip-compressed FASTQ file, bucket matched sequences into separate files
 named after each regexName, with the output in FASTQ format, and write a SQLite
 database file, limiting the number of tetranucleotides in the TNF and CTNF fields
 to two*
-    **grepq -R --read-gzip --writeSQL -N 2 --bucket regex.json file.fastq.gz**
+
+**grepq -R --read-gzip --writeSQL -N 2 --bucket regex.json file.fastq.gz**
 
 **Tips:**
 
@@ -164,18 +189,18 @@ respectively), and file path.
 2. Other than when the `inverted` command is given, output to a SQLite database
 is supported with the `writeSQL` option. The SQLite database will contain a table
 called `fastq_data` with the following fields: the fastq record (header, sequence
-and quality fields), length of the sequence field (length), percent GC content (GC),
+and quality fields), length of the sequence (length), percent GC content (GC),
 percent GC content as an integer (GC_int), number of unique tetranucleotides in the
 sequence (nTN), number of unique canonical tetranucleotides in the sequence, percent
-tetranucleotide frequency within the sequence (TNF), percent canonical tetranucleotide
-frequency within the sequence (CTNF), and a JSON array containing the matched regex
+tetranucleotide frequency in the sequence (TNF), percent canonical tetranucleotide
+frequency in the sequence (CTNF), and a JSON array containing the matched regex
 patterns, the matches and their position(s) in the FASTQ sequence (variants). If the
 pattern file was given in JSON format and contained a non-null qualityEncoding field,
-then the average quality score for the sequence field (average_quality) will also be
+then the average quality score for the sequence (average_quality) will also be
 written. The `--num-tetranucleotides` option can be used to limit the number of
 tetranucleotides written to the TNF and CTNF fields of the fastq_data SQLite table,
 these being the most or equal most frequent tetranucleotides and canonical
-tetranucleotides in the sequence field of the matched FASTQ records. A summary of
+tetranucleotides in the sequence of the matched FASTQ records. A summary of
 the invoked query (pattern and data files) is written to a second table called
 `query`.
 
@@ -205,12 +230,12 @@ FASTQ format.
 
 8. Other than when the `tune` or `summarise` command is run, a FASTQ record is
 deemed to match (and hence provided in the output) when any of the regex patterns
-in the pattern file match the sequence field of the FASTQ record.
+in the pattern file match the sequence of the FASTQ record.
 
 9. When the count option (-c) is given with the `tune` or `summarise` command,
 `grepq` will count the number of FASTQ records containing a sequence that is
 matched, for each matching regex in the pattern file. If, however, there are
-multiple occurrences of a given regex within a FASTQ record sequence field, `grepq`
+multiple occurrences of a given regex in a FASTQ record sequence, `grepq`
 will count this as one match. To ensure all records are processed, use the
 `summarise` command instead of the `tune` command.
 
@@ -255,13 +280,15 @@ output (i.e. FASTQ format)
 * `-b`, `--best` — Use best compression
 * `--bucket` — Write matched sequences to separate files named after each regexName
 * `--writeSQL` — Write matching records to SQLite database, along with length
-of the sequence field (length), percent GC content (GC), percent GC content as
+of the sequence (length), percent GC content (GC), percent GC content as
 an integer (GC_int), number of unique tetranucleotides in the sequence (nTN),
-percent tetranucleotide frequency within the sequence (TNF), and average quality
-score for the sequence field (average_quality)
+number of unique canonical tetranucleotides in the sequence (nCTN), percent
+tetranucleotide frequency in the sequence (TNF), percent canonical
+tetranucleotide frequency in the sequence (CTNF), and average quality score
+for the sequence (average_quality) if qualityEncoding is not null
 * `-N`, `--num-tetranucleotides <NUM_TETRANUCLEOTIDES>` — Limit the number of tetranucleotides written to the TNF field of
 the fastq_data SQLite table, these being the most or equal most frequent
-tetranucleotides in the sequence field of the matched FASTQ records
+tetranucleotides in the sequence of the matched FASTQ records
 
 ## `grepq tune`
 

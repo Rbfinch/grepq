@@ -10,12 +10,12 @@ _Quickly filter FASTQ files_
 - [Feature set](#feature-set)
 - [Features and performance in detail](#features-and-performance-in-detail)
 - [Usage](#usage)
-- [Cookbook](https://github.com/Rbfinch/grepq/blob/main/cookbook.md)
+  - [Preparing pattern files](#preparing-pattern-files)
 - [Requirements](#requirements)
 - [Installation](#installation)
 - [Examples and tests](#examples-and-tests)
-- [Further testing](#futher-testing)
-- [Citation and preprint](#citation)
+- [Further testing](#further-testing)
+- [Citation and preprint](#citation-and-preprint)
 - [Update changes](#update-changes)
 - [Contributing](#contributing)
 - [License](#license)
@@ -32,7 +32,7 @@ This README contains documentation for the latest version of `grepq`. If you are
 - use **predicates** to filter on the header field (= record ID line) using a regex, minimum sequence length, and minimum average quality score (supports Phred+33 and Phred+64)
 - does not match false positives
 - output matched sequences to one of four formats
-- optionally output matched sequences to a **SQLite** database file, including GC content, tetranucleotide frequencies, and regex pattern matches and their position(s) in each matched FASTQ sequence, allowing for further analysis
+- optionally output matched sequences to a **SQLite** database file, including GC content, tetranucleotide and canonical tetranucleotide frequencies, and regex pattern matches and their position(s) in each matched FASTQ sequence, allowing for further analysis
 - tune your pattern file and **enumerate named and unnamed variants** with the `tune` command (use the `summarise` command to process all FASTQ records)
 - **bucket matching sequences** to separate files named after each regexName with the `--bucket` flag, in any of the four output formats
 - supports inverted matching with the `inverted` command
@@ -85,7 +85,7 @@ Predicates are specified in a JSON pattern file. For an example, see `16S-iupac-
 
 **4. Does not match false positives**
 
-`grepq` will only match regex patterns to the sequence field of a FASTQ record, which is the most common use case. Unlike `ripgrep` and `grep`, which will match the regex patterns to the entire FASTQ record, which includes the record ID, sequence, separator, and quality fields. This can lead to false positives and slow down the filtering process.
+`grepq` will only match regex patterns to the sequence of a FASTQ record, which is the most common use case. Unlike `ripgrep` and `grep`, which will match the regex patterns to the entire FASTQ record, which includes the record ID, sequence, separator, and quality fields. This can lead to false positives and slow down the filtering process.
 
 **5. Output matched sequences to one of four formats**
 
@@ -95,11 +95,11 @@ Predicates are specified in a JSON pattern file. For an example, see `16S-iupac-
 - FASTQ format (`-R` option)
 
 >[!NOTE]
-Other than when the `tune` or `summarise` command is run (see below), a FASTQ record is deemed to match (and hence provided in the output) when _any_ of the regex patterns in the pattern file match the sequence field of the FASTQ record.
+Other than when the `tune` or `summarise` command is run (see below), a FASTQ record is deemed to match (and hence provided in the output) when _any_ of the regex patterns in the pattern file match the sequence of the FASTQ record.
 
 **6. Optionally output matched sequences to a SQLite database file**
 
-Other than when the `inverted` command is given, output to a SQLite database is supported with the `writeSQL` option. The SQLite database will contain a table called `fastq_data` with the following fields: the fastq record (header, sequence and quality fields), length of the sequence field (length), percent GC content (GC), percent GC content as an integer (GC_int), number of unique tetranucleotides in the sequence (nTN), percent tetranucleotide frequency within the sequence (TNF), and a JSON array containing the matched regex patterns, the matches and their position(s) in the FASTQ sequence (variants). If the pattern file was given in JSON format and contained a non-null qualityEncoding field, then the average quality score for the sequence field (average_quality) will also be written. The `--num-tetranucleotides` option can be used to limit the number of tetranucleotides written to the TNF field of the fastq_data SQLite table, these being the most or equal most frequent tetranucleotides in the sequence field of the matched FASTQ records. A summary of the invoked query (pattern and data files) is written to a second table called `query`.
+Other than when the `inverted` command is given, output to a SQLite database is supported with the `writeSQL` option. The SQLite database will contain a table called `fastq_data` with the following fields: the fastq record (header, sequence and quality fields), length of the sequence (length), percent GC content (GC), percent GC content as an integer (GC_int), number of unique tetranucleotides in the sequence (nTN), number of unique canonical tetranucleotides in the sequence, percent tetranucleotide frequency in the sequence (TNF), percent canonical tetranucleotide frequency in the sequence (CTNF), and a JSON array containing the matched regex patterns, the matches and their position(s) in the FASTQ sequence (variants). If the pattern file was given in JSON format and contained a non-null qualityEncoding field, then the average quality score for the sequence (average_quality) will also be written. The `--num-tetranucleotides` option can be used to limit the number of tetranucleotides written to the TNF and CTNF fields of the fastq_data SQLite table, these being the most or equal most frequent tetranucleotides and canonical tetranucleotides in the sequence of the matched FASTQ records. A summary of the invoked query (pattern and data files) is written to a second table called `query`.
 
 The structure of the `fastq_data` table facilitates database indexing and provides a rich dataset to further query. Since all elements of each matched FASTQ record are also written, a FASTQ file can be reconstructed from the SQLite database (see `examples/export_fastq.sql` for an example of how to do this; and scripts `examples/summarise.sql` and `examples/variants-as-json-array.sql` could also come in handy).
 
@@ -171,7 +171,7 @@ jq -r '
 ```
 
 >[!NOTE]
-When the count option (-c) is given with the `tune` or `summarise` command, `grepq` will count the number of FASTQ records containing a sequence that is matched, for each matching regex in the pattern file. If, however, there are multiple occurrences of a given regex _within a FASTQ record sequence field_, `grepq` will count this as one match. To ensure all records are processed, use the `summarise` command instead of the `tune` command. When the count option (-c) is not given as part of the `tune` or `summarise` command, `grepq` provides the total number of matching FASTQ records for the set of regex patterns in the pattern file. Further, note that counts produced through independently matching regex patterns to the sequence field of a FASTQ record inherently underestimate the true number of those patterns in the biological sample, since a regex pattern may span two reads (i.e., be truncated at either the beginning or end of a read). To illustrate, a regex pattern representing a 12-mer motif has a 5.5% chance of being truncated for a read length of 400 nucleotides (11/400 + 11/400 = 22/400 = 0.055 or 5.5%), assuming a uniform distribution of motif positions and reads are sampled randomly with respect to motifs (this calculation would need to be adjusted to the extent that motifs are not uniformly distributed and reads are not randomly sampled with respect to motifs).
+When the count option (-c) is given with the `tune` or `summarise` command, `grepq` will count the number of FASTQ records containing a sequence that is matched, for each matching regex in the pattern file. If, however, there are multiple occurrences of a given regex _within a FASTQ record sequence field_, `grepq` will count this as one match. To ensure all records are processed, use the `summarise` command instead of the `tune` command. When the count option (-c) is not given as part of the `tune` or `summarise` command, `grepq` provides the total number of matching FASTQ records for the set of regex patterns in the pattern file. Further, note that counts produced through independently matching regex patterns to the sequence of a FASTQ record inherently underestimate the true number of those patterns in the biological sample, since a regex pattern may span two reads (i.e., be truncated at either the beginning or end of a read). To illustrate, a regex pattern representing a 12-mer motif has a 5.5% chance of being truncated for a read length of 400 nucleotides (11/400 + 11/400 = 22/400 = 0.055 or 5.5%), assuming a uniform distribution of motif positions and reads are sampled randomly with respect to motifs (this calculation would need to be adjusted to the extent that motifs are not uniformly distributed and reads are not randomly sampled with respect to motifs).
 
 **8. Supports inverted matching with the `inverted` command**
 
@@ -185,11 +185,8 @@ For example, see `tune.sh` in the `examples` directory. This simple script will 
 
 Get instructions and examples using `grepq -h`, or `grepq tune -h`, `grepq summarise -h` and `grepq inverted -h` for more information on the `tune`, `summarise` and `inverted` commands, respectively. See the `examples` directory for examples of pattern files and FASTQ files, and the `cookbook.sh` and `cookbook.md` files for more examples. Finally, `help.md` contains a full dump of the help output, in markdown format.
 
-```bash
-
 >[!NOTE]
 `grepq` can output to several formats, including those that are gzip or zstd compressed. `grepq`, however, will only accept a FASTQ file or a compressed (gzip or zstd) FASTQ file as the sequence data file. If you get an error message, check that the input data file is a FASTQ file or a gzip or zstd compressed FASTQ file, and that you have specified the correct file format (--read-gzip or --read-zstd for FASTQ files compressed by gzip and zstd, respectively), and file path. Pattern files must contain one regex pattern per line or be provided in JSON format, and patterns are case-sensitive. You can supply an empty pattern file to count the total number of records in the FASTQ file. The regex patterns for matching FASTQ sequences should only include the DNA sequence characters (A, C, G, T), or IUPAC ambiguity codes (N, R, Y, etc.). See `16S-no-iupac.txt`, `16S-iupac.json`, `16S-no-iupac.json`, and `16S-iupac-and-predicates.json` in the `examples` directory for examples of valid pattern files. Regex patterns to match the header field (= record ID line) must comply with the Rust regex library syntax (<https://docs.rs/regex/latest/regex/#syntax>). If you get an error message, be sure to escape any special characters in the regex pattern.
-```
 
 ### Preparing pattern files
 

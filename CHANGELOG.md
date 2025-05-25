@@ -1,6 +1,11 @@
 
 # Changelog
 
+1.5.8
+
+* inclusion of canonical tetranucleotide output when `writeSQL` invoked
+* corresponding updates to documentation
+
 1.5.7 (maintenance release)
 
 * updated README.md to clarify use of test.sh script
