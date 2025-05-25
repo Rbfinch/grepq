@@ -3,6 +3,7 @@
 _Quickly filter FASTQ files_
 
 [![Crates.io](https://img.shields.io/crates/v/grepq.svg)](https://crates.io/crates/grepq)
+![Crates.io Total Downloads](https://img.shields.io/crates/d/grepq)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
 **Table of Contents**
