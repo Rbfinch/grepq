@@ -1,6 +1,11 @@
 
 # Changelog
 
+1.6.0 (maintenance release)
+
+* updated JOSS paper and README.md
+* updtated dependencies
+
 1.5.9 (maintenance release)
 
 * removed Dockerfile support
