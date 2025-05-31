@@ -32,26 +32,9 @@ Regular expressions are a powerful tool for matching sequences, but they can be 
 
 # Implementation
 
-*grepq* is implemented in Rust, a systems programming language known for its safety features, which help prevent common programming errors such as null pointer dereferences and buffer overflows. These features make Rust an ideal choice for implementing a tool like *grepq*, which needs to be fast, efficient, and reliable.
-
-Furthermore, *grepq* obtains its performance and reliability, in part, by using the *seq_io* [@seq_io] and *regex* [@regex] libraries. The *seq_io* library is a well-tested library for parsing FASTQ files, designed to be fast and efficient, and which includes a module for parallel processing of FASTQ records through multi-threading. The *regex* library is designed to work with regular expressions and sets of regular expressions, and is known to be one of the fastest regular expression libraries currently available [@rebar]. The *regex* library supports Perl-like regular expressions without look-around or backreferences (documented at <https://docs.rs/regex/1.*/regex/#syntax>).
-
-Further performance gains were obtained by:
-
-- use of the *RegexSet* struct from the *regex* library to match multiple regular expressions against a sequence in a single pass, rather than matching each regular expression individually (the *RegexSet* is created and compiled once before entering any loop that processes the FASTQ records, avoiding the overhead of recompiling the regular expressions for each record)
-- multi-threading to process the records within an input FASTQ file in parallel through use of multiple CPU cores
-- use of the *zlib-ng* backend to the *flate2* library to read and write gzip-compressed FASTQ files, which is faster than the default *miniz_oxide* backend
-- use of an optimised global memory allocator (the *mimalloc* library [@mimalloc]) to reduce memory fragmentation and improve memory allocation and deallocation performance
-- buffer reuse to reduce the number of memory allocations and deallocations
-- use of byte slices to avoid the overhead of converting to and from string types
-- in-lining of performance-critical functions
-- use of the *write_all* I/O operation that ensures the data is written in one go, rather than writing data in smaller chunks
-
-\newpage
+*grepq* obtains its performance and reliability, in part, by using the *seq_io* [@seq_io] and *regex* [@regex] libraries. The *seq_io* library is a well-tested library for parsing FASTQ files, designed to be fast and efficient, and which includes a module for parallel processing of FASTQ records through multi-threading. The *regex* library is designed to work with regular expressions and sets of regular expressions, and is known to be one of the fastest regular expression libraries currently available [@rebar]. The *regex* library supports Perl-like regular expressions without look-around or backreferences (documented at <https://docs.rs/regex/1.*/regex/#syntax>).
 
 # Feature set
-
-*grepq* has the following features:
 
 - support for presence and absence (inverted) matching of a set of regular expressions
 - IUPAC ambiguity code support (N, R, Y, etc.)
@@ -64,122 +47,15 @@ Further performance gains were obtained by:
   - count and summarise the total number of records and the number of matching records (or records that don't match in the case of inverted matching) in the input FASTQ file
   - bucket matching sequences to separate files named after each regexName with the **--bucket** flag, in any of the four output formats
 
-Other than when the **inverted** command is given, output to a SQLite database is supported with the **writeSQL** option. The SQLite database will contain a table called **fastq_data** with the following fields: the fastq record (header, sequence and quality fields), length of the sequence field (length), percent GC content (GC), percent GC content as an integer (GC_int), number of unique tetranucleotides in the sequence (nTN), percent tetranucleotide frequency within the sequence (TNF), and a JSON array containing the matched regex patterns, the matches and their position(s) in the FASTQ sequence (variants). If the pattern file was given in JSON format and contained a non-null qualityEncoding field, then the average quality score for the sequence field (average_quality) will also be written. The **--num-tetranucleotides** option can be used to limit the number of tetranucleotides written to the TNF field of the fastq_data SQLite table, these being the most or equal most frequent tetranucleotides in the sequence field of the matched FASTQ records. A summary of the invoked query (pattern and data files) is written to a second table called **query**.
-
-Other than when the *tune* or *summarise* command is run, a FASTQ record is deemed to match (and hence provided in the output) when any of the regular expressions in the pattern file match the sequence field of the FASTQ record. Example output of the *tune* command (when given with the **--json-matches** flag) is shown below:
-
-```bash
-# For each matched pattern in a search of no more than
-# 20000 matches of a gzip-compressed FASTQ file, print
-# the pattern and the number of matches to a JSON file
-# called matches.json, and include the top three most
-# frequent variants of each pattern, and their respective
-# counts
-grepq --read-gzip 16S-no-iupac.json SRX26365298.fastq.gz \
- tune -n 20000 -c --names --json-matches --variants 3
-```
-
-Output (abridged) written to matches.json:
-
-```json
-{
-    "regexSet": {
-        "regex": [
-            {
-                "regexCount": 2,
-                "regexName": "Primer contig 06a",
-                "regexString": "[AG]AAT[AT]G[AG]CGGGG",
-                "variants": [
-                    {
-                        "count": 1,
-                        "variant": "GAATTGGCGGGG",
-                        "variantName": "06a-v3"
-                    },
-                    {
-                        "count": 1,
-                        "variant": "GAATTGACGGGG",
-                        "variantName": "06a-v1"
-                    }
-                ]
-            },
-            // matches for other regular expressions...
-    ],
-    "regexSetName": "conserved 16S rRNA regions"
-  }
-}
-```
-
-To output all variants of each pattern, use the `--all` argument, for example:
-
-```bash
-# For each matched pattern in a search of no more than
-# 20000 matches of a gzip-compressed FASTQ file, print
-# the pattern and the number of matches to a JSON file
-# called matches.json, and include all variants of each
-# pattern, and their respective counts. Note that the
-# --variants argument is not given when --all is specified.
-grepq --read-gzip 16S-no-iupac.json SRX26365298.fastq.gz \
- tune -n 20000 -c --names --json-matches --all
-```
-
-When the count option (**-c**) is given with the *tune* or *summarise* command, *grepq* will count the number of FASTQ records containing a sequence that is matched, for each matching regular expression in the pattern file. If, however, there are multiple occurrences of a given regular expression within a FASTQ record sequence field, *grepq* will count this as one match. To ensure all records are processed, the *summarise* command is used instead of the *tune* command. Further, note that counts produced through independently matching regex patterns to the sequence field of a FASTQ record inherently underestimate the true number of those patterns in the biological sample, since a regex pattern may span two reads (i.e., be truncated at either the beginning or end of a read). To illustrate, a regex pattern representing a 12-mer motif has a 5.5% chance of being truncated for a read length of 400 nucleotides (11/400 + 11/400 = 22/400 = 0.055 or 5.5%), assuming a uniform distribution of motif positions and reads are sampled randomly with respect to motifs (this calculation would need to be adjusted to the extent that motifs are not uniformly distributed and reads are not randomly sampled with respect to motifs).
-
-When the count option (**-c**) is not given as part of the *tune* or *summarise* command, *grepq* provides the total number of matching FASTQ records for the set of regular expressions in the pattern file.
-
-Colorized output for matching regular expressions is not implemented to maximise speed and minimise code complexity, but can be achieved by piping the output to *grep* or *ripgrep* for testing purposes.
+Other than when the **inverted** command is given, output to a SQLite database is supported with the **writeSQL** option. The SQLite database will contain a table called **fastq_data** with the following fields: the fastq record (header, sequence and quality fields), length of the sequence field (length), percent GC content (GC), percent GC content as an integer (GC_int), number of unique tetranucleotides in the sequence (nTN), number of unique canonical tetranucleotides in the sequence (nCTN), percent tetranucleotide frequency in the sequence (TNF), percent canonical tetranucleotide frequency in the sequence (CTNF), and a JSON array containing the matched regex patterns, the matches and their position(s) in the FASTQ sequence (variants). If the pattern file was given in JSON format and contained a non-null qualityEncoding field, then the average quality score for the sequence field (average_quality) will also be written. The **--num-tetranucleotides** option can be used to limit the number of tetranucleotides written to the TNF field of the fastq_data SQLite table, these being the most or equal most frequent tetranucleotides in the sequence field of the matched FASTQ records. A summary of the invoked query (pattern and data files) is written to a second table called **query**.
 
 # Performance
 
-The performance of *grepq* was compared to that of *fqgrep*, *seqkit* *grep*, *ripgrep*, *grep*, *awk*, and *gawk* using the benchmarking tool *hyperfine*. The test conditions and results are shown in **Table 1**, **Table 2** and **Table 3**.
+The performance of *grepq* was compared to that of *fqgrep*, *seqkit* *grep*, *ripgrep*, *grep*, *awk*, and *gawk* using the benchmarking tool *hyperfine*. The test conditions and results are shown in **Table 1**, **Table 2** and **Table 3** (see [supplemental](https://github.com/Rbfinch/grepq/blob/main/paper/supplemental.pdf)).
 
-\pagebreak
+# Testing and availability
 
-: Wall times and speedup of various tools for filtering FASTQ records against a set of regular expressions. Test FASTQ file: SRX26365298.fastq (uncompressed) was 874MB in size, and contained 869,034 records. *grepq* v1.4.1, *fqgrep* v.1.02, *ripgrep* v14.1.1, *seqkit grep* v.2.9.0, *grep* 2.6.0-FreeBSD, *awk* v. 20200816, and *gawk* v.5.3.1. *fqgrep* and *seqkit grep* were run with default settings, *ripgrep* was run with **-B 1 -A 2 `--`colors 'match:none' `--`no-line-number**, and *grep* was run with **-B 1 -A 2 `--`color=never**. *awk* and *gawk* scripts were also configured to output matching records in FASTQ format. The pattern file contained 30 regular expression representing the 12-mers (and their reverse compliment) from Table 3 of @martinez2017conserved. The wall times, given in seconds, are the mean of 10 runs, and S.D. is the standard deviation of the wall times, also given in seconds.
-
-| tool          | mean wall time (s) | S.D. wall time (s) | speedup (× grep) | speedup (× ripgrep) | speedup (× awk) |
-|---------------|--------------------|--------------------|------------------|---------------------|-----------------|
-| *grepq*       | 0.19               | 0.01               | 1796.76          | 18.62               | 863.52          |
-| *fqgrep*      | 0.34               | 0.01               | 1017.61          | 10.55               | 489.07          |
-| *ripgrep*     | 3.57               | 0.01               | 96.49            | 1.00                | 46.37           |
-| *seqkit grep* | 2.89               | 0.01               | 119.33           | 1.24                | 57.35           |
-| *grep*        | 344.26             | 0.55               | 1.00             | 0.01                | 0.48            |
-| *awk*         | 165.45             | 1.59               | 2.08             | 0.02                | 1.00            |
-| *gawk*        | 287.66             | 1.68               | 1.20             | 0.01                | 0.58            |
-
-: Wall times and speedup of various tools for filtering gzip-compressed FASTQ records against a set of regular expressions. Test FASTQ file: SRX26365298.fastq.gz was 266MB in size, and contained 869,034 records. Test conditions and tool versions as above, but *grepq* was run with the **`--`read-gzip** option, *fqgrep* with the **-Z** option, and *ripgrep* with the **-z** option. SRX26365298.fastq was gzip-compressed using the *gzip* v.448.0.3 command [@top_gzip] using default (level 6) settings. The pattern file contained 30 regular expression representing the 12-mers (and their reverse compliment) from Table 3 of @martinez2017conserved. The wall times, given in seconds, are the mean of 10 runs, and S.D. is the standard deviation of the wall times, also given in seconds.
-
-| tool      | mean wall time (s) | S.D. wall time (s) | speedup (× ripgrep) |
-|-----------|--------------------|--------------------|---------------------|
-| *grepq*   | 1.703              | 0.002              | 2.10                |
-| *fqgrep*  | 1.834              | 0.005              | 1.95                |
-| *ripgrep* | 3.584              | 0.013              | 1.00                |
-
-: Wall times and speedup of various tools for filtering FASTQ records against a set of regular expressions. Test FASTQ file: SRX22685872.fastq was 104GB in size, and contained 139,700,067 records. Test conditions and tool versions as described in the footnote to Table 1. Note that when *grepq* was run on the gzip-compressed file, a memory resident time for the *grepq* process of 116M as reported by the *top* command [@top_macos]. *fastq-dump* v3.1.1 [@sherry2012ncbi] was used to download SRX22685872 as a gzip compressed file from the NCBI SRA. The pattern file contained 30 regular expression representing the 12-mers (and their reverse compliment) from Table 3 of @martinez2017conserved. The wall times, given in seconds, are the mean of 10 runs, and S.D. is the standard deviation of the wall times, also given in seconds.
-
-| tool                | mean wall time (s) | S.D. wall time (s) | speedup (× ripgrep) |
-|---------------------|--------------------|--------------------|---------------------|
-| **uncompressed**    |                    |                    |                     |
-| *grepq*             | 26.972             | 0.244              | 4.41                |
-| *fqgrep*            | 50.525             | 0.501              | 2.36                |
-| *ripgrep*           | 119.047            | 1.227              | 1.00                |
-| **gzip-compressed** |                    |                    |                     |
-| *grepq*             | 149.172            | 1.054              | 0.98                |
-| *fqgrep*            | 169.537            | 0.934              | 0.86                |
-| *ripgrep*           | 144.333            | 0.243              | 1.00                |
-
-# Testing
-
-The output of *grepq* was compared against the output of *fqgrep*, *seqkit* *grep*, *ripgrep*, *grep*, *awk* and *gawk*, using the *stat* command [@stat_macos], and any difference investigated using the *diff* command [@diff_macos]. Furthermore, a custom utility, *spikeq* [@spikeq], was developed to generate synthetic FASTQ files with a known number of records and sequences with user-specified lengths that were spiked with a set of regular expressions a known number of times. This utility was used to test the performance of *grepq* and the aforementioned tools under controlled conditions.
-
-Finally, a bash test script (see *examples/test.sh*, available at *grepq*'s Github repository) and a simple Rust CLI application, *predate* [@predate], were developed and utilised to automate system testing, and to monitor for performance regressions.
-
-*grepq* has been tested on macOS 15.0.1 (Apple M1 Max) and Linux Ubuntu 20.04.6 LTS (AMD EPYC 7763 64-Core Processor). It may work on other platforms, but this has not been tested.
-
-# Availability and documentation
-
-*grepq* is open-source and available at *GitHub* (<https://github.com/Rbfinch/grepq>), *Crates.io* (<https://crates.io/crates/grepq>) and *bioconda* (<https://anaconda.org/bioconda/grepq>).
-
-Documentation and installation instructions for *grepq* are available at the same GitHub repository, and through the **-h** and **`--`help** command-line options, which includes a list of all available commands and options, and examples of how to use them. Example pattern files in plain text and JSON format are also provided, as well as test scripts. *grepq* is distributed under the MIT license.
+*grepq* is open-source and available at *GitHub* (<https://github.com/Rbfinch/grepq>), *Crates.io* (<https://crates.io/crates/grepq>) and *bioconda* (<https://anaconda.org/bioconda/grepq>), and is distributed under the MIT license. It has been tested on macOS 15.0.1 (Apple M1 Max) and Linux Ubuntu 20.04.6 LTS (AMD EPYC 7763 64-Core Processor). For more information on the testing of *grepq*, see the *README.md* file in the *grepq* repository on *GitHub*.
 
 # Conclusion
 
@@ -187,7 +63,7 @@ The performance of *grepq* was compared to that of *fqgrep*, *seqkit* *grep*, *r
 
 # Acknowledgements
 
-I'm grateful to my family for their patience and support during the development of *grepq*. I would also like to thank the developers of the *seq_io*, *regex*, *mimalloc* and *flate2* libraries for their excellent work, and the developers of the *hyperfine* benchmarking tool for making it easy to compare the performance of different tools. Finally, I would like to thank the authors of the *ripgrep* and *fqgrep* tools for providing inspiration for *grepq*.
+I thank the authors of the *seq_io*, *regex*, *mimalloc* and *flate2* libraries and *hyperfine* benchmarking tool, and of the *ripgrep* and *fqgrep* tools for providing inspiration for *grepq*.
 
 # Conflicts of interest
 
