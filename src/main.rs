@@ -30,7 +30,6 @@ use seq_io::parallel::parallel_fastq;
 use std::io::Write;
 use clap::Parser;
 use initialise::{create_reader, create_writer, parse_patterns_file};
-use std::io::{Error, ErrorKind};
 use serde_json::json;
 use regex::bytes::Regex as BytesRegex; // Alias to avoid confusion
 use arg::{Cli, Commands};
@@ -105,7 +104,7 @@ fn main() {
         regex_names,
         _,
     ) = parse_patterns_file(&cli.patterns)
-        .map_err(|e| Error::new(ErrorKind::Other, e))
+        .map_err(std::io::Error::other)
         .unwrap();
 
     // Check if the pattern file is a text file.

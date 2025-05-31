@@ -1,10 +1,15 @@
 
 # Changelog
 
+1.6.1 (maintenance release)
+
+* updates to error handling
+* fixed clippy warnings for more idiomatic Rust
+
 1.6.0 (maintenance release)
 
 * updated JOSS paper and README.md
-* updtated dependencies
+* updated dependencies
 
 1.5.9 (maintenance release)
 

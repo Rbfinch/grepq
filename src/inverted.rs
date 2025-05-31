@@ -42,7 +42,7 @@ pub fn run_inverted(cli: &Cli) {
     // Parse the patterns file to extract regex patterns and optional filter parameters.
     let (regex_set, header_regex, minimum_sequence_length, minimum_quality, quality_encoding, _, _) =
         parse_patterns_file(&cli.patterns)
-            .map_err(|e| std::io::Error::new(std::io::ErrorKind::Other, e))
+            .map_err(std::io::Error::other)
             .unwrap();
 
     // Compile the optional header regex.

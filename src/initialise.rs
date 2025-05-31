@@ -330,10 +330,7 @@ impl<W: Write> Write for ZstdWriter<W> {
         if let Some(encoder) = &mut self.encoder {
             encoder.write(buf)
         } else {
-            Err(io::Error::new(
-                io::ErrorKind::Other,
-                "Encoder has been finalized",
-            ))
+            Err(io::Error::other("Encoder has been finalized"))
         }
     }
 

@@ -40,7 +40,7 @@ pub fn run_summarise(cli: &Cli, include_count: bool) -> io::Result<()> {
 
     // Parse the patterns file and extract settings.
     let (regex_set, header_regex, minimum_sequence_length, minimum_quality, quality_encoding, _, _) =
-        parse_patterns_file(patterns_path).map_err(|e| io::Error::new(io::ErrorKind::Other, e))?;
+        parse_patterns_file(patterns_path).map_err(|e| io::Error::other(e.to_string()))?;
 
     // Compile header regex if provided.
     let header_regex = header_regex.map(|re| Regex::new(&re).unwrap());
@@ -78,28 +78,30 @@ pub fn run_summarise(cli: &Cli, include_count: bool) -> io::Result<()> {
             Ok(record) => record,
             Err(e) => {
                 // Return error if file format is not supported.
-                return Err(io::Error::new(
-                    io::ErrorKind::Other,
-                    format!(
-                        "grepq only supports the fastq format. Check your input file.: {}",
-                        e
-                    ),
-                ));
+                return Err(io::Error::other(format!(
+                    "grepq only supports the fastq format. Check your input file.: {}",
+                    e
+                )));
             }
         };
 
         // Apply filters: sequence length, header pattern, and quality.
-        let seq_len_check =
-            minimum_sequence_length.map_or(true, |len| record.seq().len() >= len as usize);
+        let seq_len_check = minimum_sequence_length
+            .map(|len| record.seq().len() >= len as usize)
+            .unwrap_or(true);
         let header_check = header_regex
             .as_ref()
-            .map_or(true, |re| re.is_match(record.head()));
-        let qual_check = minimum_quality.map_or(true, |min_q| {
-            quality::average_quality(
-                record.qual(),
-                quality_encoding.as_deref().unwrap_or("Phred+33"),
-            ) >= min_q
-        });
+            .map(|re| re.is_match(record.head()))
+            .unwrap_or(true);
+        let qual_check = match minimum_quality {
+            Some(min_q) => {
+                quality::average_quality(
+                    record.qual(),
+                    quality_encoding.as_deref().unwrap_or("Phred+33"),
+                ) >= min_q
+            }
+            None => true,
+        };
 
         // If the record passes all filters, match the sequence against the regex set.
         if seq_len_check && header_check && qual_check {
@@ -237,10 +239,8 @@ pub fn run_summarise(cli: &Cli, include_count: bool) -> io::Result<()> {
             .unwrap_or("Unknown");
 
         // JSON-specific processing for regex patterns with names and variants
-        if cli.command.as_ref().map_or(
-            false,
-            |cmd| matches!(cmd, crate::arg::Commands::Summarise(s) if s.include_names),
-        ) {
+        if matches!(cli.command.as_ref(), Some(crate::arg::Commands::Summarise(s)) if s.include_names)
+        {
             println!("Regex Set Name: {}", regex_set_name);
         }
 
@@ -312,10 +312,8 @@ pub fn run_summarise(cli: &Cli, include_count: bool) -> io::Result<()> {
             }));
 
             // Print summary information for each regex.
-            if cli.command.as_ref().map_or(
-                false,
-                |cmd| matches!(cmd, crate::arg::Commands::Summarise(s) if s.include_names),
-            ) {
+            if matches!(cli.command.as_ref(), Some(crate::arg::Commands::Summarise(s)) if s.include_names)
+            {
                 if include_count {
                     println!("{} ({}): {}", regex_name, regex_string, count);
                 } else {
