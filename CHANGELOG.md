@@ -1,6 +1,10 @@
 
 # Changelog
 
+1.6.2 (maintenance release)
+
+* fixed DOI issue in JOSS paper
+
 1.6.1 (maintenance release)
 
 * updates to error handling
