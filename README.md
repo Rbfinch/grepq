@@ -39,7 +39,7 @@ This README contains documentation for the latest version of `grepq`. If you are
 - supports inverted matching with the `inverted` command
 - plays nicely with your unix workflows
 - comprehensive help, examples and testing script
-- read the preprint at **bioRxiv**: <https://doi.org/10.1101/2025.01.09.632104>
+- read the **JOSS** [paper](https://joss.theoj.org/papers/10.21105/joss.08048)
 
 ## Features and performance in detail
 
@@ -318,11 +318,13 @@ Obtain `SRX26602697.fastq` from the SRA using `fastq-dump --accession SRX2660269
 
 You can verify that `grepq` has found the regex patterns by using tools such as `grep` and `ripgrep`, using their ability to color-match the regex patterns (this feature is not available in `grepq` as that would make the code more complicated; code maintainability is an objective of this project). Recall, however, that `grep` and `ripgrep` will match the regex patterns to the entire FASTQ record, which includes the record ID, sequence, separator, and quality fields, occasionally leading to false positives.
 
-## Citation and preprint
+## Citation
 
 If you use `grepq` in your research, please cite as follows:
 
-Crosbie, N.D. (2025). grepq: A Rust application that quickly filters FASTQ files by matching sequences to a set of regular expressions. **bioRxiv**, doi: <https://doi.org/10.1101/2025.01.09.632104>
+Crosbie, N. D., (2025). grepq: A Rust application that quickly filters FASTQ files by matching sequences to a set of regular expressions. Journal of Open Source Software, 10(110), 8048, https://doi.org/10.21105/joss.08048
+
+@article{Crosbie2025, doi = {10.21105/joss.08048}, url = {https://doi.org/10.21105/joss.08048}, year = {2025}, publisher = {The Open Journal}, volume = {10}, number = {110}, pages = {8048}, author = {Nicholas D. Crosbie}, title = {grepq: A Rust application that quickly filters FASTQ files by matching sequences to a set of regular expressions}, journal = {Journal of Open Source Software} }
 
 ## Update changes
 
