@@ -1,11 +1,35 @@
-cff-version: 1.2.0
-message: "If you use this software, please cite it as below."
+cff-version: "1.2.0"
 authors:
-- family-names: "Crosbie"
-  given-names: "Nicholas D."
+- email: nicholas.crosbie@unimelb.edu.au
+  family-names: Crosbie
+  given-names: Nicholas D.
   orcid: "https://orcid.org/0000-0002-0319-4248"
-title: "grepq: A Rust application that quickly filters FASTQ files by matching sequences to a set of regular expressions"
-version: 1.4.2
-doi: 10.1101/2025.01.09.632104
-date-released: 2025-01-25
-url: "https://github.com/Rbfinch/grepq"
+contact:
+- email: nicholas.crosbie@unimelb.edu.au
+  family-names: Crosbie
+  given-names: Nicholas D.
+  orcid: "https://orcid.org/0000-0002-0319-4248"
+doi: 10.5281/zenodo.15612061
+message: If you use this software, please cite our article in the
+  Journal of Open Source Software.
+preferred-citation:
+  authors:
+  - email: nicholas.crosbie@unimelb.edu.au
+    family-names: Crosbie
+    given-names: Nicholas D.
+    orcid: "https://orcid.org/0000-0002-0319-4248"
+  date-published: 2025-06-30
+  doi: 10.21105/joss.08048
+  issn: 2475-9066
+  issue: 110
+  journal: Journal of Open Source Software
+  publisher:
+    name: Open Journals
+  start: 8048
+  title: "grepq: A Rust application that quickly filters FASTQ files by
+    matching sequences to a set of regular expressions"
+  type: article
+  url: "https://joss.theoj.org/papers/10.21105/joss.08048"
+  volume: 10
+title: "grepq: A Rust application that quickly filters FASTQ files by
+  matching sequences to a set of regular expressions"
