@@ -5,6 +5,7 @@ _Quickly filter FASTQ files_
 [![Crates.io](https://img.shields.io/crates/v/grepq.svg)](https://crates.io/crates/grepq)
 ![Crates.io Total Downloads](https://img.shields.io/crates/d/grepq)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![DOI](https://joss.theoj.org/papers/10.21105/joss.08048/status.svg)](https://doi.org/10.21105/joss.08048)
 
 **Table of Contents**
 
@@ -16,7 +17,7 @@ _Quickly filter FASTQ files_
 - [Installation](#installation)
 - [Examples and tests](#examples-and-tests)
 - [Further testing](#further-testing)
-- [Citation and preprint](#citation-and-preprint)
+- [Citation](#citation)
 - [Update changes](#update-changes)
 - [Contributing and issue reporting](#contributing-and-issue-reporting)
 - [License](#license)
@@ -86,7 +87,7 @@ Predicates are specified in a JSON pattern file. For an example, see `16S-iupac-
 
 **4. Does not match false positives**
 
-`grepq` will only match regex patterns to the sequence of a FASTQ record, which is the most common use case. Unlike `ripgrep` and `grep`, which will match the regex patterns to the entire FASTQ record, which includes the record ID, sequence, separator, and quality fields. This can lead to false positives and slow down the filtering process.
+`grepq` will only match regex patterns to the sequence of a FASTQ record, which is the most common use case. Unlike `ripgrep` and `grep`, which will match the regex patterns to the entire FASTQ record, which includes the record ID, sequence, separator, and quality fields. This can lead to false positives and slow down the filtering process. When multiple regex patterns are provided, a matched sequence is one where _any_ of the regex patterns in the pattern file match the sequence of the FASTQ record.
 
 **5. Output matched sequences to one of four formats**
 
@@ -322,9 +323,9 @@ You can verify that `grepq` has found the regex patterns by using tools such as 
 
 If you use `grepq` in your research, please cite as follows:
 
-Crosbie, N. D., (2025). grepq: A Rust application that quickly filters FASTQ files by matching sequences to a set of regular expressions. Journal of Open Source Software, 10(110), 8048, https://doi.org/10.21105/joss.08048
+Crosbie, N. D., (2025). grepq: A Rust application that quickly filters FASTQ files by matching sequences to a set of regular expressions. Journal of Open Source Software, 10(110), 8048, <https://doi.org/10.21105/joss.08048>
 
-@article{Crosbie2025, doi = {10.21105/joss.08048}, url = {https://doi.org/10.21105/joss.08048}, year = {2025}, publisher = {The Open Journal}, volume = {10}, number = {110}, pages = {8048}, author = {Nicholas D. Crosbie}, title = {grepq: A Rust application that quickly filters FASTQ files by matching sequences to a set of regular expressions}, journal = {Journal of Open Source Software} }
+@article{Crosbie2025, doi = {10.21105/joss.08048}, url = {<https://doi.org/10.21105/joss.08048}>, year = {2025}, publisher = {The Open Journal}, volume = {10}, number = {110}, pages = {8048}, author = {Nicholas D. Crosbie}, title = {grepq: A Rust application that quickly filters FASTQ files by matching sequences to a set of regular expressions}, journal = {Journal of Open Source Software} }}
 
 ## Update changes
 

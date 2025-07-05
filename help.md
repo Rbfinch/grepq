@@ -249,9 +249,7 @@ of regex patterns in the pattern file.
 
 If you use grepq in your research, please cite as follows:
 
-Crosbie, N.D. (2024). grepq: A Rust application that quickly filters
-FASTQ files by matching sequences to a set of regular expressions. bioRxiv, doi:
-<https://doi.org/10.1101/2025.01.09.632104>
+Crosbie, N. D., (2025). grepq: A Rust application that quickly filters FASTQ files by matching sequences to a set of regular expressions. Journal of Open Source Software, 10(110), 8048, <https://doi.org/10.21105/joss.08048>
 
 ###### **Subcommands:**
 

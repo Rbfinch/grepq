@@ -40,26 +40,8 @@ fn main() {
     let k = 4; // We are pre-computing for k=4 (tetranucleotides)
     let bases = ['A', 'C', 'G', 'T'];
 
-    // Start generating the map code - using phf_codegen instead of phf_map macro
-    writeln!(
-        &mut file,
-        "use phf::Map;\n\nstatic CANONICAL_K_MERS: Map<&'static str, &'static str> = {{"
-    )
-    .unwrap();
-
-    writeln!(
-        &mut file,
-        "    // Generated map of tetranucleotides to their canonical forms"
-    )
-    .unwrap();
-    writeln!(
-        &mut file,
-        "    const DATA: phf::Map<&'static str, &'static str> = {{"
-    )
-    .unwrap();
-
-    // Use phf_codegen to create a phf::Map
-    let mut builder = phf_codegen::Map::new();
+    // Collect all k-mer mappings first
+    let mut kmer_mappings = Vec::new();
 
     // Iterate through all possible k-mers (4^k combinations)
     // For k=4, this is 4^4 = 256 combinations.
@@ -81,20 +63,30 @@ fn main() {
                         rc_kmer
                     };
 
-                    // Add the k-mer -> canonical k-mer entry to the builder
-                    builder.entry(kmer, &format!("\"{}\"", canonical));
+                    kmer_mappings.push((kmer, canonical));
                 }
             }
         }
     }
 
-    // Write the generated phf::Map code
-    write!(&mut file, "{}", builder.build()).unwrap();
+    // Build the PHF map using the collected mappings
+    let mut builder = phf_codegen::Map::new();
+    let formatted_mappings: Vec<(String, String)> = kmer_mappings
+        .iter()
+        .map(|(kmer, canonical)| (kmer.clone(), format!("\"{}\"", canonical)))
+        .collect();
 
-    // Close the map definition
-    writeln!(&mut file, "    }};").unwrap();
-    writeln!(&mut file, "    DATA").unwrap();
-    writeln!(&mut file, "}};").unwrap();
+    for (kmer, canonical) in &formatted_mappings {
+        builder.entry(kmer, canonical);
+    }
+
+    // Write the generated phf::Map code
+    writeln!(
+        &mut file,
+        "use phf::Map;\n\npub static CANONICAL_K_MERS: Map<&'static str, &'static str> = {};",
+        builder.build()
+    )
+    .unwrap();
 
     // Check if SQLite is installed
     let sqlite_installed = check_library("sqlite3");

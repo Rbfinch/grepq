@@ -1,6 +1,13 @@
 
 # Changelog
 
+1.6.3 (maintenance release)
+
+* updated dependencies
+* updated README.md
+* updated build.rs
+* update help.md
+
 1.6.2 (maintenance release)
 
 * fixed DOI issue in JOSS paper
