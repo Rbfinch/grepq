@@ -206,10 +206,10 @@ ajv --strict=false -s grepq-schema.json -d pattern-file.json
 
 ## Requirements
 
-- `grepq` has been tested on Linux (x86-64) and macOS (ARM64). It might work on other platforms, but it has not been tested.
+- `grepq` has been tested on Linux (x86-64 and ARM64) and macOS (ARM64). It might work on other platforms, but it has not been tested.
 - Ensure that Rust is installed on your system (<https://www.rust-lang.org/tools/install>)
-- Ensure that SQLite and zstd are installed on your system. If you are using a package manager, you can install them with the following commands:
-  - For Ubuntu/Debian: `sudo apt-get install sqlite3 zstd`
+- Ensure that the dependencies are installed on your system. If you are using a package manager, you can install them with the following commands:
+  - For Ubuntu/Debian: `sudo apt update && sudo apt install -y build-essential cmake libsqlite3-dev libzstd-dev sqlite3`
   - For macOS: `brew install sqlite zstd`
 - If you are installing from `bioconda`, you will need to have conda or miniconda installed on your system. You can install conda or miniconda from <https://docs.conda.io/en/latest/miniconda.html> or <https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html>.
 - If the build fails, make sure you have the latest version of the Rust compiler by running `rustup update`
@@ -217,7 +217,7 @@ ajv --strict=false -s grepq-schema.json -d pattern-file.json
 
 ## Installation
 
-System requirements: `grepq` requires Rust (v1.56.0 or later) and the Rust toolchain to be installed on your system. You will also need system libraries for SQLite and zstd. The cargo install command will check if these libraries are installed, and if not, it will prompt you to install them.
+First, install the dependencies described in the `Requirements` section, see above. Then, you can install `grepq` in one of the following ways:
 
 - From _crates.io_ (easiest method, but will not install the `examples` directory)
   - `cargo install grepq`

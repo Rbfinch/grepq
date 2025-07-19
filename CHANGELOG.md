@@ -1,6 +1,11 @@
 
 # Changelog
 
+1.6.4 (maintenance release)
+
+* updated dependencies
+* updated README.md
+
 1.6.3 (maintenance release)
 
 * updated dependencies
