@@ -186,7 +186,10 @@ pub fn parse_patterns_file(patterns_path: &str) -> ParseResult {
 
         let mut error_messages = Vec::new();
         for error in validator.iter_errors(&json) {
-            error_messages.push(format!("Error: {error}\nLocation: {}", error.instance_path));
+            error_messages.push(format!(
+                "Error: {error}\nLocation: {}",
+                error.instance_path()
+            ));
         }
 
         if !error_messages.is_empty() {
