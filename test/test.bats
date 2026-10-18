@@ -115,7 +115,7 @@ verify_bucket_files() {
 measure_time() {
     local command="$1"
     local result
-    result=$(hyperfine --warmup 1 --runs 3 --export-json /tmp/hyperfine.json "$command")
+    result=$(hyperfine --shell=default --warmup 1 --runs 3 --export-json /tmp/hyperfine.json "$command")
     jq '.results[0].mean' /tmp/hyperfine.json
 }
 
