@@ -1,10 +1,13 @@
 
 # Changelog
 
-1.6.6 (maintenance release)
+1.6.7 (maintenance release)
 
 * updated dependencies
 
+1.6.6 (maintenance release)
+
+* updated dependencies
 
 1.6.5 (maintenance release)
 
