@@ -133,6 +133,8 @@ fn main() {
     let with_fasta = cli.with_fasta;
     let count = cli.count;
     let bucket = cli.bucket;
+    let num_threads = cli.threads.unwrap_or_else(num_cpus::get);
+    assert!(num_threads > 0, "The number of threads cannot be 0.");
 
     // Determine which filters to apply.
     let check_seq_len = minimum_sequence_length.is_some();
@@ -149,8 +151,8 @@ fn main() {
         let mut match_count = 0;
         parallel_fastq(
             reader,
-            num_cpus::get() as u32,
-            num_cpus::get(),
+            num_threads as u32,
+            num_threads,
             |record, found| {
                 // Worker thread: Apply filter checks for sequence length, quality, header, and regex.
                 *found = false;
@@ -212,8 +214,8 @@ fn main() {
 
         parallel_fastq(
             reader,
-            num_cpus::get() as u32,
-            num_cpus::get(),
+            num_threads as u32,
+            num_threads,
             |record, found| {
                 // Worker thread: Check the same filter criteria as in count mode.
                 *found = false;

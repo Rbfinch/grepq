@@ -246,6 +246,13 @@ pub struct Cli {
     pub markdown_help: bool,
 
     #[arg(
+        short = 'j',
+        long = "threads",
+        help = "Number of threads [# CPU cores by default]"
+    )]
+    pub threads: Option<usize>,
+
+    #[arg(
         short = 'I',
         long = "includeID",
         help = "Include record ID in the output"
